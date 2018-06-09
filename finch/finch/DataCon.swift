@@ -9,25 +9,52 @@
 import Foundation
 import Accelerate
 
-struct Countdown: Sequence, IteratorProtocol {
-    var count: Int
-    
-    mutating func next() -> Int? {
-        if count == 0 {
-            return nil
-        } else {
-            defer { count -= 1 }
-            return count
-        }
-    }
-}
+//struct Countdown: Sequence, IteratorProtocol {
+//    var count: Int
+//    
+//    mutating func next() -> Int? {
+//        if count == 0 {
+//            return nil
+//        } else {
+//            defer { count -= 1 }
+//            return count
+//        }
+//    }
+//}
 
 class DataCon<Element: Numeric> // implementing class to have ARC
     :
+    Equatable,
     ExpressibleByArrayLiteral,
+    IteratorProtocol,
     Sequence,
-    IteratorProtocol
+    CustomStringConvertible,
+    LosslessStringConvertible,
+    CustomDebugStringConvertible
 {
+
+    var debugDescription: String {
+        return "<DataCon: > \(self.data.description)"
+    }
+    
+    var description: String {
+        return self.data.description
+    }
+
+
+    
+    static func == (lhs: DataCon<Element>, rhs: DataCon<Element>) -> Bool {
+        guard lhs.count == rhs.count else {
+            return false
+        }
+        for (a, b) in zip(lhs, rhs) {
+            guard a == b else {
+                return false
+            }
+        }
+        return true
+    }
+    
     var data: ContiguousArray<Element>
     typealias ArrayLiteralElement = Element
 
@@ -52,5 +79,9 @@ class DataCon<Element: Numeric> // implementing class to have ARC
 
     init(elements: [Element]) {
         data = ContiguousArray<Element>(elements)
+    }
+
+    required init?(_ description: String) {
+        data = []
     }
 }

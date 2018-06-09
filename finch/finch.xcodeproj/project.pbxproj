@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052B20CC5BD60006DCE8 /* string_extension.swift */; };
+		C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052D20CC5C3A0006DCE8 /* extTests.swift */; };
 		C9348BFF20CB0BDC00D4CE21 /* finch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9348BF520CB0BDC00D4CE21 /* finch.framework */; };
 		C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0320CB0BDC00D4CE21 /* finchTests.swift */; };
 		C9348C0620CB0BDC00D4CE21 /* finch.h in Headers */ = {isa = PBXBuildFile; fileRef = C9348BF820CB0BDC00D4CE21 /* finch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -24,6 +26,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		C91F052B20CC5BD60006DCE8 /* string_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = string_extension.swift; sourceTree = "<group>"; };
+		C91F052D20CC5C3A0006DCE8 /* extTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extTests.swift; sourceTree = "<group>"; };
 		C9348BF520CB0BDC00D4CE21 /* finch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = finch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9348BF820CB0BDC00D4CE21 /* finch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = finch.h; sourceTree = "<group>"; };
 		C9348BF920CB0BDC00D4CE21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -76,6 +80,7 @@
 				C9348BF820CB0BDC00D4CE21 /* finch.h */,
 				C9348BF920CB0BDC00D4CE21 /* Info.plist */,
 				C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */,
+				C91F052B20CC5BD60006DCE8 /* string_extension.swift */,
 			);
 			path = finch;
 			sourceTree = "<group>";
@@ -85,6 +90,7 @@
 			children = (
 				C9348C0320CB0BDC00D4CE21 /* finchTests.swift */,
 				C9348C0520CB0BDC00D4CE21 /* Info.plist */,
+				C91F052D20CC5C3A0006DCE8 /* extTests.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -198,6 +204,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */,
 				C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -207,6 +214,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
+				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
