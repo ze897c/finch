@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C907579B20CDAB14001B2145 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C907579A20CDAB14001B2145 /* Cocoa.framework */; };
+		C907579E20CDAB14001B2145 /* SourceEditorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C907579D20CDAB14001B2145 /* SourceEditorExtension.swift */; };
+		C90757A020CDAB14001B2145 /* SourceEditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */; };
 		C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052B20CC5BD60006DCE8 /* string_extension.swift */; };
 		C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052D20CC5C3A0006DCE8 /* extTests.swift */; };
 		C9348BFF20CB0BDC00D4CE21 /* finch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9348BF520CB0BDC00D4CE21 /* finch.framework */; };
@@ -27,6 +30,12 @@
 
 /* Begin PBXFileReference section */
 		C907579320CD7677001B2145 /* scratch.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = scratch.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		C907579820CDAB14001B2145 /* openit.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = openit.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		C907579A20CDAB14001B2145 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
+		C907579D20CDAB14001B2145 /* SourceEditorExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorExtension.swift; sourceTree = "<group>"; };
+		C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorCommand.swift; sourceTree = "<group>"; };
+		C90757A120CDAB14001B2145 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C90757A220CDAB14001B2145 /* openit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = openit.entitlements; sourceTree = "<group>"; };
 		C91F052B20CC5BD60006DCE8 /* string_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = string_extension.swift; sourceTree = "<group>"; };
 		C91F052D20CC5C3A0006DCE8 /* extTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extTests.swift; sourceTree = "<group>"; };
 		C9348BF520CB0BDC00D4CE21 /* finch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = finch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -39,6 +48,14 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		C907579520CDAB14001B2145 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C907579B20CDAB14001B2145 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C9348BF120CB0BDC00D4CE21 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -57,11 +74,32 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C907579920CDAB14001B2145 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				C907579A20CDAB14001B2145 /* Cocoa.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		C907579C20CDAB14001B2145 /* openit */ = {
+			isa = PBXGroup;
+			children = (
+				C907579D20CDAB14001B2145 /* SourceEditorExtension.swift */,
+				C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */,
+				C90757A120CDAB14001B2145 /* Info.plist */,
+				C90757A220CDAB14001B2145 /* openit.entitlements */,
+			);
+			path = openit;
+			sourceTree = "<group>";
+		};
 		C9348BEB20CB0BDB00D4CE21 = {
 			isa = PBXGroup;
 			children = (
 				C9348BF720CB0BDC00D4CE21 /* finch */,
 				C9348C0220CB0BDC00D4CE21 /* finchTests */,
+				C907579C20CDAB14001B2145 /* openit */,
+				C907579920CDAB14001B2145 /* Frameworks */,
 				C9348BF620CB0BDC00D4CE21 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -71,6 +109,7 @@
 			children = (
 				C9348BF520CB0BDC00D4CE21 /* finch.framework */,
 				C9348BFE20CB0BDC00D4CE21 /* finchTests.xctest */,
+				C907579820CDAB14001B2145 /* openit.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -111,6 +150,23 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		C907579720CDAB14001B2145 /* openit */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C90757A320CDAB14001B2145 /* Build configuration list for PBXNativeTarget "openit" */;
+			buildPhases = (
+				C907579420CDAB14001B2145 /* Sources */,
+				C907579520CDAB14001B2145 /* Frameworks */,
+				C907579620CDAB14001B2145 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = openit;
+			productName = openit;
+			productReference = C907579820CDAB14001B2145 /* openit.appex */;
+			productType = "com.apple.product-type.xcode-extension";
+		};
 		C9348BF420CB0BDC00D4CE21 /* finch */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = C9348C0920CB0BDC00D4CE21 /* Build configuration list for PBXNativeTarget "finch" */;
@@ -153,10 +209,13 @@
 		C9348BEC20CB0BDB00D4CE21 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0940;
+				LastSwiftUpdateCheck = 1000;
 				LastUpgradeCheck = 0940;
 				ORGANIZATIONNAME = octeps;
 				TargetAttributes = {
+					C907579720CDAB14001B2145 = {
+						CreatedOnToolsVersion = 10.0;
+					};
 					C9348BF420CB0BDC00D4CE21 = {
 						CreatedOnToolsVersion = 9.4;
 						LastSwiftMigration = 0940;
@@ -180,11 +239,19 @@
 			targets = (
 				C9348BF420CB0BDC00D4CE21 /* finch */,
 				C9348BFD20CB0BDC00D4CE21 /* finchTests */,
+				C907579720CDAB14001B2145 /* openit */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		C907579620CDAB14001B2145 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C9348BF320CB0BDC00D4CE21 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -202,6 +269,15 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		C907579420CDAB14001B2145 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C907579E20CDAB14001B2145 /* SourceEditorExtension.swift in Sources */,
+				C90757A020CDAB14001B2145 /* SourceEditorCommand.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		C9348BF020CB0BDC00D4CE21 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -231,6 +307,49 @@
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
+		C90757A420CDAB14001B2145 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = openit/openit.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CCW98HMD5J;
+				INFOPLIST_FILE = openit/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				PRODUCT_BUNDLE_IDENTIFIER = com.octeps.openit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Debug;
+		};
+		C90757A520CDAB14001B2145 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = openit/openit.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = CCW98HMD5J;
+				INFOPLIST_FILE = openit/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@executable_path/../../../../Frameworks",
+				);
+				MACOSX_DEPLOYMENT_TARGET = 10.14;
+				PRODUCT_BUNDLE_IDENTIFIER = com.octeps.openit;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 4.2;
+			};
+			name = Release;
+		};
 		C9348C0720CB0BDC00D4CE21 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -446,6 +565,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		C90757A320CDAB14001B2145 /* Build configuration list for PBXNativeTarget "openit" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C90757A420CDAB14001B2145 /* Debug */,
+				C90757A520CDAB14001B2145 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		C9348BEF20CB0BDB00D4CE21 /* Build configuration list for PBXProject "finch" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

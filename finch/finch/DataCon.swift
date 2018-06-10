@@ -20,19 +20,22 @@ class DataCon<Element:LosslessStringConvertible>
     :
     Equatable,
     ExpressibleByArrayLiteral,
-    IteratorProtocol,
-    Collection,
+    Sequence,
+    //BidirectionalCollection, // breaks: *Collection.map<Element>* doe not call *makeIterator()*; rely on *Sequence*?
+    //LazyCollectionProtocol,
     CustomStringConvertible,
     LosslessStringConvertible,
-    CustomDebugStringConvertible where Element:Numeric
+    CustomDebugStringConvertible
+    where Element:Numeric
 {
-
-    let startIndex: Int = 0
-    var endIndex: Int {
-        return data.count - 1
-    }
-    var count: Int = 0
     
+    typealias ArrayLiteralElement = Element
+    var data: ContiguousArray<Element>
+
+    let startIndex: Int
+    let endIndex: Int
+    let count: Int
+
     var debugDescription: String {
         return "<DataCon: > \(self.data.description)"
     }
@@ -41,16 +44,19 @@ class DataCon<Element:LosslessStringConvertible>
         return self.data.description
     }
 
+//    func index(before i: Int) -> Int {
+//        return i - 1
+//    }
     func index(after i: Int) -> Int {
         return i + 1
     }
-
-    //    static func == (lhs: [Element], rhs: [Element]) -> Bool {
-    //
-    //    }
+    
+    func makeIterator() -> DataConIterator<Element> {
+        return DataConIterator(self)
+    }
     
     static func == (lhs: DataCon<Element>, rhs: DataCon<Element>) -> Bool {
-        guard lhs.data.count == rhs.data.count else {
+        guard lhs.startIndex == rhs.startIndex && lhs.endIndex == rhs.endIndex else {
             return false
         }
         for (a, b) in zip(lhs, rhs) {
@@ -61,31 +67,29 @@ class DataCon<Element:LosslessStringConvertible>
         return true
     }
     
-    var data: ContiguousArray<Element>
-    typealias ArrayLiteralElement = Element
 
     subscript(idx: Int) -> Element {
         return data[idx]
     }
     
-
-
-    func next() -> Element? {
-        if count == data.count {
-            return nil
-        } else {
-            defer { count += 1 }
-            return self[count]
-        }
+    init(DataCon otro: DataCon<Element>) {
+        data = otro.data // still wrong: want pointer to same raw storage
+        startIndex = 0
+        endIndex = data.count - 1
+        count = data.count
     }
     
     required init(arrayLiteral elements: Element...) {
         data = ContiguousArray<Element>(elements)
+        startIndex = 0
+        endIndex = data.count - 1
         count = data.count
     }
 
     init(elements: [Element]) {
         data = ContiguousArray<Element>(elements)
+        startIndex = 0
+        endIndex = data.count - 1
         count = data.count
     }
 
@@ -93,6 +97,31 @@ class DataCon<Element:LosslessStringConvertible>
         let strings: [String] = description.removingDelimiters().components(separatedBy: String.VectorSeparators)
         let elements = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
         data = ContiguousArray<Element>(elements)
+        startIndex = 0
+        endIndex = data.count - 1
         count = data.count
+    }
+}
+
+struct DataConIterator<Element:LosslessStringConvertible>
+    :
+    IteratorProtocol
+    where Element: Numeric
+{
+    let daco: DataCon<Element>
+    var idx: Int
+    
+    init(_ daco: DataCon<Element>) {
+        self.daco = daco
+        idx = self.daco.startIndex
+    }
+    
+    mutating func next() -> Element? {
+        if idx == daco.endIndex {
+            return nil
+        } else {
+            defer { idx += 1 }
+            return daco[idx]
+        }
     }
 }
