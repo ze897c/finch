@@ -22,7 +22,13 @@ import Accelerate
 //    }
 //}
 
-class DataCon<Element: Numeric> // implementing class to have ARC
+protocol InitializableNumeric : InitializableFromString, Numeric {
+    // is this insane?
+}
+//<T where T: SomeClass, T: SomeProtocol>
+// implementing class to have ARC
+// class DataCon<Element where Element:Numeric, Element:InitializableFromString>
+class DataCon<Element:InitializableFromString>
     :
     Equatable,
     ExpressibleByArrayLiteral,
@@ -30,7 +36,8 @@ class DataCon<Element: Numeric> // implementing class to have ARC
     Sequence,
     CustomStringConvertible,
     LosslessStringConvertible,
-    CustomDebugStringConvertible
+    CustomDebugStringConvertible where Element:Numeric
+    //where Element:Numeric, Element:InitializableFromString
 {
 
     var debugDescription: String {
@@ -41,8 +48,6 @@ class DataCon<Element: Numeric> // implementing class to have ARC
         return self.data.description
     }
 
-
-    
     static func == (lhs: DataCon<Element>, rhs: DataCon<Element>) -> Bool {
         guard lhs.count == rhs.count else {
             return false
@@ -82,6 +87,8 @@ class DataCon<Element: Numeric> // implementing class to have ARC
     }
 
     required init?(_ description: String) {
-        data = []
+        let strings: [String] = description.removingDelimiters().components(separatedBy: String.VectorSeparators)
+        let elements = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
+        data = ContiguousArray<Element>(elements)
     }
 }

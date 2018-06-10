@@ -11,6 +11,15 @@ import XCTest
 
 class finchTests: XCTestCase {
 
+    func testStringInit() {
+        let a: Double = 1.4
+        let b: Double = -2.0
+        let c: Double = 0.3
+        let dc = DataCon(arrayLiteral: a, b, c)
+        let cd: DataCon<Double> = DataCon(dc.description)!
+        XCTAssertEqual(dc, cd)
+    }
+    
     /// test simple init patterns
     func testDatConInit() {
         let a: Double = 1.4

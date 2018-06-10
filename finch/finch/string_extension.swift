@@ -10,8 +10,16 @@ import Foundation
 
 
 protocol InitializableFromString {
-    init?(_ : String)
+    init?<String>(_ : String)
 }
+
+//extension Double: InitializableFromString {
+//    init?(_: String) {
+//        <#code#>
+//    }
+//    
+//    // anything?
+//}
 
 // if you get to regex...
 // https://developer.apple.com/documentation/foundation/nsstring/compareoptions
