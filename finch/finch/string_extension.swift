@@ -10,7 +10,7 @@ import Foundation
 
 
 protocol InitializableFromString {
-    init?<String>(_ : String)
+    init?(_ : String)
 }
 
 // if you get to regex...
@@ -54,13 +54,12 @@ extension String {
 //            (x: Character) -> Bool in return (of as String).contains(x)
 //            }.joined()
     }
-    
-    func asArray<Element: InitializableFromString>() -> [Element] {
-        let string_elements: [String] = removingDelimiters().components(separatedBy: String.VectorSeparators)
-        let rex: [Element] = string_elements.map {
-            (x: String) -> Element in return Element(x)!
-        }
-        return rex
-    }
 
 }
+
+// TODO: move
+func asDoubleArray(_ string: String) -> [Double] {
+    let elements: [String] = string.removingDelimiters().components(separatedBy: String.VectorSeparators)
+    return elements.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Double in return Double(x)!}
+}
+

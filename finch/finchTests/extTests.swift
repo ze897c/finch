@@ -26,4 +26,12 @@ class stringExtensionTests: XCTestCase {
         XCTAssertEqual("[<555>]".removingDelimiters().count, 3)
     }
 
+    func testAsArray() {
+        let v = [1.2, -3.4, 5.6]
+        let w: [Double] = asDoubleArray(v.description)
+        XCTAssertEqual(v.count, w.count)
+        for (a, b) in zip(v, w) {
+            XCTAssertEqual(a, b)
+        }
+    }
 }
