@@ -8,6 +8,7 @@
 
 import Foundation
 
+
 protocol InitializableFromString {
     init?<String>(_ : String)
 }
@@ -21,13 +22,13 @@ extension String {
     static let VectorSeparators = CharacterSet(charactersIn: ",;:\t").union(.whitespaces)
 
     func removingWhitespaces() -> String {
-        return trimmingCharacters(in: .whitespaces)
+        return removingAnyCharacters(inCharacterSet: .whitespaces)
     }
     func removingSquareBrackets() -> String {
         return removingAnyCharacters(of: "[]")
     }
     func removingDelimiters() -> String {
-        return removingAnyCharacters(of: String.Delimiters)
+        return removingAnyCharacters(inCharacterSet: String.Delimiters)
     }
 
     /// return a String: replacing any of the characters in _of_ string with _with_
@@ -40,12 +41,12 @@ extension String {
         }.joined()
     }
     
-    func removingAnyCharacters(of: CharacterSet) -> String {
-        return self.components(separatedBy: of.inverted).joined()
+    func removingAnyCharacters(inCharacterSet: CharacterSet) -> String {
+        return self.components(separatedBy: inCharacterSet).joined()
     }
     
     func removingAnyCharacters(of: String) -> String {
-        return removingAnyCharacters(of: CharacterSet(charactersIn: of))
+        return removingAnyCharacters(inCharacterSet: CharacterSet(charactersIn: of))
         // saving the code below because I learned 2 things
         // 1. using closure in filter generally
         // 1. using 'as' to interpret as a particular protocol -- I think..
@@ -61,4 +62,5 @@ extension String {
         }
         return rex
     }
+
 }

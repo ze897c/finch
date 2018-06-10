@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+import os.log
 import XCTest
 @testable import finch
 
@@ -16,16 +16,14 @@ class stringExtensionTests: XCTestCase {
     /// test simple init patterns
     func testRemoveWhitespace() {
         let a: String = "The quick brown...  "
+        // os_log("removed: %@", type: .info, a.removingWhitespaces())
         XCTAssertEqual(a.count - 4, a.removingWhitespaces().count)
     }
     
     func testRemoveSquareBracket() {
-        let r = Double("3.12")
-        XCTAssertEqual(r, 3.12)
-        
-        let sed = CharacterSet("[]{}")
-        
-        "[<555>]".trimmingCharacters(in: <#T##CharacterSet#>)(in: "[", with: ""))
+        print("[<555>]".removingSquareBrackets())
+        XCTAssertEqual("[<555>]".removingSquareBrackets().count, 5)
+        XCTAssertEqual("[<555>]".removingDelimiters().count, 3)
     }
 
 }
