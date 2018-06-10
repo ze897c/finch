@@ -9,27 +9,25 @@
 import Foundation
 
 
-protocol InitializableFromString {
-    init?<String>(_ : String)
-}
-
+//public protocol InitializableFromString {
+//    init?<String>(_ : String)
+//}
+//
 //extension Double: InitializableFromString {
-//    init?(_: String) {
-//        <#code#>
+//    public init?<String>(_: String) {
+//        super.init(_)
 //    }
-//    
-//    // anything?
 //}
 
 // if you get to regex...
 // https://developer.apple.com/documentation/foundation/nsstring/compareoptions
 
 // WTF?
-extension String {
+public extension String {
     static let Delimiters = CharacterSet(charactersIn: "[]{}<>()")
     static let VectorSeparators = CharacterSet(charactersIn: ",;:\t").union(.whitespaces)
 
-    func removingWhitespaces() -> String {
+    public func removingWhitespaces() -> String {
         return removingAnyCharacters(inCharacterSet: .whitespaces)
     }
     func removingSquareBrackets() -> String {
@@ -66,7 +64,7 @@ extension String {
 }
 
 // TODO: move
-func asDoubleArray(_ string: String) -> [Double] {
+public func asDoubleArray(_ string: String) -> [Double] {
     let elements: [String] = string.removingDelimiters().components(separatedBy: String.VectorSeparators)
     return elements.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Double in return Double(x)!}
 }

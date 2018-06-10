@@ -9,37 +9,30 @@
 import Foundation
 import Accelerate
 
-//struct Countdown: Sequence, IteratorProtocol {
-//    var count: Int
-//    
-//    mutating func next() -> Int? {
-//        if count == 0 {
-//            return nil
-//        } else {
-//            defer { count -= 1 }
-//            return count
-//        }
-//    }
+
+//protocol InitializableNumeric : InitializableFromString, Numeric {
+//    // is this insane?
 //}
 
-protocol InitializableNumeric : InitializableFromString, Numeric {
-    // is this insane?
-}
-//<T where T: SomeClass, T: SomeProtocol>
 // implementing class to have ARC
 // class DataCon<Element where Element:Numeric, Element:InitializableFromString>
-class DataCon<Element:InitializableFromString>
+class DataCon<Element:LosslessStringConvertible>
     :
     Equatable,
     ExpressibleByArrayLiteral,
     IteratorProtocol,
-    Sequence,
+    Collection,
     CustomStringConvertible,
     LosslessStringConvertible,
     CustomDebugStringConvertible where Element:Numeric
-    //where Element:Numeric, Element:InitializableFromString
 {
 
+    let startIndex: Int = 0
+    var endIndex: Int {
+        return data.count - 1
+    }
+    var count: Int = 0
+    
     var debugDescription: String {
         return "<DataCon: > \(self.data.description)"
     }
@@ -48,8 +41,16 @@ class DataCon<Element:InitializableFromString>
         return self.data.description
     }
 
+    func index(after i: Int) -> Int {
+        return i + 1
+    }
+
+    //    static func == (lhs: [Element], rhs: [Element]) -> Bool {
+    //
+    //    }
+    
     static func == (lhs: DataCon<Element>, rhs: DataCon<Element>) -> Bool {
-        guard lhs.count == rhs.count else {
+        guard lhs.data.count == rhs.data.count else {
             return false
         }
         for (a, b) in zip(lhs, rhs) {
@@ -67,8 +68,8 @@ class DataCon<Element:InitializableFromString>
         return data[idx]
     }
     
-    // MARK: Sequence, IteratorProtocol
-    var count: Int = 0
+
+
     func next() -> Element? {
         if count == data.count {
             return nil
@@ -80,15 +81,18 @@ class DataCon<Element:InitializableFromString>
     
     required init(arrayLiteral elements: Element...) {
         data = ContiguousArray<Element>(elements)
+        count = data.count
     }
 
     init(elements: [Element]) {
         data = ContiguousArray<Element>(elements)
+        count = data.count
     }
 
     required init?(_ description: String) {
         let strings: [String] = description.removingDelimiters().components(separatedBy: String.VectorSeparators)
         let elements = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
         data = ContiguousArray<Element>(elements)
+        count = data.count
     }
 }

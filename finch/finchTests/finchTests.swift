@@ -7,6 +7,7 @@
 //
 
 import XCTest
+import os.log
 @testable import finch
 
 class finchTests: XCTestCase {
@@ -47,12 +48,26 @@ class finchTests: XCTestCase {
     
     /// baselie tests that the *DataCon* performs as a *Sequence*
     func testActAsSequenceGenegic() {
-        let a: Double = 1.4
-        let b: Double = -2.0
-        let c: Double = 0.3
-        let dc = DataCon(arrayLiteral: a, b, c)
+        let x: Double = 1.4
+        let y: Double = -2.0
+        let z: Double = 0.3
+        
+        let dc = DataCon(arrayLiteral: x, y, z)
+        XCTAssertEqual(dc.count, 3)
+        
+        let cd: DataCon<Double> = [z, y, x]
+        XCTAssertEqual(cd.count, 3)
+        XCTAssertNotEqual(dc, cd)
+        
         let mapped = dc.map({(x: Double) -> Double in return x * x})
-        XCTAssertEqual(dc, [a, b, c])
+        XCTAssertEqual(mapped, [x * x, y * y, z * z])
+        XCTAssertEqual(dc, [x, y, z])
+        for (a, b) in zip(dc, mapped) {
+            // this test avoids syntactic sugar to focus on behavior of 'map'
+            XCTAssertLessThanOrEqual(abs(a * a - b), Double.leastNonzeroMagnitude)
+        }
+        //let filtered: DataCon<Double> = dc.filter {$0 < 0}
+        //XCTAssertEqual(filtered, [-2.0])
     }
     
     func testPerformanceExample() {
