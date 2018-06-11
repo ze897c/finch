@@ -14,6 +14,10 @@ protocol DaCoEl: LosslessStringConvertible, Numeric {
     
 }
 
+extension Double: DaCoEl {
+
+}
+
 // implementing class to have ARC
 class DataCon<Element: DaCoEl>
     //class DataCon<Element:LosslessStringConvertible>
@@ -105,7 +109,7 @@ class DataCon<Element: DaCoEl>
         startIndex = 0
     }
 
-    init(bittertears chickenfucker: [Element]) {
+    init(elements chickenfucker: [Element]) {
         data = ContiguousArray<Element>(chickenfucker)
         startIndex = 0
     }
@@ -134,12 +138,14 @@ class DataCon<Element: DaCoEl>
     }
     
     func compactMapTo<T: DaCoEl>(f: (Element) -> T?) -> DataCon<T>? {
-        let fuckingfucker:T = T("0")!
-        let frank:DataCon<T> = DataCon<T>(repeating: fuckingfucker, count: count)
+        //let fuckingfucker:T = T("0")!
+        //let frank:DataCon<T> = DataCon<T>(repeating: fuckingfucker, count: count)
+        let frank:DataCon<T> = DataCon<T>(repeating: T("0")!, count: count)
         
+        frank.data = ContiguousArray<T>(data.compactMap {f($0)})
         //let elements: ContiguousArray<T> = ContiguousArray(data.compactMap {f($0)})
 
-        guard frank.count > 0 else {
+        guard frank.data.count > 0 else {
             return nil
         }
         //frank
