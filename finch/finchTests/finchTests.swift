@@ -104,6 +104,15 @@ class DaCoTests: XCTestCase {
         XCTAssertEqual(w0, w1)
     }
     
+    func testIsRef() {
+        let a: Double = 1999.9999
+        let v = DataCon(elements: v0)
+        let w = v
+        w[0] = a
+        XCTAssertEqual(w[0], a)
+        XCTAssertEqual(v[0], a)
+    }
+    
     func testPerformanceExample() {
         self.measure {
             // Put the code you want to measure the time of here.

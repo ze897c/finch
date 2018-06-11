@@ -10,23 +10,25 @@ import Foundation
 import Accelerate
 
 
+protocol DaCoEl: LosslessStringConvertible, Numeric {
+    
+}
+
 // implementing class to have ARC
-// class DataCon<Element where Element:Numeric, Element:InitializableFromString>
-class DataCon<Element:LosslessStringConvertible>
+class DataCon<Element: DaCoEl>
+    //class DataCon<Element:LosslessStringConvertible>
     :
     CustomDebugStringConvertible,
     CustomStringConvertible,
     Equatable,
     ExpressibleByArrayLiteral,
     LosslessStringConvertible,
-    Sequence // let DaCo behave like a *Sequence*
-    where Element:Numeric
+    Sequence
+//    where Element:Numeric
 {
 
     typealias Index = Int
-    //typealias Index = LazyIndex<Base.Index, ResultElement>
     typealias Indices = Range<DataCon.Index>
-    typealias Iterator = DataConIterator
     typealias ArrayLiteralElement = Element
     var data: ContiguousArray<Element>
 
@@ -83,9 +85,19 @@ class DataCon<Element:LosslessStringConvertible>
         }
     }
     
-    init(DataCon otro: DataCon<Element>) {
-        data = otro.data
+    init(repeating rep: Element, count capacity: Int) {
+        data = ContiguousArray<Element>(repeating: rep, count: capacity)
         startIndex = 0
+    }
+
+    init(DataCon otro: DataCon<Element>, start: DataCon.Index?) {
+        data = otro.data
+        startIndex = start ?? otro.startIndex
+    }
+    
+    init(contiguousArray whoreofbabylon: ContiguousArray<Element>, start: DataCon.Index = 0) {
+        data = whoreofbabylon
+        startIndex = start
     }
     
     required init(arrayLiteral elements: Element...) {
@@ -93,8 +105,8 @@ class DataCon<Element:LosslessStringConvertible>
         startIndex = 0
     }
 
-    init(elements: [Element]) {
-        data = ContiguousArray<Element>(elements)
+    init(bittertears chickenfucker: [Element]) {
+        data = ContiguousArray<Element>(chickenfucker)
         startIndex = 0
     }
 
@@ -111,28 +123,31 @@ class DataCon<Element:LosslessStringConvertible>
         return DataConIterator(self)
     }
     
-//    static func zip(lhs: DataCon<Element>, rhs: DataCon<Element>) -> Zip2Iterator<Element, Element> {
-//        guard lhs.startIndex == rhs.startIndex && lhs.endIndex == rhs.endIndex else {
-//            return false
-//        }
-//        for idx in lhs.startIndex..<lhs.endIndex {
-//            guard lhs.data[idx] == rhs.data[idx] else {
-//                return false
-//            }
-//        }
-//        return true
-//    }
 
-    func compactMapTo<ResultElement>(f: (Element) -> ResultElement) {
-        
+    func mapTo<ResultElement>(f: (DataCon.Element) -> ResultElement) -> DataCon<ResultElement> {
+        // below, _let_ should be _var_ IMO, but SILGEN complains
+        let rex: DataCon<ResultElement> = DataCon<ResultElement>(repeating: 0 as ResultElement, count: count)
+        for idx in startIndex ..< endIndex {
+            rex.data[idx] = f(data[idx])
+        }
+        return rex
     }
     
-    //    var lazy: LazyCollection<DataCon> {
-    //        get {
-    //
-    //        }
-    //    }
-    
+    func compactMapTo<T: DaCoEl>(f: (Element) -> T?) -> DataCon<T>? {
+        let fuckingfucker:T = T("0")!
+        let frank:DataCon<T> = DataCon<T>(repeating: fuckingfucker, count: count)
+        
+        //let elements: ContiguousArray<T> = ContiguousArray(data.compactMap {f($0)})
+
+        guard frank.count > 0 else {
+            return nil
+        }
+        //frank
+        let rexi = DataCon<T>(DataCon: frank, start: 0)
+        //let rex: DataCon<T> = DataCon(contiguousArray: elements)
+        return rexi
+    }
+
     // act like a *Collection*, but only where appropriate
 
 //    Returns the distance between two indices.
@@ -189,10 +204,10 @@ class DataCon<Element:LosslessStringConvertible>
 
 }
 
-struct DataConIterator<Element:LosslessStringConvertible>
+struct DataConIterator<Element:DaCoEl>
     :
     IteratorProtocol
-    where Element: Numeric
+    //where Element: Numeric
 {
     let daco: DataCon<Element>
     var idx: DataCon<Element>.Index
