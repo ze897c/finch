@@ -14,9 +14,9 @@ protocol DaCoEl: LosslessStringConvertible, Numeric {
     
 }
 
-extension Double: DaCoEl {
-
-}
+extension Double: DaCoEl {}
+extension Int: DaCoEl {}
+extension UInt: DaCoEl {}
 
 // implementing class to have ARC
 class DataCon<Element: DaCoEl>
