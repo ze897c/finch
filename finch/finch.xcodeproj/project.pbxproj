@@ -16,6 +16,7 @@
 		C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0320CB0BDC00D4CE21 /* finchTests.swift */; };
 		C9348C0620CB0BDC00D4CE21 /* finch.h in Headers */ = {isa = PBXBuildFile; fileRef = C9348BF820CB0BDC00D4CE21 /* finch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */; };
+		C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99361CA20CE066900A36D2A /* chickenTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -45,6 +46,7 @@
 		C9348C0320CB0BDC00D4CE21 /* finchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finchTests.swift; sourceTree = "<group>"; };
 		C9348C0520CB0BDC00D4CE21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCon.swift; sourceTree = "<group>"; };
+		C99361CA20CE066900A36D2A /* chickenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chickenTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -96,6 +98,7 @@
 		C9348BEB20CB0BDB00D4CE21 = {
 			isa = PBXGroup;
 			children = (
+				C907579320CD7677001B2145 /* scratch.playground */,
 				C9348BF720CB0BDC00D4CE21 /* finch */,
 				C9348C0220CB0BDC00D4CE21 /* finchTests */,
 				C907579C20CDAB14001B2145 /* openit */,
@@ -118,7 +121,6 @@
 			isa = PBXGroup;
 			children = (
 				C9348BF820CB0BDC00D4CE21 /* finch.h */,
-				C907579320CD7677001B2145 /* scratch.playground */,
 				C9348BF920CB0BDC00D4CE21 /* Info.plist */,
 				C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */,
 				C91F052B20CC5BD60006DCE8 /* string_extension.swift */,
@@ -132,6 +134,7 @@
 				C9348C0320CB0BDC00D4CE21 /* finchTests.swift */,
 				C9348C0520CB0BDC00D4CE21 /* Info.plist */,
 				C91F052D20CC5C3A0006DCE8 /* extTests.swift */,
+				C99361CA20CE066900A36D2A /* chickenTests.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -293,6 +296,7 @@
 			files = (
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
+				C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

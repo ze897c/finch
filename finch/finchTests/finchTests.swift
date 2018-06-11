@@ -15,62 +15,10 @@ func square(x: Double) -> Double {
     return x * x
 }
 
-
-struct Countdown: Sequence {
-    let krauthammer: Double
-    
-    func makeIterator() -> CountdownIterator {
-        return CountdownIterator(self)
-    }
-}
-// The makeIterator() method returns another custom type, an iterator named CountdownIterator.
-// The CountdownIterator type keeps track of both the Countdown sequence that it’s iterating and the number of times it has returned a value.
-
-struct CountdownIterator: IteratorProtocol {
-    let countdown: Countdown
-    var times = 0
-    
-    init(_ countdown: Countdown) {
-        self.countdown = countdown
-    }
-    
-    mutating func next() -> Double? {
-        let nextNumber = countdown.krauthammer - Double(times)
-        guard nextNumber > 0
-            else { return nil }
-        
-        times += 1
-        return nextNumber
-    }
-}
-
-// testing the above, found in docs, as it seems to be the same thing I am doing with DaCo, which is bombing
-class stupidTest: XCTestCase {
-    func testChickens() {
-        let threeTwoOne = Countdown(krauthammer: 3)
-        var i: Double = 3.0
-        for count in threeTwoOne {
-            XCTAssertEqual(count, i)
-            i -= 1
-        }
-        i = 3.0
-        for count in threeTwoOne {
-            XCTAssertEqual(count, i)
-            i -= 1
-        }
-    }
-    func testMappedChickens() {
-        let threeTwoOne = Countdown(krauthammer: 3)
-        let harry = threeTwoOne.map(square)
-        XCTAssertEqual(harry, [9.0, 4.0, 1.0])
-        let yrrah = threeTwoOne.map(square)
-        XCTAssertEqual(yrrah, [9.0, 4.0, 1.0])
-    }
-}
-
-class finchTests: XCTestCase {
+class DaCoTests: XCTestCase {
 
     let v0: [Double] = [1.4, -2.2, 4.5]
+    let v1: [Double] = [Double.pi, -Double.pi, Double.pi]
     
     func testStringInit() {
         let dc = DataCon(arrayLiteral: v0[0], v0[1], v0[2])
@@ -79,7 +27,7 @@ class finchTests: XCTestCase {
     }
     
     /// test simple init patterns
-    func testDatConInit() {
+    func testInit() {
         var dc = DataCon(arrayLiteral: v0[0], v0[1], v0[2])
         XCTAssertEqual(dc[0], v0[0])
         XCTAssertEqual(dc[1], v0[1])
@@ -103,6 +51,7 @@ class finchTests: XCTestCase {
     func testBasicEquatable() {
         let dc = DataCon(arrayLiteral: v0[0], v0[1], v0[2])
         XCTAssertEqual(dc.count, 3)
+
         XCTAssertEqual(dc, dc)
         // multiple times to verify iterator c-tion/use
         XCTAssertEqual(dc, dc)
@@ -117,21 +66,42 @@ class finchTests: XCTestCase {
         XCTAssertNotEqual(dc, cd)
     }
     
-    /// baselie tests that the *DataCon* performs as a *Sequence*
-    func testActAsSequenceGenegic() {
+    /// baseline tests that the *DataCon* performs as a *Sequence*
+    func testMap() {
         let dc = DataCon(elements: v0)
+        
+        let mapped = dc.map({(x: Double) -> Double in return x * x})
+        //let mapped: [Double]  = dc.map(square)
+        print("mapped: \(mapped)")
+        XCTAssertEqual(mapped, [v0[0] * v0[0], v0[1] * v0[1], v0[2] * v0[2]])
+        XCTAssertEqual(dc, [v0[0], v0[1], v0[2]])
+        for (a, b) in zip(dc, mapped) {
+            // this test avoids syntactic sugar to focus on behavior of 'map'
+            XCTAssertLessThanOrEqual(abs(a * a - b), Double.leastNonzeroMagnitude) // TODO: use _accuracy_ param in XCTestEqual
+        }
+    }
+    
+    /// keep *zip* working on *DaCo* as a *Sequence*, would need to do work to remake as *DaCo*
+    /// but that should help odd things from happening
+    func testZip() {
+        let v = DataCon(elements: v0)
+        let w = DataCon(elements: v1)
 
-        //let mapped = dc.map({(x: Double) -> Double in return x * x})
-        let mapped = dc.map(square)
-        print(mapped)
-//        XCTAssertEqual(mapped, [x * x, y * y, z * z])
-//        XCTAssertEqual(dc, [x, y, z])
-//        for (a, b) in zip(dc, mapped) {
-//            // this test avoids syntactic sugar to focus on behavior of 'map'
-//            XCTAssertLessThanOrEqual(abs(a * a - b), Double.leastNonzeroMagnitude)
-//        }
-        //let filtered: DataCon<Double> = dc.filter {$0 < 0}
-        //XCTAssertEqual(filtered, [-2.0])
+        for (ivw, vw) in zip(v, w).enumerated() {
+            XCTAssertEqual(vw.0 * vw.1, v0[ivw] * v1[ivw])
+        }
+        for (ivw, vw) in zip(v, v1).enumerated() {
+            XCTAssertEqual(vw.0 * vw.1, v0[ivw] * v1[ivw])
+        }
+    }
+    
+    /// assert we can make a *Sequence* from filtered *DaCo*: requires some more work to
+    /// re-make as *DaCo*: test that as well
+    func testFilter() {
+        let v = DataCon(elements: v0)
+        let w0 = v.filter {$0 < 0}
+        let w1 = v0.filter {$0 < 0}
+        XCTAssertEqual(w0, w1)
     }
     
     func testPerformanceExample() {

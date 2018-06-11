@@ -10,31 +10,40 @@ import Foundation
 import Accelerate
 
 
-//protocol InitializableNumeric : InitializableFromString, Numeric {
-//    // is this insane?
-//}
-
 // implementing class to have ARC
 // class DataCon<Element where Element:Numeric, Element:InitializableFromString>
 class DataCon<Element:LosslessStringConvertible>
     :
+    CustomDebugStringConvertible,
+    CustomStringConvertible,
     Equatable,
     ExpressibleByArrayLiteral,
-    Sequence,
-    //BidirectionalCollection, // breaks: *Collection.map<Element>* doe not call *makeIterator()*; rely on *Sequence*?
-    //LazyCollectionProtocol,
-    CustomStringConvertible,
     LosslessStringConvertible,
-    CustomDebugStringConvertible
+    Sequence // let DaCo behave like a *Sequence*
     where Element:Numeric
 {
-    
+
+    typealias Index = Int
+    //typealias Index = LazyIndex<Base.Index, ResultElement>
+    typealias Indices = Range<DataCon.Index>
+    typealias Iterator = DataConIterator
     typealias ArrayLiteralElement = Element
     var data: ContiguousArray<Element>
 
-    let startIndex: Int
-    let endIndex: Int
-    let count: Int
+    let startIndex: DataCon.Index
+    var endIndex: DataCon.Index {
+        guard data.count > 0 else {
+            return 0 // bogus?
+        }
+        return startIndex + Int(data.count) - 1
+    }
+    var count: Int {
+        return Int(data.count)
+    }
+    
+    var indices: Range<DataCon.Index> {
+        return startIndex..<endIndex
+    }
 
     var debugDescription: String {
         return "<DataCon: > \(self.data.description)"
@@ -44,53 +53,49 @@ class DataCon<Element:LosslessStringConvertible>
         return self.data.description
     }
 
-//    func index(before i: Int) -> Int {
-//        return i - 1
-//    }
-    func index(after i: Int) -> Int {
+    func formIndex(before i: inout DataCon.Index) {
+        i -= 1
+    }
+
+    func index(after i: DataCon.Index) -> DataCon.Index {
         return i + 1
     }
     
-    func makeIterator() -> DataConIterator<Element> {
-        return DataConIterator(self)
-    }
     
     static func == (lhs: DataCon<Element>, rhs: DataCon<Element>) -> Bool {
         guard lhs.startIndex == rhs.startIndex && lhs.endIndex == rhs.endIndex else {
             return false
         }
-        for (a, b) in zip(lhs, rhs) {
-            guard a == b else {
+        for idx in lhs.startIndex..<lhs.endIndex {
+            guard lhs.data[idx] == rhs.data[idx] else {
                 return false
             }
         }
         return true
     }
-    
 
-    subscript(idx: Int) -> Element {
-        return data[idx]
+    subscript(idx: DataCon.Index) -> Element {
+        get{
+            return data[Int(idx)]
+        }
+        set {
+            data[Int(idx)] = newValue
+        }
     }
     
     init(DataCon otro: DataCon<Element>) {
-        data = otro.data // still wrong: want pointer to same raw storage
+        data = otro.data
         startIndex = 0
-        endIndex = data.count - 1
-        count = data.count
     }
     
     required init(arrayLiteral elements: Element...) {
         data = ContiguousArray<Element>(elements)
         startIndex = 0
-        endIndex = data.count - 1
-        count = data.count
     }
 
     init(elements: [Element]) {
         data = ContiguousArray<Element>(elements)
         startIndex = 0
-        endIndex = data.count - 1
-        count = data.count
     }
 
     required init?(_ description: String) {
@@ -98,9 +103,90 @@ class DataCon<Element:LosslessStringConvertible>
         let elements = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
         data = ContiguousArray<Element>(elements)
         startIndex = 0
-        endIndex = data.count - 1
-        count = data.count
     }
+    
+    // Higher order functions -- maps, reduces, filters, etc. : behavior of these should reflect what is expected of the class
+    // for example, *map* is removed to prevent *nil* elements in something passed to BLAS
+    func makeIterator() -> DataConIterator<Element> {
+        return DataConIterator(self)
+    }
+    
+//    static func zip(lhs: DataCon<Element>, rhs: DataCon<Element>) -> Zip2Iterator<Element, Element> {
+//        guard lhs.startIndex == rhs.startIndex && lhs.endIndex == rhs.endIndex else {
+//            return false
+//        }
+//        for idx in lhs.startIndex..<lhs.endIndex {
+//            guard lhs.data[idx] == rhs.data[idx] else {
+//                return false
+//            }
+//        }
+//        return true
+//    }
+
+    func compactMapTo<ResultElement>(f: (Element) -> ResultElement) {
+        
+    }
+    
+    //    var lazy: LazyCollection<DataCon> {
+    //        get {
+    //
+    //        }
+    //    }
+    
+    // act like a *Collection*, but only where appropriate
+
+//    Returns the distance between two indices.
+//    Required. Default implementations provided.
+//    Beta
+//    func distance(from: Self.Index, to: Self.Index) -> Int
+
+//    Returns the first index where the specified value appears in the collection.
+//    Beta
+//    func firstIndex(of: Self.Element) -> Self.Index?
+
+//    Returns the first index in which an element of the collection satisfies the given predicate.
+//    Beta
+//    func firstIndex(where: (Self.Element) -> Bool) -> Self.Index?
+
+//    Replaces the given index with its successor.
+//    Required. Default implementation provided.
+//    Beta
+//    func formIndex(after: inout Self.Index)
+
+//    Returns an index that is the specified distance from the given index.
+//    Required. Default implementations provided.
+//    Beta
+//    func index(Self.Index, offsetBy: Int) -> Self.Index
+
+//    Returns an index that is the specified distance from the given index, unless that distance is beyond a given limiting index.
+//    Required. Default implementations provided.
+//    Beta
+//    func index(Self.Index, offsetBy: Int, limitedBy: Self.Index) -> Self.Index?
+
+//    Returns a subsequence from the start of the collection through the specified position.
+//    Required. Default implementation provided.
+//    Beta
+//    func prefix(through: Self.Index) -> Self.SubSequence
+
+//    Returns a subsequence from the start of the collection up to, but not including, the specified position.
+//    Required. Default implementation provided.
+//    Beta
+//    func prefix(upTo: Self.Index) -> Self.SubSequence
+
+//    Returns a random element of the collection.
+//    Beta
+//    func randomElement() -> Self.Element?
+
+//    Returns a random element of the collection, using the given generator as a source for randomness.
+//    Required. Default implementation provided.
+//    Beta
+//    func randomElement<T>(using: inout T) -> Self.Element?
+
+
+//    Returns a subsequence from the specified position to the end of the collection.
+//    Required. Default implementation provided.
+//    func suffix(from: Self.Index) -> Self.SubSequence
+
 }
 
 struct DataConIterator<Element:LosslessStringConvertible>
@@ -109,7 +195,7 @@ struct DataConIterator<Element:LosslessStringConvertible>
     where Element: Numeric
 {
     let daco: DataCon<Element>
-    var idx: Int
+    var idx: DataCon<Element>.Index
     
     init(_ daco: DataCon<Element>) {
         self.daco = daco
@@ -117,11 +203,10 @@ struct DataConIterator<Element:LosslessStringConvertible>
     }
     
     mutating func next() -> Element? {
-        if idx == daco.endIndex {
+        guard idx <= daco.endIndex else {
             return nil
-        } else {
-            defer { idx += 1 }
-            return daco[idx]
         }
+        defer { idx += 1 }
+        return daco[idx]
     }
 }

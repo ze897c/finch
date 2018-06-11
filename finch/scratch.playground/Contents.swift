@@ -12,3 +12,4 @@ let ww = w.filter {$0 < 2}
 
 print(ww)
 
+Int(3) == UInt(3)
