@@ -10,13 +10,52 @@ import Foundation
 import Accelerate
 
 
-protocol DaCoEl: LosslessStringConvertible, Numeric {
-    
+extension BinaryInteger {
+    public var Zero: Self {
+        get{
+            return Self()
+        }
+    }
 }
 
-extension Double: DaCoEl {}
-extension Int: DaCoEl {}
-extension UInt: DaCoEl {}
+protocol SafeDivisionByIntegerProtocol {
+    /// safely divide _self_ by *BinaryInteger* _y_, which is checked
+    /// to be non-zero
+    /// Params:
+    /// y - BinaryInteger
+    func safeDivide<T>(_ y: T) throws -> Self where T : BinaryInteger
+}
+
+protocol DaCoEl: LosslessStringConvertible, Numeric, SafeDivisionByIntegerProtocol {
+    /// return the zero-element
+    static var Zero: Self {get}
+    static var Identity: Self {get}
+    init()
+}
+
+extension Double: DaCoEl {
+    static var Identity: Double {
+        get {
+            return Double(1)
+        }
+    }
+
+    func safeDivide<T>(_ y: T) throws -> Double where T : BinaryInteger {
+        guard y != y.Zero else {
+            throw Exceptions.DivideByZero
+        }
+        return self / Double(y)
+    }
+
+    static var Zero: Double {
+        get {
+            return Double()
+        }
+    }
+
+}
+//extension Int: DaCoEl {}
+//extension UInt: DaCoEl {}
 
 // implementing class to have ARC
 class DataCon<Element: DaCoEl>
@@ -88,29 +127,61 @@ class DataCon<Element: DaCoEl>
             data[Int(idx)] = newValue
         }
     }
+    func cyclic_accessor(_ idx: UInt) -> Element {
+        return self[Int(idx) % count]
+    }
     
+    func deepcopy() -> DataCon<Element> {
+        let rex: DataCon<Element> = DataCon(repeating: Element.Zero, count: self.count)
+        memcpy(&self.data, &rex.data, self.count)
+        return rex
+    }
+    
+    /// linspace init
+    /// y = linspace(start, stop, step) generates n points.
+    /// The spacing between the points is (x2-x1)/(n-1).
+    init?(start: Element, stop: Element, n: UInt) {
+        guard let d = try? (stop - start).safeDivide(n) as Element else {
+            return nil
+        }
+        let N = Int(n)
+        startIndex = 0
+        data = ContiguousArray<Element>(repeating: start, count: N)
+        data[N - 1] = stop
+        var x = start + d
+        for idx in 1 ..< (N - 1) {
+            data[idx] = x
+            x += d
+        }
+    }
+    /// initialize by repeating given element and capacity
     init(repeating rep: Element, count capacity: Int) {
         data = ContiguousArray<Element>(repeating: rep, count: capacity)
         startIndex = 0
     }
 
+    /// shallow copy ctor
     init(DataCon otro: DataCon<Element>, start: DataCon.Index?) {
         data = otro.data
         startIndex = start ?? otro.startIndex
     }
     
-    init(contiguousArray whoreofbabylon: ContiguousArray<Element>, start: DataCon.Index = 0) {
-        data = whoreofbabylon
+    /// initialize from a given contiguous array and starting index in that array
+    /// may be stupid idea, and should be that the mem-view always handles the offset
+    init(contiguousArray conarr: ContiguousArray<Element>, start: DataCon.Index = 0) {
+        data = conarr
         startIndex = start
     }
     
+    /// array literal ctor allows following
+    /// var dc: DataCon<Double> = [1, 2, 3]
     required init(arrayLiteral elements: Element...) {
         data = ContiguousArray<Element>(elements)
         startIndex = 0
     }
 
-    init(elements chickenfucker: [Element]) {
-        data = ContiguousArray<Element>(chickenfucker)
+    init(elements elms: [Element]) {
+        data = ContiguousArray<Element>(elms)
         startIndex = 0
     }
 
@@ -138,20 +209,14 @@ class DataCon<Element: DaCoEl>
     }
     
     func compactMapTo<T: DaCoEl>(f: (Element) -> T?) -> DataCon<T>? {
-        //let fuckingfucker:T = T("0")!
-        //let frank:DataCon<T> = DataCon<T>(repeating: fuckingfucker, count: count)
-        let frank:DataCon<T> = DataCon<T>(repeating: T("0")!, count: count)
+        let rex: DataCon<T> = DataCon<T>(repeating: T("0")!, count: count)
         
-        frank.data = ContiguousArray<T>(data.compactMap {f($0)})
-        //let elements: ContiguousArray<T> = ContiguousArray(data.compactMap {f($0)})
-
-        guard frank.data.count > 0 else {
+        rex.data = ContiguousArray<T>(data.compactMap {f($0)})
+ 
+        guard rex.data.count > 0 else {
             return nil
         }
-        //frank
-        let rexi = DataCon<T>(DataCon: frank, start: 0)
-        //let rex: DataCon<T> = DataCon(contiguousArray: elements)
-        return rexi
+        return rex
     }
 
     // act like a *Collection*, but only where appropriate
@@ -208,6 +273,53 @@ class DataCon<Element: DaCoEl>
 //    Required. Default implementation provided.
 //    func suffix(from: Self.Index) -> Self.SubSequence
 
+    
+    /// matlab-like _diff_
+    func diff() -> DataCon<Element> {
+        // code in default behavior: override with dbl/flt version as desired
+        let rex = DataCon.Zeros(UInt(self.count - 1))
+        return rex
+    }
+    
+    // TODO: move to Double extension
+//    func ceil() -> DataCon<Element> {wa
+//        let rex: DataCon<Element> = DataCon()
+//        vvceil(self.data, _: UnsafePointer<Double>, _: UnsafePointer<Int32>)
+//    }
+    
+    // static conveniences
+    
+    /// linspace
+    /// y = linspace(start, stop, step) generates n points.
+    /// The spacing between the points is (x2-x1)/(n-1).
+    public static func Linspace(start: Element=0, stop: Element=1, n: UInt) -> DataCon {
+        let rex:DataCon<Element> = DataCon(start: start, stop: stop, n: n)!
+        return rex
+    }
+    
+    public static func Ones(_ n: UInt) -> DataCon {
+        let rex:DataCon<Element> = DataCon(repeating: Element.Identity, count: Int(n))
+        return rex
+    }
+    public static func Zeros(_ n: UInt) -> DataCon {
+        let rex:DataCon<Element> = DataCon(repeating: Element.Zero, count: Int(n))
+        return rex
+    }
+    public static func Eye(_ n: UInt) -> DataCon {
+        let rex:DataCon<Element> = DataCon(repeating: Element.Zero, count: Int(n * n))
+        for idx in 0 ..< Int(n) {
+            rex[DataCon<Element>.Index(idx)] = Element.Identity
+        }
+        return rex
+    }
+    public static func UnitVector(_ n: UInt, in_dimension N: UInt=3) -> DataCon? {
+        guard n < N else {
+            return nil
+        }
+        let rex:DataCon<Element> = DataCon.Zeros(N)
+        rex[DataCon<Element>.Index(n)] = Element.Identity
+        return rex
+    }
 }
 
 struct DataConIterator<Element:DaCoEl>
@@ -230,4 +342,5 @@ struct DataConIterator<Element:DaCoEl>
         defer { idx += 1 }
         return daco[idx]
     }
+    
 }

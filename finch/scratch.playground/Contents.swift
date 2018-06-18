@@ -1,15 +1,25 @@
 import Cocoa
 import finch
 
-let pinche = "1, 2, 3".removingWhitespaces()
+var v = [1, 2, 3]
+v[-1] = 99
 
-var v = asDoubleArray("[1, 2, 3]")
-Double.leastNonzeroMagnitude
 
-var w: [Double] = [1, 2, 3]
+let arseface = Double("0")!
 
-let ww = w.filter {$0 < 2}
+print("arseface: \(arseface)")
 
-print(ww)
+let a = Double()
+let b = UInt()
 
-Int(3) == UInt(3)
+protocol ClosureProtocol {
+    static func * (x: Self, y: Self) -> Self
+}
+
+extension Double: ClosureProtocol {}
+
+
+
+
+
+

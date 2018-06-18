@@ -20,6 +20,28 @@ class DaCoTests: XCTestCase {
     let v0: [Double] = [1.4, -2.2, 4.5]
     let v1: [Double] = [Double.pi, -Double.pi, Double.pi]
     
+    
+    func testStaticCTors() {
+        let N: UInt = 10
+        let Ones = DataCon<Double>.Ones(N)
+        let Zeros = DataCon<Double>.Zeros(N)
+        XCTAssertEqual(Ones.count, 10)
+        for x in Ones {
+            XCTAssertEqual(x, 1)
+        }
+        for x in Zeros {
+            XCTAssertEqual(x, 0)
+        }
+    }
+    
+    func test_linspace() {
+        let N:UInt = 10
+        let v = DataCon<Double>.Linspace(n: N)
+        XCTAssertEqual(v[0], 0)
+        XCTAssertEqual(UInt(v.count), N)
+        
+    }
+    
     func testStringInit() {
         let dc = DataCon(arrayLiteral: v0[0], v0[1], v0[2])
         let cd: DataCon<Double> = DataCon(dc.description)!
@@ -28,7 +50,7 @@ class DaCoTests: XCTestCase {
     
     /// test simple init patterns
     func testInit() {
-        var dc = DataCon(arrayLiteral: v0[0], v0[1], v0[2])
+        var dc: DataCon<Double> = [v0[0], v0[1], v0[2]]
         XCTAssertEqual(dc[0], v0[0])
         XCTAssertEqual(dc[1], v0[1])
         XCTAssertEqual(dc[2], v0[2])
@@ -111,6 +133,11 @@ class DaCoTests: XCTestCase {
         w[0] = a
         XCTAssertEqual(w[0], a)
         XCTAssertEqual(v[0], a)
+    }
+    
+    func testCompactMapTo() {
+        // func compactMapTo<T: DaCoEl>(f: (Element) -> T?) -> DataCon<T>? {
+        
     }
     
     func testPerformanceExample() {
