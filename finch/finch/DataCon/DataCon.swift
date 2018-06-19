@@ -9,51 +9,6 @@
 import Foundation
 import Accelerate
 
-
-extension BinaryInteger {
-    public var Zero: Self {
-        get{
-            return Self()
-        }
-    }
-}
-
-protocol SafeDivisionByIntegerProtocol {
-    /// safely divide _self_ by *BinaryInteger* _y_, which is checked
-    /// to be non-zero
-    /// Params:
-    /// y - BinaryInteger
-    func safeDivide<T>(_ y: T) throws -> Self where T : BinaryInteger
-}
-
-protocol DaCoEl: LosslessStringConvertible, Numeric, SafeDivisionByIntegerProtocol {
-    /// return the zero-element
-    static var Zero: Self {get}
-    static var Identity: Self {get}
-    init()
-}
-
-extension Double: DaCoEl {
-    static var Identity: Double {
-        get {
-            return Double(1)
-        }
-    }
-
-    func safeDivide<T>(_ y: T) throws -> Double where T : BinaryInteger {
-        guard y != y.Zero else {
-            throw Exceptions.DivideByZero
-        }
-        return self / Double(y)
-    }
-
-    static var Zero: Double {
-        get {
-            return Double()
-        }
-    }
-
-}
 //extension Int: DaCoEl {}
 //extension UInt: DaCoEl {}
 
@@ -73,29 +28,40 @@ class DataCon<Element: DaCoEl>
     typealias Index = Int
     typealias Indices = Range<DataCon.Index>
     typealias ArrayLiteralElement = Element
-    var data: ContiguousArray<Element>
-
+    //var data: ContiguousArray<Element>
+    let count: UInt
+    let data: UnsafeMutablePointer<Element>
+    
     let startIndex: DataCon.Index
     var endIndex: DataCon.Index {
-        guard data.count > 0 else {
+        guard count > 0 else {
             return 0 // bogus?
         }
-        return startIndex + Int(data.count) - 1
+        return startIndex + DataCon.Index(count) - 1
     }
-    var count: Int {
-        return Int(data.count)
-    }
+//    var count: DataCon.Index {
+//        return DataCon.Index(data.count)
+//    }
     
     var indices: Range<DataCon.Index> {
         return startIndex..<endIndex
     }
 
     var debugDescription: String {
-        return "<DataCon: > \(self.data.description)"
+        return "<DataCon: > \(self.description)"
     }
-    
+
     var description: String {
-        return self.data.description
+        let sep: String = ", "
+        var rex: String = "["
+        for x in self {
+            print(x, separator: "<><>,,", terminator: sep, to: &rex)
+//            print(v, separator: "<><>,,", terminator: sep, to: &rex)
+            //print(items: "\(x)", to: &rex, terminator: sep)
+        }
+        let ned = rex.index(rex.endIndex, offsetBy: -sep.count)
+        rex.replaceSubrange(ned..<rex.endIndex, with: "]")
+        return rex
     }
 
     func formIndex(before i: inout DataCon.Index) {
@@ -127,15 +93,26 @@ class DataCon<Element: DaCoEl>
             data[Int(idx)] = newValue
         }
     }
-    func cyclic_accessor(_ idx: UInt) -> Element {
-        return self[Int(idx) % count]
+    func cyclic_accessor(_ idx: Int) -> Element {
+        return self[idx % Int(count)]
     }
     
     func deepcopy() -> DataCon<Element> {
-        let rex: DataCon<Element> = DataCon(repeating: Element.Zero, count: self.count)
-        memcpy(&self.data, &rex.data, self.count)
+        let rex: DataCon<Element> = DataCon(capacity: self.count)
+        rex.data.initialize(from: data, count: Int(self.count))
+        //memcpy(data, rex.data, Int(self.count))
         return rex
     }
+    
+//    func deepcopy() -> DataCon<Element> {
+//        let rex: DataCon<Element> = DataCon(capacity: self.count)
+//        rex.data.withUnsafeMutableBytes { dst in
+//            data.withUnsafeBytes { src in
+//                dst.copyMemory(from: src)
+//            }
+//        }
+//        return rex
+//    }
     
     /// linspace init
     /// y = linspace(start, stop, step) generates n points.
@@ -145,8 +122,10 @@ class DataCon<Element: DaCoEl>
             return nil
         }
         let N = Int(n)
+        count = UInt(N)
         startIndex = 0
-        data = ContiguousArray<Element>(repeating: start, count: N)
+        data = UnsafeMutablePointer<Element>.allocate(capacity: N)
+        //data.initialize(repeating: start, count: N)
         data[N - 1] = stop
         var x = start + d
         for idx in 1 ..< (N - 1) {
@@ -154,42 +133,90 @@ class DataCon<Element: DaCoEl>
             x += d
         }
     }
-    /// initialize by repeating given element and capacity
-    init(repeating rep: Element, count capacity: Int) {
-        data = ContiguousArray<Element>(repeating: rep, count: capacity)
+    /// allocate only
+    /// Params -
+    /// capacity: UInt
+    init(capacity: UInt) {
+        count = capacity
+        data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
+        //data.initialize(repeating: rep, count: capacity)
         startIndex = 0
     }
+    
+    /// initialize by repeating given element and capacity
+    init(repeating rep: Element, count capacity: Int) {
+        //data = ContiguousArray<Element>(repeating: rep, count: capacity)
+        count = UInt(capacity)
+        data = UnsafeMutablePointer<Element>.allocate(capacity: capacity)
+        data.initialize(repeating: rep, count: capacity)
+        startIndex = 0
+    }
+    
+    // TODO: add deinit
 
     /// shallow copy ctor
-    init(DataCon otro: DataCon<Element>, start: DataCon.Index?) {
-        data = otro.data
-        startIndex = start ?? otro.startIndex
-    }
+    // TODO: I think this should only be handled by ref:
+    // E.g.:
+    // > A = DataCon([1, 2, 3])
+    // > B = A // take the ref,
+//    init(DataCon otro: DataCon<Element>, start: DataCon.Index?) {
+//        data = otro.data
+//        startIndex = start ?? otro.startIndex
+//    }
     
     /// initialize from a given contiguous array and starting index in that array
     /// may be stupid idea, and should be that the mem-view always handles the offset
-    init(contiguousArray conarr: ContiguousArray<Element>, start: DataCon.Index = 0) {
-        data = conarr
-        startIndex = start
-    }
+//    init(contiguousArray conarr: ContiguousArray<Element>, start: DataCon.Index = 0) {
+//        data = conarr
+//        startIndex = start
+//    }
     
     /// array literal ctor allows following
     /// var dc: DataCon<Double> = [1, 2, 3]
-    required init(arrayLiteral elements: Element...) {
-        data = ContiguousArray<Element>(elements)
-        startIndex = 0
+    required convenience init(arrayLiteral elms: Element...) {
+        self.init(elements: elms)
+////        data = ContiguousArray<Element>(elements)
+//        data.initialize(repeating: Element.Zero, count: elms.count)
+//        for (ix, x) in elms.enumerated() {
+//            data[ix] = x
+//        }
+//        startIndex = 0
     }
 
     init(elements elms: [Element]) {
-        data = ContiguousArray<Element>(elms)
+        // data = ContiguousArray<Element>(elms)
+        count = UInt(elms.count)
+        let N: Int = elms.count
+        data = UnsafeMutablePointer<Element>.allocate(capacity: N)
+        for (ix, x) in elms.enumerated() {
+            data[ix] = x
+        }
         startIndex = 0
+        
+        // KILL:
+        // still don't get Swift approach to pointers
+//        elms.withUnsafeBytes { src in
+//            data.initialize(from: src, count: N)
+//        }
     }
 
+    // TODO: "required convenience" seems slightly at cross purposes...?
     required init?(_ description: String) {
         let strings: [String] = description.removingDelimiters().components(separatedBy: String.VectorSeparators)
-        let elements = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
-        data = ContiguousArray<Element>(elements)
+        let elms = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
+
+        // C&V from [Element] init ... "required convenience" approach drops core
+        count = UInt(elms.count)
+        let N: Int = elms.count
+        data = UnsafeMutablePointer<Element>.allocate(capacity: N)
+        for (ix, x) in elms.enumerated() {
+            data[ix] = x
+        }
         startIndex = 0
+        // KILL:
+//        self.init(elements: elements)  // seems to cause core dump
+//        data = ContiguousArray<Element>(elements)
+//        startIndex = 0
     }
     
     // Higher order functions -- maps, reduces, filters, etc. : behavior of these should reflect what is expected of the class
@@ -197,11 +224,10 @@ class DataCon<Element: DaCoEl>
     func makeIterator() -> DataConIterator<Element> {
         return DataConIterator(self)
     }
-    
 
     func mapTo<ResultElement>(f: (DataCon.Element) -> ResultElement) -> DataCon<ResultElement> {
         // below, _let_ should be _var_ IMO, but SILGEN complains
-        let rex: DataCon<ResultElement> = DataCon<ResultElement>(repeating: 0 as ResultElement, count: count)
+        let rex: DataCon<ResultElement> = DataCon<ResultElement>(repeating: 0 as ResultElement, count: Int(count))
         for idx in startIndex ..< endIndex {
             rex.data[idx] = f(data[idx])
         }
@@ -209,14 +235,26 @@ class DataCon<Element: DaCoEl>
     }
     
     func compactMapTo<T: DaCoEl>(f: (Element) -> T?) -> DataCon<T>? {
-        let rex: DataCon<T> = DataCon<T>(repeating: T("0")!, count: count)
-        
-        rex.data = ContiguousArray<T>(data.compactMap {f($0)})
- 
-        guard rex.data.count > 0 else {
+        // TODO: this could be better
+        var prerex = [T](repeating: T.Zero, count: Int(self.count))
+        var idx: Int = 0
+        for x in self {
+            guard let y = f(x) else {
+                continue
+            }
+            prerex[idx] = y
+        }
+        guard idx > 0 else {
             return nil
         }
-        return rex
+        return DataCon<T>(elements: prerex)
+
+//        let rex: DataCon<T> = DataCon<T>(repeating: T("0")!, count: count)
+//        rex.data = ContiguousArray<T>(data.compactMap {f($0)})
+//        guard rex.data.count > 0 else {
+//            return nil
+//        }
+//        return rex
     }
 
     // act like a *Collection*, but only where appropriate
@@ -281,11 +319,7 @@ class DataCon<Element: DaCoEl>
         return rex
     }
     
-    // TODO: move to Double extension
-//    func ceil() -> DataCon<Element> {wa
-//        let rex: DataCon<Element> = DataCon()
-//        vvceil(self.data, _: UnsafePointer<Double>, _: UnsafePointer<Int32>)
-//    }
+
     
     // static conveniences
     

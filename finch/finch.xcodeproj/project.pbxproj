@@ -10,6 +10,9 @@
 		C907579B20CDAB14001B2145 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C907579A20CDAB14001B2145 /* Cocoa.framework */; };
 		C907579E20CDAB14001B2145 /* SourceEditorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C907579D20CDAB14001B2145 /* SourceEditorExtension.swift */; };
 		C90757A020CDAB14001B2145 /* SourceEditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */; };
+		C9106E2620D8560A0053AB1C /* DataConElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2520D8560A0053AB1C /* DataConElement.swift */; };
+		C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2720D856190053AB1C /* DataConDouble.swift */; };
+		C9106E2D20D857450053AB1C /* DataConDoubleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */; };
 		C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052B20CC5BD60006DCE8 /* string_extension.swift */; };
 		C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052D20CC5C3A0006DCE8 /* extTests.swift */; };
 		C9348BFF20CB0BDC00D4CE21 /* finch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9348BF520CB0BDC00D4CE21 /* finch.framework */; };
@@ -41,6 +44,9 @@
 		C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorCommand.swift; sourceTree = "<group>"; };
 		C90757A120CDAB14001B2145 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C90757A220CDAB14001B2145 /* openit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = openit.entitlements; sourceTree = "<group>"; };
+		C9106E2520D8560A0053AB1C /* DataConElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConElement.swift; sourceTree = "<group>"; };
+		C9106E2720D856190053AB1C /* DataConDouble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConDouble.swift; sourceTree = "<group>"; };
+		C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConDoubleTest.swift; sourceTree = "<group>"; };
 		C91F052B20CC5BD60006DCE8 /* string_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = string_extension.swift; sourceTree = "<group>"; };
 		C91F052D20CC5C3A0006DCE8 /* extTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extTests.swift; sourceTree = "<group>"; };
 		C9348BF520CB0BDC00D4CE21 /* finch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = finch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,6 +109,35 @@
 			path = openit;
 			sourceTree = "<group>";
 		};
+		C9106E2920D8566E0053AB1C /* DataCon */ = {
+			isa = PBXGroup;
+			children = (
+				C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */,
+				C9106E2720D856190053AB1C /* DataConDouble.swift */,
+				C9106E2520D8560A0053AB1C /* DataConElement.swift */,
+			);
+			path = DataCon;
+			sourceTree = "<group>";
+		};
+		C9106E2A20D856810053AB1C /* Axiomatic */ = {
+			isa = PBXGroup;
+			children = (
+				C985B79A20CEF235003B923C /* Ring.swift */,
+				C985B79C20CEF29A003B923C /* Group.swift */,
+				C985B79E20CEF363003B923C /* AxiomProtocols.swift */,
+			);
+			path = Axiomatic;
+			sourceTree = "<group>";
+		};
+		C9106E2B20D856920053AB1C /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				C91F052B20CC5BD60006DCE8 /* string_extension.swift */,
+				C985B79820CEDE24003B923C /* Exceptions.swift */,
+			);
+			path = Utils;
+			sourceTree = "<group>";
+		};
 		C9348BEB20CB0BDB00D4CE21 = {
 			isa = PBXGroup;
 			children = (
@@ -130,12 +165,9 @@
 			children = (
 				C9348BF820CB0BDC00D4CE21 /* finch.h */,
 				C9348BF920CB0BDC00D4CE21 /* Info.plist */,
-				C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */,
-				C91F052B20CC5BD60006DCE8 /* string_extension.swift */,
-				C985B79820CEDE24003B923C /* Exceptions.swift */,
-				C985B79A20CEF235003B923C /* Ring.swift */,
-				C985B79C20CEF29A003B923C /* Group.swift */,
-				C985B79E20CEF363003B923C /* AxiomProtocols.swift */,
+				C9106E2920D8566E0053AB1C /* DataCon */,
+				C9106E2B20D856920053AB1C /* Utils */,
+				C9106E2A20D856810053AB1C /* Axiomatic */,
 			);
 			path = finch;
 			sourceTree = "<group>";
@@ -147,6 +179,7 @@
 				C9348C0520CB0BDC00D4CE21 /* Info.plist */,
 				C91F052D20CC5C3A0006DCE8 /* extTests.swift */,
 				C99361CA20CE066900A36D2A /* chickenTests.swift */,
+				C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -298,7 +331,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */,
+				C9106E2620D8560A0053AB1C /* DataConElement.swift in Sources */,
 				C985B79B20CEF235003B923C /* Ring.swift in Sources */,
+				C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */,
 				C985B79920CEDE24003B923C /* Exceptions.swift in Sources */,
 				C985B79D20CEF29A003B923C /* Group.swift in Sources */,
 				C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */,
@@ -313,6 +348,7 @@
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
 				C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */,
+				C9106E2D20D857450053AB1C /* DataConDoubleTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

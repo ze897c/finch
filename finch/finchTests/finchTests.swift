@@ -42,10 +42,21 @@ class DaCoTests: XCTestCase {
         
     }
     
-    func testStringInit() {
+    func testArrayLiteralInit() {
         let dc = DataCon(arrayLiteral: v0[0], v0[1], v0[2])
-        let cd: DataCon<Double> = DataCon(dc.description)!
-        XCTAssertEqual(dc, cd)
+        XCTAssertEqual(dc.count, 3)
+        for idx in 0..<3 {
+            XCTAssertEqual(dc[idx], v0[idx])
+        }
+    }
+    
+    func testStringInit() {
+        let cd: DataCon<Double> = DataCon("[1.7, -2.8, 3.9]")!
+        print("cd: \(cd)")
+        XCTAssertEqual(cd.count, 3)
+        XCTAssertEqual(cd[0], 1.7)
+        XCTAssertEqual(cd[1], -2.8)
+        XCTAssertEqual(cd[2], 3.9)
     }
     
     /// test simple init patterns
@@ -62,11 +73,10 @@ class DaCoTests: XCTestCase {
     
     func testDescriptors() {
         let a = v0
-        print(a.description)
-        print(a.description.split(separator: ","))
+        print("a.description: \(a.description)")
+        print("a.description.split(separator: ","): \(a.description.split(separator: ","))")
         for x in a.description.split(separator: ",") {
-            print(x.components(separatedBy: .whitespaces).joined())
-            
+            print("x.components(separatedBy: .whitespaces).joined(): \(x.components(separatedBy: .whitespaces).joined())")
         }
     }
     
@@ -91,10 +101,9 @@ class DaCoTests: XCTestCase {
     /// baseline tests that the *DataCon* performs as a *Sequence*
     func testMap() {
         let dc = DataCon(elements: v0)
-        
         let mapped = dc.map({(x: Double) -> Double in return x * x})
         //let mapped: [Double]  = dc.map(square)
-        print("mapped: \(mapped)")
+
         XCTAssertEqual(mapped, [v0[0] * v0[0], v0[1] * v0[1], v0[2] * v0[2]])
         XCTAssertEqual(dc, [v0[0], v0[1], v0[2]])
         for (a, b) in zip(dc, mapped) {
