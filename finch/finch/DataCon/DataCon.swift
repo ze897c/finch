@@ -201,22 +201,11 @@ class DataCon<Element: DaCoEl>
     }
 
     // TODO: "required convenience" seems slightly at cross purposes...?
-    required init?(_ description: String) {
+    required convenience init?(_ description: String) {
         let strings: [String] = description.removingDelimiters().components(separatedBy: String.VectorSeparators)
         let elms = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
 
-        // C&V from [Element] init ... "required convenience" approach drops core
-        count = UInt(elms.count)
-        let N: Int = elms.count
-        data = UnsafeMutablePointer<Element>.allocate(capacity: N)
-        for (ix, x) in elms.enumerated() {
-            data[ix] = x
-        }
-        startIndex = 0
-        // KILL:
-//        self.init(elements: elements)  // seems to cause core dump
-//        data = ContiguousArray<Element>(elements)
-//        startIndex = 0
+        self.init(elements: elms)  // seems to cause core dump
     }
     
     // Higher order functions -- maps, reduces, filters, etc. : behavior of these should reflect what is expected of the class
