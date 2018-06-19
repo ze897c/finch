@@ -71,6 +71,8 @@ class DaCoTests: XCTestCase {
         XCTAssertEqual(dc[2], v0[2])
     }
     
+    // KILL:
+    // no test here: saving for help on taking strings apart
     func testDescriptors() {
         let a = v0
         print("a.description: \(a.description)")
