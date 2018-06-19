@@ -24,6 +24,7 @@
 		C985B79D20CEF29A003B923C /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79C20CEF29A003B923C /* Group.swift */; };
 		C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79E20CEF363003B923C /* AxiomProtocols.swift */; };
 		C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99361CA20CE066900A36D2A /* chickenTests.swift */; };
+		C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,7 @@
 		C985B79C20CEF29A003B923C /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		C985B79E20CEF363003B923C /* AxiomProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxiomProtocols.swift; sourceTree = "<group>"; };
 		C99361CA20CE066900A36D2A /* chickenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chickenTests.swift; sourceTree = "<group>"; };
+		C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasConUInt.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +117,7 @@
 				C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */,
 				C9106E2720D856190053AB1C /* DataConDouble.swift */,
 				C9106E2520D8560A0053AB1C /* DataConElement.swift */,
+				C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */,
 			);
 			path = DataCon;
 			sourceTree = "<group>";
@@ -336,6 +339,7 @@
 				C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */,
 				C985B79920CEDE24003B923C /* Exceptions.swift in Sources */,
 				C985B79D20CEF29A003B923C /* Group.swift in Sources */,
+				C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */,
 				C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */,
 				C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */,
 			);

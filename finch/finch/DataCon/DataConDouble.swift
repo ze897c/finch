@@ -28,7 +28,6 @@ extension Double: DaCoEl {
             return Double()
         }
     }
-    
 }
 
 extension DataCon where DataCon.Element == Double {

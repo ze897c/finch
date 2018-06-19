@@ -146,9 +146,25 @@ class DaCoTests: XCTestCase {
     
     func testCompactMapTo() {
         // func compactMapTo<T: DaCoEl>(f: (Element) -> T?) -> DataCon<T>? {
+        let Z = DataCon<UInt>.Linspace(start: 0, stop: 25, n: 26)
         
+        let filterOdds = {(x: UInt) -> UInt? in x % 2 == 0 ? nil: x}
+        let filterEvns = {(x: UInt) -> UInt? in x % 2 == 1 ? nil: x}
+        
+        //let evn = Z.compactMapTo {(x: UInt) -> UInt? in x % 2 == 0 ? nil: x}
+        //let odd = Z.compactMapTo {(x: UInt) -> UInt? in x % 2 == 1 ? nil: x}
+        let evn = Z.compactMapTo(f: filterOdds)
+        let odd = Z.compactMapTo(f: filterEvns)
+        
+        XCTAssertNotNil(evn)
+        XCTAssertNotNil(odd)
+        if (evn != nil) && (odd != nil) {
+            XCTAssertEqual(evn!.count, 13)
+            XCTAssertEqual(odd!.count, 13)
+        }
+
     }
-    
+
     func testPerformanceExample() {
         self.measure {
             // Put the code you want to measure the time of here.

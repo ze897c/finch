@@ -118,7 +118,7 @@ class DataCon<Element: DaCoEl>
     /// y = linspace(start, stop, step) generates n points.
     /// The spacing between the points is (x2-x1)/(n-1).
     init?(start: Element, stop: Element, n: UInt) {
-        guard let d = try? (stop - start).safeDivide(n) as Element else {
+        guard let d = try? (stop - start).safeDivide(n - 1) as Element else {
             return nil
         }
         let N = Int(n)
@@ -232,18 +232,13 @@ class DataCon<Element: DaCoEl>
                 continue
             }
             prerex[idx] = y
+            idx += 1
         }
         guard idx > 0 else {
             return nil
         }
+        prerex = Array(prerex[..<idx])
         return DataCon<T>(elements: prerex)
-
-//        let rex: DataCon<T> = DataCon<T>(repeating: T("0")!, count: count)
-//        rex.data = ContiguousArray<T>(data.compactMap {f($0)})
-//        guard rex.data.count > 0 else {
-//            return nil
-//        }
-//        return rex
     }
 
     // act like a *Collection*, but only where appropriate
