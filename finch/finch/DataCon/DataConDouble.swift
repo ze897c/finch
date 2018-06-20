@@ -32,23 +32,39 @@ extension Double: DaCoEl {
 
 extension DataCon where DataCon.Element == Double {
 
+    func diff() -> DataCon<Double> {
+        let N: Int = Int(count) - 1
+        let newdata = UnsafeMutablePointer<Double>.allocate(capacity: N)
+        // NOTE: this might be slower than naive loop...partly exercising usage
+        cblas_dcopy(Int32(N), data, 1, newdata, 1)
+        cblas_dscal(Int32(N), -1.0, newdata, 1)
+        cblas_daxpy(Int32(N), 1.0, data + 1, 1, newdata, 1)
+        return DataCon<Double>(initializedPointer: newdata, capacity: UInt(N))
+    }
+
     func deepcopy() -> DataCon<Double> {
         // func cblas_dcopy(_ __N: Int32, _ __X: UnsafePointer<Double>!, _ __incX: Int32, _ __Y: UnsafeMutablePointer<Double>!, _ __incY: Int32)
         let rex: DataCon<Double> = DataCon(repeating: Double.Zero, count: DataCon.Index(self.count))
 
         let one = Int32(1)
-        let N = Int32(self.count)
-        cblas_dcopy(N, &(self.data[0]), one, &(rex.data[0]), one)
+        let N = Int32(count)
+        cblas_dcopy(N, data, one, rex.data, one)
         return rex
     }
 
-//    var debugDescription: String {
-//        return "<DataCon: > \(self.data.description)"
-//    }
-//
-//    var description: String {
-//        return self.data.description
-//    }
+    static func BLASConstant( _ val: Double, _ n: UInt) -> DataCon<Double> {
+        let rex: DataCon<Double> = DataCon(capacity: n)
+        var v = Double(val)
+        catlas_cset(Int32(rex.count), &v, rex.data, 1)
+        return rex
+    }
+    
+    static func Ones(count capacity: UInt) -> DataCon<Double> {
+        return BLASConstant(1.0, capacity)
+    }
+    static func Zeros(count capacity: UInt) -> DataCon<Double> {
+        return BLASConstant(0.0, capacity)
+    }
 
     // vForce, WTF?
 //    func ceil() -> DataCon<Double> {

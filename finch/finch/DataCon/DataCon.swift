@@ -25,10 +25,13 @@ class DataCon<Element: DaCoEl>
 //    where Element:Numeric
 {
 
+    // MARK: class members
     typealias Index = Int
     typealias Indices = Range<DataCon.Index>
     typealias ArrayLiteralElement = Element
     //var data: ContiguousArray<Element>
+    
+    // MARK: instance members
     let count: UInt
     let data: UnsafeMutablePointer<Element>
     
@@ -47,6 +50,15 @@ class DataCon<Element: DaCoEl>
         return startIndex..<endIndex
     }
 
+    func formIndex(before i: inout DataCon.Index) {
+        i -= 1
+    }
+    
+    func index(after i: DataCon.Index) -> DataCon.Index {
+        return i + 1
+    }
+    
+    // MARK: descriptors
     var debugDescription: String {
         return "<DataCon: > \(self.description)"
     }
@@ -64,14 +76,7 @@ class DataCon<Element: DaCoEl>
         return rex
     }
 
-    func formIndex(before i: inout DataCon.Index) {
-        i -= 1
-    }
-
-    func index(after i: DataCon.Index) -> DataCon.Index {
-        return i + 1
-    }
-    
+    // MARK: operators
     
     static func == (lhs: DataCon<Element>, rhs: DataCon<Element>) -> Bool {
         guard lhs.startIndex == rhs.startIndex && lhs.endIndex == rhs.endIndex else {
@@ -93,9 +98,15 @@ class DataCon<Element: DaCoEl>
             data[Int(idx)] = newValue
         }
     }
+
+    // MARK: accessors
+    
+    /// accessor that treats the container as periodic
     func cyclic_accessor(_ idx: Int) -> Element {
         return self[idx % Int(count)]
     }
+
+    // MARK: init/copy
     
     func deepcopy() -> DataCon<Element> {
         let rex: DataCon<Element> = DataCon(capacity: self.count)
@@ -103,17 +114,8 @@ class DataCon<Element: DaCoEl>
         //memcpy(data, rex.data, Int(self.count))
         return rex
     }
-    
-//    func deepcopy() -> DataCon<Element> {
-//        let rex: DataCon<Element> = DataCon(capacity: self.count)
-//        rex.data.withUnsafeMutableBytes { dst in
-//            data.withUnsafeBytes { src in
-//                dst.copyMemory(from: src)
-//            }
-//        }
-//        return rex
-//    }
-    
+
+
     /// linspace init
     /// y = linspace(start, stop, step) generates n points.
     /// The spacing between the points is (x2-x1)/(n-1).
@@ -133,6 +135,7 @@ class DataCon<Element: DaCoEl>
             x += d
         }
     }
+
     /// allocate only
     /// Params -
     /// capacity: UInt
@@ -140,6 +143,13 @@ class DataCon<Element: DaCoEl>
         count = capacity
         data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
         //data.initialize(repeating: rep, count: capacity)
+        startIndex = 0
+    }
+
+    /// initialize from initialized unsafe pointer and capacity
+    init(initializedPointer p: UnsafeMutablePointer<Element>, capacity: UInt) {
+        count = capacity
+        data = p
         startIndex = 0
     }
     

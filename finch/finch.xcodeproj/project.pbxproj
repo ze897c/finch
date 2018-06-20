@@ -25,6 +25,7 @@
 		C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79E20CEF363003B923C /* AxiomProtocols.swift */; };
 		C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99361CA20CE066900A36D2A /* chickenTests.swift */; };
 		C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */; };
+		C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4C20D9C29300A4739A /* DataConTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		C985B79E20CEF363003B923C /* AxiomProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxiomProtocols.swift; sourceTree = "<group>"; };
 		C99361CA20CE066900A36D2A /* chickenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chickenTests.swift; sourceTree = "<group>"; };
 		C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasConUInt.swift; sourceTree = "<group>"; };
+		C9D72E4C20D9C29300A4739A /* DataConTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -179,6 +181,7 @@
 			isa = PBXGroup;
 			children = (
 				C9348C0320CB0BDC00D4CE21 /* finchTests.swift */,
+				C9D72E4C20D9C29300A4739A /* DataConTests.swift */,
 				C9348C0520CB0BDC00D4CE21 /* Info.plist */,
 				C91F052D20CC5C3A0006DCE8 /* extTests.swift */,
 				C99361CA20CE066900A36D2A /* chickenTests.swift */,
@@ -351,6 +354,7 @@
 			files = (
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
+				C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */,
 				C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */,
 				C9106E2D20D857450053AB1C /* DataConDoubleTest.swift in Sources */,
 			);
