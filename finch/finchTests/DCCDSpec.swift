@@ -35,29 +35,119 @@ class DCCDSpec: QuickSpec {
         let v1: [CDouble] = [CDouble.pi, -CDouble.pi, CDouble.pi]
         
         var linspace: DataCon<CDouble>?
+        
         _ = "this a long drive for someone with nothing to think about"
 
-        beforeEach {
+        // MARK: .deepcopy
+        describe(".deepcopy") {
+            var ecapsnil:DataCon<CDouble>?
+            context("of linspace") {
+
+                beforeEach {
+                    linspace = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
+                    ecapsnil = linspace!.deepcopy()
+                }
+
+                fit("has correct element count") {
+                    expect(linspace!.count).to(equal(ecapsnil!.count))
+                    
+                } //fit("has correct element count")
+
+                fit("elements are copied correctly") {
+                    for (a, b) in zip(linspace!, ecapsnil!) {
+                        expect(a).to(equal(b))
+                    }
+                } // fit("elements are copied correctly")
+
+                fit("copy is deep") {
+                    let truth: CDouble = ecapsnil![0]
+                    linspace![0] = 27
+                    expect(ecapsnil![0]).to(equal(truth))
+                } // fit("copy is deep")
+
+            } // context("<# ctx #>")
+        } //describe(".deepcopy")
+        
+        // MARK: .linspace
+        describe(".linspace") {
             linspace = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
-        }
+
+            context("explicit init") {
+                let N: UInt = 25
+                let lins: DataCon<CDouble> = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
+
+                fit("has correct number of elements") {
+                    expect(lins.count) == N
+                } // fit("has correct number of elements")
+
+                fit("has correct start element") {
+                    expect(lins[0]) == 0
+                } // fit("has correct start element")
+
+                fit("has correct stop element") {
+                    expect(lins[lins.endIndex]) == 10
+                } // fit("has correct stop element")
+
+            } // context("explicit init")
+        } //describe("<# desc #>")
+
+        // MARK: .diff
+        describe(".diff") {
+            linspace = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
+            let unmod = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
+
+            context("on simple data") {
+                let d = linspace!.diff()
+                let d_truth: CDouble = 10.0/24.0
+
+                fit("has correct number of elements") {
+                    expect(d.count) == 24
+                } // fit("has correct number of elements")
+
+                fit("computes correctly") {
+                    for x in d {
+                        expect(x).to(beCloseTo(d_truth, within: 1.0e-15))
+                    }
+                } // fit(""computes correctly")
+                
+                fit ("leaves original unmodified") {
+                    for (a, b) in zip(linspace!, unmod) {
+                        expect(a).to(equal(b))
+                    }
+                } // fit ("leaves original unmodified")
+
+            } // context("on simple data")
+        } //describe(".diff")
+
         // MARK: .norm
         describe(".norm") {
             context("on simple data") {
-                let dc0: DataCon<CDouble> = DataCon<CDouble>(elements: v0)
-                let dc1: DataCon<CDouble> = DataCon<CDouble>(elements: v1)
                 let truth_0: CDouble = sqrt(v0[0] * v0[0] + v0[1] * v0[1] + v0[2] * v0[2])
                 let truth_1: CDouble = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2])
 
                 fit("computes correctly") {
+                    let dc0: DataCon<CDouble> = DataCon<CDouble>(elements: v0)
+                    let dc1: DataCon<CDouble> = DataCon<CDouble>(elements: v1)
                     // .norm uses magnitude
                     let mag0 = dc0.norm
                     let mag1 = dc1.norm
                     expect(mag0).to(beCloseTo(truth_0, within: 1.0e-15))
                     expect(mag1).to(beCloseTo(truth_1, within: 1.0e-15))
                 } //fit("computes correctly")
-                
+
+                fit("leaves original unmodified") {
+                    let dc0: DataCon<CDouble> = DataCon<CDouble>(elements: v0)
+                    let dc1: DataCon<CDouble> = DataCon<CDouble>(elements: v1)
+                    _ = dc0.norm
+                    _ = dc1.norm
+                    for idx in 0 ..< 3 {
+                        expect(dc0[idx]).to(equal(v0[idx]))
+                        expect(dc1[idx]).to(equal(v1[idx]))
+                    }
+                } //fit("leaves original unmodified")
             } // context("on simple data")
         } //describe(".norm")
+
         // MARK: .dot
         describe(".dot") {
             context("on simple data") {
@@ -101,12 +191,14 @@ class DCCDSpec: QuickSpec {
                 let dc1: DataCon<CDouble> = DataCon<CDouble>(elements: v1)
                 let v = dc0.sub(dc1)
                 let w = dc1.sub(dc0)
+
                 fit("leaves original unmodified") {
                     for idx in 0 ..< 3 {
                         expect(dc0[idx]).to(equal(v0[idx]))
                         expect(dc1[idx]).to(equal(v1[idx]))
                     }
                 } // fit("leaves original unmodified")
+
                 fit("correctly computes") {
                     for idx in 0 ..< 3 {
                         expect(v[idx]).to(beCloseTo(v0[idx] - v1[idx], within: 1.0e-15))

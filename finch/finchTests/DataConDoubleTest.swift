@@ -34,21 +34,6 @@ class DaCoDbTimingTests: XCTestCase {
     
     var linspace: DataCon<CDouble> = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
     let msg = "this a long drive for someone with nothing to think about"
-        
-    func testMagnitude()
-    {
-        let dc0: DataCon<CDouble> = DataCon<CDouble>(elements: v0)
-        let dc1: DataCon<CDouble> = DataCon<CDouble>(elements: v1)
-        let truth_0: CDouble = sqrt(v0[0] * v0[0] + v0[1] * v0[1] + v0[2] * v0[2])
-        let truth_1: CDouble = sqrt(v1[0] * v1[0] + v1[1] * v1[1] + v1[2] * v1[2])
-        
-        // .norm uses magnitude
-        let mag0 = dc0.norm
-        let mag1 = dc1.norm
-        
-        AssertNear(mag0, truth_0)
-        AssertNear(mag1, truth_1)
-    }
 
     let DotTimingN: UInt = 450000
     func testDotTiming()
@@ -67,26 +52,6 @@ class DaCoDbTimingTests: XCTestCase {
             _ = fauxdot(dc0, dc0)
             //print("testCompareDotTiming result: \(x)")
         }
-    }
-    
-    func testDiff()
-    {
-        let d = linspace.diff()
-        XCTAssertEqual(d.count, 24)
-
-        let d_truth: CDouble = 10.0/24.0
-        for x in d {
-            AssertNear(x, d_truth)
-        }
-    }
-    
-    func testLinspace()
-    {
-        let N: UInt = 25
-        let lins: DataCon<CDouble> = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
-        XCTAssertEqual(lins.count, N)
-        XCTAssertEqual(lins[0], 0)
-        XCTAssertEqual(lins[lins.endIndex], 10)
     }
     
     func test_deepcopy()
