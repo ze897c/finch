@@ -26,6 +26,11 @@
 		C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99361CA20CE066900A36D2A /* chickenTests.swift */; };
 		C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */; };
 		C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4C20D9C29300A4739A /* DataConTests.swift */; };
+		C9D72E8720DB123700A4739A /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D72E8620DB123700A4739A /* Nimble.framework */; };
+		C9D72E8920DB124400A4739A /* Quick.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D72E8820DB124400A4739A /* Quick.framework */; };
+		C9D72E8A20DB125D00A4739A /* Nimble.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9D72E4F20DB054F00A4739A /* Nimble.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C9D72E8B20DB125D00A4739A /* Quick.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = C9D72E4E20DB054F00A4739A /* Quick.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		C9D72E8F20DB155B00A4739A /* DCCDSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E8E20DB155B00A4739A /* DCCDSpec.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +42,20 @@
 			remoteInfo = finch;
 		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		C9D72E5A20DB0EC300A4739A /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				C9D72E8A20DB125D00A4739A /* Nimble.framework in CopyFiles */,
+				C9D72E8B20DB125D00A4739A /* Quick.framework in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		C907579320CD7677001B2145 /* scratch.playground */ = {isa = PBXFileReference; lastKnownFileType = file.playground; path = scratch.playground; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
@@ -65,6 +84,13 @@
 		C99361CA20CE066900A36D2A /* chickenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chickenTests.swift; sourceTree = "<group>"; };
 		C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasConUInt.swift; sourceTree = "<group>"; };
 		C9D72E4C20D9C29300A4739A /* DataConTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConTests.swift; sourceTree = "<group>"; };
+		C9D72E4E20DB054F00A4739A /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = ../Carthage/Build/Mac/Quick.framework; sourceTree = "<group>"; };
+		C9D72E4F20DB054F00A4739A /* Nimble.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Nimble.framework; path = ../Carthage/Build/Mac/Nimble.framework; sourceTree = "<group>"; };
+		C9D72E5220DB096C00A4739A /* Nimble.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Nimble.framework.dSYM; path = ../Carthage/Build/Mac/Nimble.framework.dSYM; sourceTree = "<group>"; };
+		C9D72E5420DB097800A4739A /* Quick.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; name = Quick.framework.dSYM; path = ../Carthage/Build/Mac/Quick.framework.dSYM; sourceTree = "<group>"; };
+		C9D72E8620DB123700A4739A /* Nimble.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Nimble.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9D72E8820DB124400A4739A /* Quick.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = Quick.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		C9D72E8E20DB155B00A4739A /* DCCDSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCCDSpec.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,6 +114,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				C9348BFF20CB0BDC00D4CE21 /* finch.framework in Frameworks */,
+				C9D72E8720DB123700A4739A /* Nimble.framework in Frameworks */,
+				C9D72E8920DB124400A4739A /* Quick.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -97,6 +125,12 @@
 		C907579920CDAB14001B2145 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				C9D72E5420DB097800A4739A /* Quick.framework.dSYM */,
+				C9D72E8620DB123700A4739A /* Nimble.framework */,
+				C9D72E8820DB124400A4739A /* Quick.framework */,
+				C9D72E5220DB096C00A4739A /* Nimble.framework.dSYM */,
+				C9D72E4F20DB054F00A4739A /* Nimble.framework */,
+				C9D72E4E20DB054F00A4739A /* Quick.framework */,
 				C907579A20CDAB14001B2145 /* Cocoa.framework */,
 			);
 			name = Frameworks;
@@ -186,6 +220,7 @@
 				C91F052D20CC5C3A0006DCE8 /* extTests.swift */,
 				C99361CA20CE066900A36D2A /* chickenTests.swift */,
 				C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */,
+				C9D72E8E20DB155B00A4739A /* DCCDSpec.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -246,6 +281,7 @@
 				C9348BFA20CB0BDC00D4CE21 /* Sources */,
 				C9348BFB20CB0BDC00D4CE21 /* Frameworks */,
 				C9348BFC20CB0BDC00D4CE21 /* Resources */,
+				C9D72E5A20DB0EC300A4739A /* CopyFiles */,
 			);
 			buildRules = (
 			);
@@ -352,6 +388,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C9D72E8F20DB155B00A4739A /* DCCDSpec.swift in Sources */,
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
 				C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */,
