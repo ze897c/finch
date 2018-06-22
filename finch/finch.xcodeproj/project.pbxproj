@@ -24,6 +24,7 @@
 		C985B79D20CEF29A003B923C /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79C20CEF29A003B923C /* Group.swift */; };
 		C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79E20CEF363003B923C /* AxiomProtocols.swift */; };
 		C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C99361CA20CE066900A36D2A /* chickenTests.swift */; };
+		C9978FDC20DC7EBA00B88A0B /* DCCDSugarSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9978FDB20DC7EBA00B88A0B /* DCCDSugarSpec.swift */; };
 		C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */; };
 		C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9D72E4C20D9C29300A4739A /* DataConTests.swift */; };
 		C9D72E8720DB123700A4739A /* Nimble.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9D72E8620DB123700A4739A /* Nimble.framework */; };
@@ -82,6 +83,7 @@
 		C985B79C20CEF29A003B923C /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
 		C985B79E20CEF363003B923C /* AxiomProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AxiomProtocols.swift; sourceTree = "<group>"; };
 		C99361CA20CE066900A36D2A /* chickenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chickenTests.swift; sourceTree = "<group>"; };
+		C9978FDB20DC7EBA00B88A0B /* DCCDSugarSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DCCDSugarSpec.swift; sourceTree = "<group>"; };
 		C9D72E4A20D9A16000A4739A /* DatasConUInt.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatasConUInt.swift; sourceTree = "<group>"; };
 		C9D72E4C20D9C29300A4739A /* DataConTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConTests.swift; sourceTree = "<group>"; };
 		C9D72E4E20DB054F00A4739A /* Quick.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quick.framework; path = ../Carthage/Build/Mac/Quick.framework; sourceTree = "<group>"; };
@@ -221,6 +223,7 @@
 				C99361CA20CE066900A36D2A /* chickenTests.swift */,
 				C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */,
 				C9D72E8E20DB155B00A4739A /* DCCDSpec.swift */,
+				C9978FDB20DC7EBA00B88A0B /* DCCDSugarSpec.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -394,6 +397,7 @@
 				C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */,
 				C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */,
 				C9106E2D20D857450053AB1C /* DataConDoubleTest.swift in Sources */,
+				C9978FDC20DC7EBA00B88A0B /* DCCDSugarSpec.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

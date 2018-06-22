@@ -33,12 +33,18 @@ extension CDouble: DaCoEl {
 extension DataCon where DataCon.Element == CDouble {
 
     // MARK: magic
-    func sub_inplace(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> DataCon<Double>
+    static func -=(_ lhs: DataCon<CDouble>, _ rhs: DataCon<CDouble>) {
+        return lhs.sub_inplace(rhs)
+    }
+    
+    static func -(_ lhs: DataCon<CDouble>, _ rhs: DataCon<CDouble>) -> DataCon<CDouble> {
+        return lhs.sub(rhs)
+    }
+    
+    func sub_inplace(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
     {
         let N = n ?? count
-        let rex = DataCon<CDouble>(capacity: N)
-        axpby(a: 1.0, v, b: -1.0, n: N, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
-        return rex
+        axpby_inplace(1.0, v, -1.0, n: N, xstride: stride, xoffset: offset, ystride: vstride, yoffset: voffset)
     }
     
     func sub(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> DataCon<Double>
@@ -66,20 +72,36 @@ extension DataCon where DataCon.Element == CDouble {
         let bstr = Int32(vstride ?? 1)
         catlas_daxpby(num, CDouble(a), aptr, astr, CDouble(b), bptr, bstr)
     }
-    /// a * this + b * that -> this
-    func axpby_inplace(a: Double, _ v: DataCon<CDouble>, b: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
+
+    /// alpha * x + b * y -> this
+    /// uses *catlas_daxpby*
+    /// - Parameters:
+    ///   - alpha: scalar for _x_
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - beta: scalar for _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func axpby_inplace(_ alpha: Double, _ y: DataCon<CDouble>, _ beta: Double, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
     {
         let num = Int32(n ?? count)
-        let aptr = v.data + Int(voffset ?? 0)
-        let astr = Int32(vstride ?? 1)
-        let bptr = data + Int(offset ?? 0)
-        let bstr = Int32(stride ?? 1)
-        catlas_daxpby(num, CDouble(a), aptr, astr, CDouble(b), bptr, bstr)
+        let aptr = y.data + Int(yoffset ?? 0)
+        let astr = Int32(ystride ?? 1)
+        let bptr = data + Int(xoffset ?? 0)
+        let bstr = Int32(xstride ?? 1)
+        // yes (alpha, beta) switches up
+        catlas_daxpby(num, CDouble(beta), aptr, astr, CDouble(alpha), bptr, bstr)
     }
     
     func distance(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> CDouble
     {
         return sub(v).norm
+    }
+    
+    static prefix func - (_ x: DataCon<CDouble>) -> DataCon<CDouble> {
+        return x.negate()
     }
     
     func negate_inplace(n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil)
@@ -200,3 +222,5 @@ extension DataCon where DataCon.Element == CDouble {
 //    }
 
 }
+
+

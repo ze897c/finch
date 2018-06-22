@@ -7,7 +7,6 @@
 //
 
 import Foundation
-// TODO: will these work?
 import Nimble
 import Quick
 import XCTest
