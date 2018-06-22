@@ -37,7 +37,7 @@ extension DataCon where DataCon.Element == CDouble {
     {
         let N = n ?? count
         let rex = DataCon<CDouble>(capacity: N)
-        axpby(alpha: 1.0, v, beta: -1.0, n: N, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
+        axpby(a: 1.0, v, b: -1.0, n: N, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
         return rex
     }
     
@@ -45,7 +45,7 @@ extension DataCon where DataCon.Element == CDouble {
     {
         let N = n ?? count
         let rex = v.deepcopy()
-        axpby(alpha: 1.0, rex, beta: -1.0, n: N, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
+        axpby(a: 1.0, rex, b: -1.0, n: N, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
         return rex
     }
     
@@ -56,24 +56,25 @@ extension DataCon where DataCon.Element == CDouble {
     /// modifies input *DataCon*
     /// Parameters -
     ///
-    func axpby(alpha: Double, _ v: DataCon<CDouble>, beta: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
+    /// a * this + b * that -> that
+    func axpby(a: Double, _ v: DataCon<CDouble>, b: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
     {
         let num = Int32(n ?? count)
-        let xptr = data + Int(offset ?? 0)
-        let xstr = Int32(stride ?? 1)
-        let vptr = v.data + Int(voffset ?? 0)
-        let vstr = Int32(vstride ?? 1)
-        catlas_daxpby(num, CDouble(alpha), xptr, xstr, CDouble(beta), vptr, vstr)
+        let aptr = data + Int(offset ?? 0)
+        let astr = Int32(stride ?? 1)
+        let bptr = v.data + Int(voffset ?? 0)
+        let bstr = Int32(vstride ?? 1)
+        catlas_daxpby(num, CDouble(a), aptr, astr, CDouble(b), bptr, bstr)
     }
-
-    func axpby_inplace(alpha: Double, _ v: DataCon<CDouble>, beta: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
+    /// a * this + b * that -> this
+    func axpby_inplace(a: Double, _ v: DataCon<CDouble>, b: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
     {
         let num = Int32(n ?? count)
-        let xptr = data + Int(offset ?? 0)
-        let xstr = Int32(stride ?? 1)
-        let vptr = data + Int(voffset ?? 0)
-        let vstr = Int32(vstride ?? 1)
-        catlas_daxpby(num, CDouble(alpha), xptr, xstr, CDouble(beta), vptr, vstr)
+        let aptr = v.data + Int(voffset ?? 0)
+        let astr = Int32(vstride ?? 1)
+        let bptr = data + Int(offset ?? 0)
+        let bstr = Int32(stride ?? 1)
+        catlas_daxpby(num, CDouble(a), aptr, astr, CDouble(b), bptr, bstr)
     }
     
     func distance(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> CDouble

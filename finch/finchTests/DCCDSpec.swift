@@ -34,6 +34,7 @@ class DCCDSpec: QuickSpec {
         var dc0: DataCon<CDouble> = DataCon<CDouble>()
         var dc1: DataCon<CDouble> = DataCon<CDouble>()
         var dc2: DataCon<CDouble> = DataCon<CDouble>()
+        var dc3: DataCon<CDouble> = DataCon<CDouble>()
         let v0: [CDouble] = [1.4, -2.2, 4.5]
         let v1: [CDouble] = [CDouble.pi, -CDouble.pi, CDouble.pi]
         
@@ -42,9 +43,53 @@ class DCCDSpec: QuickSpec {
         let x: [CDouble] = [1, 0, 0]
         let y: [CDouble] = [0, 1, 0]
         let z: [CDouble] = [0, 0, 1]
+        let xyz: [CDouble] = [1, 1, 1]
         let sqrt2: CDouble = sqrt(2.0)
         
         _ = "this a long drive for someone with nothing to think about"
+
+        // MARK: .scale
+        describe(".scale") {
+            context("on simple data") {
+                let a = CDouble.pi
+                let b:CDouble = -8.183
+                let c: CDouble = 19999.999162
+
+                beforeEach() {
+                    dc0 = DataCon(elements: x)
+                    dc1 = DataCon(elements: y)
+                    dc2 = DataCon(elements: z)
+                    dc3 = DataCon(elements: xyz)
+                }
+                
+                fit("computes correctly") {
+                    let dc0sa = dc0.scale(a)
+                    let dc1sb = dc1.scale(b)
+                    let dc2sc = dc2.scale(c)
+                    let dc3sa = dc3.scale(a)
+                    for idx in 0 ..< 3 {
+                        expect(dc0sa[idx]).to(beCloseTo(a * x[idx], within: CDouble.small))
+                        expect(dc1sb[idx]).to(beCloseTo(b * y[idx], within: CDouble.small))
+                        expect(dc2sc[idx]).to(beCloseTo(c * z[idx], within: CDouble.small))
+                        expect(dc3sa[idx]).to(beCloseTo(a * xyz[idx], within: CDouble.small))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = dc0.scale(a)
+                    _ = dc1.scale(b)
+                    _ = dc2.scale(c)
+                    _ = dc3.scale(a)
+                    for idx in 0 ..< 3 {
+                        expect(dc0[idx]).to(equal(x[idx]))
+                        expect(dc1[idx]).to(equal(y[idx]))
+                        expect(dc2[idx]).to(equal(z[idx]))
+                        expect(dc3[idx]).to(equal(xyz[idx]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".scale")
 
         // MARK: .negate
         describe(".negate") {
