@@ -7,31 +7,92 @@
 //
 
 import Foundation
+import Nimble
+import Quick
 import os.log
 import XCTest
 @testable import finch
 
-class stringExtensionTests: XCTestCase {
-    
-    /// test simple init patterns
-    func testRemoveWhitespace() {
-        let a: String = "The quick brown...  "
-        // os_log("removed: %@", type: .info, a.removingWhitespaces())
-        XCTAssertEqual(a.count - 4, a.removingWhitespaces().count)
-    }
-    
-    func testRemoveSquareBracket() {
-        print("[<555>]".removingSquareBrackets())
-        XCTAssertEqual("[<555>]".removingSquareBrackets().count, 5)
-        XCTAssertEqual("[<555>]".removingDelimiters().count, 3)
-    }
 
-    func testAsArray() {
-        let v = [1.2, -3.4, 5.6]
-        let w: [Double] = asDoubleArray(v.description)
-        XCTAssertEqual(v.count, w.count)
-        for (a, b) in zip(v, w) {
-            XCTAssertEqual(a, b)
-        }
-    }
-}
+// TODO: use the approach from
+//  https://github.com/Quick/Quick/blob/master/Documentation/en-us/SharedExamples.md
+// to make these tests much cleaner
+
+class FinchStringSpec: QuickSpec {
+    
+    override func spec() {
+        // MARK: removingWhitespaces
+        describe(".removingWhitespaces") {
+            var a: String = ""
+            var unmod: String = ""
+            var truth: String = ""
+            context("on simple data") {
+
+                beforeEach {
+                    a = "\tThe quick brown...  "
+                    unmod = "\tThe quick brown...  "
+                    truth = "Thequickbrown..."
+                }
+                
+                fit("removes iff") {
+                    let b = a.removingWhitespaces()
+                    expect(b).to(equal(truth))
+                } //fit("removes iff")
+
+                fit("leaves original") {
+                    _ = a.removingWhitespaces()
+                    expect(a).to(equal(unmod))
+                } // fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".removingWhitespaces")
+        
+        describe(".removingDelimiters") {
+            var a: String = ""
+            var unmod: String = ""
+            var truth: String = ""
+            context("on simple data") {
+                beforeEach {
+                    a = "[<555>]"
+                    unmod = "[<555>]"
+                    truth = "555"
+                }
+
+                fit("removes iff") {
+                    let b = a.removingDelimiters()
+                    expect(b).to(equal(truth))
+                } // fit("removes iff")
+
+                fit("leaves original") {
+                    _ = a.removingDelimiters()
+                    expect(a).to(equal(unmod))
+                } // fit("leaves original")
+            }
+        } //describe(".removingDelimiters")
+        
+        describe(".removingSquareBrackets") {
+            var a: String = ""
+            var unmod: String = ""
+            var truth: String = ""
+            context("on simple data") {
+                beforeEach {
+                    a = "[<555>]"
+                    unmod = "[<555>]"
+                    truth = "<555>"
+                }
+                
+                fit("removes iff") {
+                    let b = a.removingSquareBrackets()
+                    expect(b).to(equal(truth))
+                } // fit("removes iff")
+                
+                fit("leaves original") {
+                    _ = a.removingSquareBrackets()
+                    expect(a).to(equal(unmod))
+                } // fit("leaves original")
+            }
+        } //describe(".removingSquareBrackets")
+
+    } // spec()
+} // class FinchStringSpec: QuickSpec
+

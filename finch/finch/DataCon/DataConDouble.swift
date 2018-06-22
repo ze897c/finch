@@ -81,6 +81,11 @@ extension DataCon where DataCon.Element == CDouble {
         return sub(v).norm
     }
     
+    func negate_inplace(n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil)
+    {
+        cblas_dscal(Int32(count), -1.0, data + Int(offset ?? 0), Int32(stride ?? 1))
+    }
+    
     func negate(n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil) -> DataCon<CDouble>
     {
         let rex = deepcopy()
@@ -88,10 +93,15 @@ extension DataCon where DataCon.Element == CDouble {
         return rex
     }
     
+    func scale_inplace(_ alpha: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil)
+    {
+        cblas_dscal(Int32(n ?? count), CDouble(alpha), data + Int(offset ?? 0), Int32(stride ?? 1))
+    }
+    
     func scale(_ alpha: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil) -> DataCon<CDouble>
     {
         let rex = deepcopy()
-        cblas_dscal(Int32(n ?? count), CDouble(alpha), rex.data + Int(offset ?? 0), Int32(stride ?? 1))
+        rex.scale_inplace(alpha, n: n, stride: stride, offset: offset)
         return rex
     }
 

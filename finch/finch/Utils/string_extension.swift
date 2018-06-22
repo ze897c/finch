@@ -30,9 +30,11 @@ public extension String {
     public func removingWhitespaces() -> String {
         return removingAnyCharacters(inCharacterSet: .whitespaces)
     }
+
     func removingSquareBrackets() -> String {
         return removingAnyCharacters(of: "[]")
     }
+
     func removingDelimiters() -> String {
         return removingAnyCharacters(inCharacterSet: String.Delimiters)
     }

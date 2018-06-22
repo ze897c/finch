@@ -16,13 +16,13 @@ import os.log
 @testable import finch
 
 extension CDouble {
-    var small: CDouble {
+    static var small: CDouble {
         get {
             return 1.0e-15
         }
     }
     func near(_ x: CDouble, tol: CDouble? = nil) -> Bool {
-        return abs(x - self) < (tol ?? small)
+        return abs(x - self) < (tol ?? CDouble.small)
     }
 }
 
