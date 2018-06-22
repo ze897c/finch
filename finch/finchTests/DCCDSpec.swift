@@ -39,15 +39,53 @@ class DCCDSpec: QuickSpec {
         
         var linspace: DataCon<CDouble>?
         
+        let x: [CDouble] = [1, 0, 0]
+        let y: [CDouble] = [0, 1, 0]
+        let z: [CDouble] = [0, 0, 1]
+        let sqrt2: CDouble = sqrt(2.0)
+        
         _ = "this a long drive for someone with nothing to think about"
 
+        // MARK: .negate
+        describe(".negate") {
+            context("on simple data") {
+
+                beforeEach() {
+                    dc0 = DataCon(elements: x)
+                    dc1 = DataCon(elements: y)
+                    dc2 = DataCon(elements: z)
+                }
+                
+                fit("computes correctly") {
+                    let ndc0 = dc0.negate()
+                    let ndc1 = dc1.negate()
+                    let ndc2 = dc2.negate()
+
+                    for idx in 0 ..< 3 {
+                        expect(ndc0[idx]).to(equal(-1 * x[idx]))
+                        expect(ndc1[idx]).to(equal(-1 * y[idx]))
+                        expect(ndc2[idx]).to(equal(-1 * z[idx]))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = dc0.negate()
+                    _ = dc1.negate()
+                    _ = dc2.negate()
+                    for idx in 0 ..< 3 {
+                        expect(dc0[idx]).to(equal(x[idx]))
+                        expect(dc1[idx]).to(equal(y[idx]))
+                        expect(dc2[idx]).to(equal(z[idx]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".negate")
+        
         // MARK: .distance
         describe(".distance") {
             context("on simple data") {
-                let x: [CDouble] = [1, 0, 0]
-                let y: [CDouble] = [0, 1, 0]
-                let z: [CDouble] = [0, 0, 1]
-                let sqrt2: CDouble = sqrt(2.0)
+
                 beforeEach() {
                     dc0 = DataCon(elements: x)
                     dc1 = DataCon(elements: y)
@@ -79,9 +117,9 @@ class DCCDSpec: QuickSpec {
                     let dxy: CDouble = dc0.distance(dc1)
                     let dxz: CDouble = dc0.distance(dc2)
                     let dyz: CDouble = dc1.distance(dc2)
-                    expect(dxy).to(beCloseTo(sqrt2on2, within: CDouble.small))
-                    expect(dxz).to(beCloseTo(sqrt2on2, within: CDouble.small))
-                    expect(dyz).to(beCloseTo(sqrt2on2, within: CDouble.small))
+                    expect(dxy).to(beCloseTo(sqrt2, within: CDouble.small))
+                    expect(dxz).to(beCloseTo(sqrt2, within: CDouble.small))
+                    expect(dyz).to(beCloseTo(sqrt2, within: CDouble.small))
                 } //fit("computes correctly")
                 
                 fit("leaves original") {
