@@ -46,7 +46,54 @@ class DCCDSpec: QuickSpec {
         let sqrt2: CDouble = sqrt(2.0)
         
         _ = "this a long drive for someone with nothing to think about"
-
+        // MARK: minmax
+        describe("<#desc#>") {
+            context("on simple data") {
+                let big: CDouble = 17.9
+                let elms: [CDouble] = [-big, 2, -3, 0, 5, big]
+                beforeEach() {
+                    dc0 = DataCon(elements: elms)
+                    dc1 = DataCon(elements: [big, 2, -3, 0, 5, -big])
+                    dc2 = DataCon(elements: [3, -2, -big, big, 5, 9])
+                    dc3 = DataCon(elements: [-3, 2, big, -big, 5, 9])
+                }
+                
+                fit("computes correctly") {
+                    let mm0 = dc0.minmax()
+                    let mm1 = dc1.minmax()
+                    let mm2 = dc2.minmax()
+                    let mm3 = dc3.minmax()
+                    expect(mm0.imin) == 0
+                    expect(mm0.min) == -big
+                    expect(mm0.imax) == 5
+                    expect(mm0.max) == big
+                    
+                    expect(mm1.imin) == 5
+                    expect(mm1.min) == -big
+                    expect(mm1.imax) == 0
+                    expect(mm1.max) == big
+                    
+                    expect(mm2.imin) == 2
+                    expect(mm2.min) == -big
+                    expect(mm2.imax) == 3
+                    expect(mm2.max) == big
+                    
+                    expect(mm3.imin) == 3
+                    expect(mm3.min) == -big
+                    expect(mm3.imax) == 2
+                    expect(mm3.max) == big
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    let mm0 = dc0.minmax()
+                    for (a, b) in zip(dc0, elms) {
+                        expect(a) == b
+                    }
+                    
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("<#desc#>")
         // MARK: .scale
         describe(".scale") {
             context("on simple data") {

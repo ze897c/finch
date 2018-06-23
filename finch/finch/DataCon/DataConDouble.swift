@@ -31,49 +31,345 @@ extension CDouble: DaCoEl {
 }
 
 extension DataCon where DataCon.Element == CDouble {
+//    func cblas_dasum(Int32, UnsafePointer<Double>!, Int32) -> Double
+//    Computes the sum of the absolute values of elements in a vector (double-precision).
+    
+    
+    // MARK: min/max
+    
+    /// return index of minimum value
+    /// NOTE: imax is faster
+    func imin(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> UInt {
+        let mm = minmax(n, offset, stride)
+        return mm.imin
+    }
+    
+    /// return minimum value
+    func min(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> CDouble {
+        let mm = minmax(n, offset, stride)
+        return mm.min
+    }
+    
+    /// return index of minimum value
+    /// NOTE: imax is faster
+    func imax(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> UInt {
+        let mm = minmax(n, offset, stride)
+        return mm.imax
+    }
+    
+    /// return minimum value
+    func max(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> CDouble {
+        let mm = minmax(n, offset, stride)
+        return mm.max
+    }
+    
+    /// return index/element pairs for min & max
+    func minmax(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> (imin: UInt, min: CDouble, imax: UInt, max: CDouble) {
 
-    // MARK: magic
-    static func -=(_ lhs: DataCon<CDouble>, _ rhs: DataCon<CDouble>) {
-        return lhs.sub_inplace(rhs)
+        let num = n ?? count
+        let xstart = offset ?? 0
+        let xstr = stride ?? 1
+        
+        var rex: (imin: UInt, min: CDouble, imax: UInt, max: CDouble) = (0, data[0], 0, data[0])
+        for idx in 1 ..< num {
+            let xdx = xstart + idx * xstr
+            let x = data[Int(xdx)]
+            if x < rex.min {
+                rex.min = x
+                rex.imin = idx
+                continue
+            }
+            if rex.max < x {
+                rex.max = x
+                rex.imax = idx
+            }
+        }
+        return rex
     }
     
-    static func -(_ lhs: DataCon<CDouble>, _ rhs: DataCon<CDouble>) -> DataCon<CDouble> {
-        return lhs.sub(rhs)
+    /// return index of element with maximum absolute value
+    func imaxmag(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> UInt {
+        return UInt(cblas_idamax(Int32(n ?? count), data + Int(offset ?? 0), Int32(stride ?? 1)))
     }
     
+    /// return element with maximum absolute value
+    func maxmag(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> CDouble {
+        return data[Int(imaxmag(n, offset, stride))]
+    }
+    
+    // MARK: mul
+    /// x * y -> x
+    /// where _x_ is the instance
+    static func *=(_ x: DataCon<CDouble>, _ y: CDouble) {
+        return x.scale_inplace(y)
+    }
+    static func *=(_ x: CDouble, _ y: DataCon<CDouble>) {
+        return y.scale_inplace(x)
+    }
+    
+    /// Return x * y
+    /// where _x_ is the instance & operation is elementwise
+    static func *(_ x: DataCon<CDouble>, _ y: CDouble) -> DataCon<CDouble> {
+        return x.scale(y)
+    }
+    static func *(_ x: CDouble, _ y:DataCon<CDouble>) -> DataCon<CDouble> {
+        return y.scale(x)
+    }
+    
+    /// x * y -> x
+    /// where _x_ is the instance
+    static func *=(_ x: DataCon<CDouble>, _ y: DataCon<CDouble>) {
+        return x.mul_inplace(y)
+    }
+    
+    /// Return x * y
+    /// where _x_ is the instance & operation is elementwise
+    static func *(_ x: DataCon<CDouble>, _ y: DataCon<CDouble>) -> DataCon<CDouble> {
+        return x.mul(y)
+    }
+    
+    /// x * y -> x
+    /// where _x_ is the instance
+    /// - Parameters:
+    ///   - y: CDouble
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func mul_inplace(_ y: CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil)
+    {
+        let num = Int(n ?? count)
+        let xstart = Int(xoffset ?? 0)
+        let xstr = Int(xstride ?? 1)
+        for idx in 0 ..< num {
+            let xdx = xstart + idx * xstr
+            data[xdx] *= y
+        }
+    }
+    
+    /// Return: x * y
+    /// where _x_ is the instance & operation is elementwise
+    /// options for fine control of offset and stride
+    /// - Parameters:
+    ///   - y: CDouble
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func mul(_ y: CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) -> DataCon<Double>
+    {
+        let num = Int(n ?? count)
+        let xstart = Int(xoffset ?? 0)
+        let xstr = Int(xstride ?? 1)
+        let rex = DataCon<CDouble>(capacity: UInt(num))
+        for idx in 0 ..< num {
+            let xdx = xstart + idx * xstr
+            rex[xdx] = data[xdx] * y
+        }
+        return rex
+    }
+    
+    /// x * y -> x
+    /// where _x_ is the instance & operation is elementwise
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func mul_inplace(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
+    {
+        let num = Int(n ?? count)
+        let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
+        let (xstr, ystr) = (Int(xstride ?? 1), Int(ystride ?? 1))
+        for idx in 0 ..< num {
+            let (xdx, ydx) = (xstart + idx * xstr, ystart + idx * ystr)
+            data[xdx] *= y[ydx]
+        }
+    }
+    
+    /// Return: x * y
+    /// where _x_ is the instance & operation is elementwise
+    /// options for fine control of offset and stride
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func mul(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<Double>
+    {
+        let num = Int(n ?? count)
+        let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
+        let (xstr, ystr) = (Int(xstride ?? 1), Int(ystride ?? 1))
+        let rex = DataCon<CDouble>(capacity: UInt(num))
+        for idx in 0 ..< num {
+            let (xdx, ydx) = (xstart + idx * xstr, ystart + idx * ystr)
+            rex[xdx] = data[xdx] * y[ydx]
+        }
+        return rex
+    }
+    
+    // MARK: map // TODO: add tests
+    
+    /// f(x, y) -> x
+    /// where _x_ is the instance
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    ///   - f: (CDouble, CDouble) -> CDouble; function to map
+    func map_inplace(f: (CDouble, CDouble) -> CDouble, _ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
+    {
+        let num = Int(n ?? count)
+        let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
+        let (xstr, ystr) = (Int(xstride ?? 1), Int(ystride ?? 1))
+        for idx in 0 ..< num {
+            let (xdx, ydx) = (xstart + idx * xstr, ystart + idx * ystr)
+            data[xdx] = f(data[xdx], y[ydx])
+        }
+    }
+
+    /// Return: f(x, y)
+    /// where _x_ is the instance
+    /// options for fine control of offset and stride
+    /// uses .axpby
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    ///   - f: (CDouble, CDouble) -> CDouble; function to map
+    func map(f: (CDouble, CDouble) -> CDouble, _ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<Double>
+    {
+        let num = Int(n ?? count)
+        let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
+        let (xstr, ystr) = (Int(xstride ?? 1), Int(ystride ?? 1))
+        let rex = DataCon<CDouble>(capacity: UInt(num))
+        for idx in 0 ..< num {
+            let (xdx, ydx) = (xstart + idx * xstr, ystart + idx * ystr)
+            rex[xdx] = f(data[xdx], y[ydx])
+        }
+        return rex
+    }
+
+    // MARK: add
+
+    /// x + y -> x
+    /// where _x_ is the instance
+    static func +=(_ x: DataCon<CDouble>, _ y: DataCon<CDouble>) {
+        return x.add_inplace(y)
+    }
+    
+    /// Return x + y
+    /// where _x_ is the instance
+    static func +(_ x: DataCon<CDouble>, _ y: DataCon<CDouble>) -> DataCon<CDouble> {
+        return x.add(y)
+    }
+    
+    /// x + y -> x
+    /// where _x_ is the instance
+    func add_inplace(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
+    {
+        let N = n ?? count
+        axpby_inplace(1.0, y, 1.0, n: N, xstride: xstride, xoffset: xoffset, ystride: ystride, yoffset: yoffset)
+    }
+    
+    /// Return: x + y
+    /// where _x_ is the instance
+    /// options for fine control of offset and stride
+    /// uses .axpby
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func add(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<Double>
+    {
+        let N = n ?? count
+        let rex = y.deepcopy()
+        axpby(1.0, rex, 1.0, n: N, xstride: xstride, xoffset: xoffset, ystride: ystride, yoffset: yoffset)
+        return rex
+    }
+    
+    // MARK: sub
+    
+    /// x - y -> x
+    /// where _x_ is the instance
+    static func -=(_ x: DataCon<CDouble>, _ y: DataCon<CDouble>) {
+        return x.sub_inplace(y)
+    }
+    
+    /// Return x - y
+    /// where _x_ is the instance
+    static func -(_ x: DataCon<CDouble>, _ y: DataCon<CDouble>) -> DataCon<CDouble> {
+        return x.sub(y)
+    }
+    
+    /// x - y -> x
+    /// where _x_ is the instance
     func sub_inplace(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
     {
         let N = n ?? count
         axpby_inplace(1.0, v, -1.0, n: N, xstride: stride, xoffset: offset, ystride: vstride, yoffset: voffset)
     }
     
-    func sub(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> DataCon<Double>
+    /// Return: x - y
+    /// where _x_ is the instance
+    /// options for fine control of offset and stride
+    /// uses .axpby
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func sub(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<Double>
     {
         let N = n ?? count
-        let rex = v.deepcopy()
-        axpby(a: 1.0, rex, b: -1.0, n: N, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
+        let rex = y.deepcopy()
+        axpby(1.0, rex, -1.0, n: N, xstride: xstride, xoffset: xoffset, ystride: ystride, yoffset: yoffset)
         return rex
     }
-    
-    // MARK: cblas implemented
 
-    // func catlas_daxpby(_ __N: Int32, _ __alpha: Double, _ __X: UnsafePointer<Double>!, _ __incX: Int32, _ __beta: Double, _ __Y: UnsafeMutablePointer<Double>!, _ __incY: Int32)
-    /// Computes the sum of two vectors, scaling each one separately
-    /// modifies input *DataCon*
-    /// Parameters -
-    ///
-    /// a * this + b * that -> that
-    func axpby(a: Double, _ v: DataCon<CDouble>, b: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil)
+    // MARK: axpby(s)
+    
+    /// alpha * x + b * y -> y
+    /// where _x_ is the instance
+    /// uses *catlas_daxpby*
+    /// - Parameters:
+    ///   - alpha: scalar for _x_
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - beta: scalar for _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - ystride: UInt; stide for _y_
+    ///   - yoffset: UInt; offset for _y_
+    func axpby(_ alpha: Double, _ y: DataCon<CDouble>, _ beta: Double, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
     {
         let num = Int32(n ?? count)
-        let aptr = data + Int(offset ?? 0)
-        let astr = Int32(stride ?? 1)
-        let bptr = v.data + Int(voffset ?? 0)
-        let bstr = Int32(vstride ?? 1)
-        catlas_daxpby(num, CDouble(a), aptr, astr, CDouble(b), bptr, bstr)
+        let aptr = data + Int(xoffset ?? 0)
+        let astr = Int32(xstride ?? 1)
+        let bptr = y.data + Int(yoffset ?? 0)
+        let bstr = Int32(ystride ?? 1)
+        catlas_daxpby(num, CDouble(alpha), aptr, astr, CDouble(beta), bptr, bstr)
     }
 
-    /// alpha * x + b * y -> this
+    /// alpha * x + b * y -> x
+    /// where _x_ is the instance
     /// uses *catlas_daxpby*
     /// - Parameters:
     ///   - alpha: scalar for _x_
@@ -100,6 +396,8 @@ extension DataCon where DataCon.Element == CDouble {
         return sub(v).norm
     }
     
+    // MARK: negates
+    
     static prefix func - (_ x: DataCon<CDouble>) -> DataCon<CDouble> {
         return x.negate()
     }
@@ -116,6 +414,8 @@ extension DataCon where DataCon.Element == CDouble {
         return rex
     }
     
+    // MARK: scale
+    
     func scale_inplace(_ alpha: Double, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil)
     {
         cblas_dscal(Int32(n ?? count), CDouble(alpha), data + Int(offset ?? 0), Int32(stride ?? 1))
@@ -128,14 +428,19 @@ extension DataCon where DataCon.Element == CDouble {
         return rex
     }
 
+    // MARK: norm
+    
     var norm: CDouble { get { return magnitude() } }
 
     func magnitude(n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil) -> CDouble {
         let num = Int32(n ?? count)
         let ptr = data + Int(offset ?? 0)
         let str = Int32(stride ?? 1)
-        return sqrt(cblas_ddot(num, ptr, str, ptr, str))
+        return cblas_dnrm2(num, ptr, str)
+        // return sqrt(cblas_ddot(num, ptr, str, ptr, str))
     }
+    
+    // MARK: math
     
     func dot(_ v: DataCon<CDouble>, n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> CDouble
     {
@@ -159,6 +464,8 @@ extension DataCon where DataCon.Element == CDouble {
         return DataCon<CDouble>(initializedPointer: newdata, capacity: UInt(N))
     }
 
+    // MARK: copies/inits
+    
     func deepcopy() -> DataCon<CDouble>
     {
         // func cblas_dcopy(_ __N: Int32, _ __X: UnsafePointer<Double>!, _ __incX: Int32, _ __Y: UnsafeMutablePointer<Double>!, _ __incY: Int32)
