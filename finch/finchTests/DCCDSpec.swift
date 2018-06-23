@@ -37,7 +37,10 @@ class DCCDSpec: QuickSpec {
         let v0: [CDouble] = [1.4, -2.2, 4.5]
         let v1: [CDouble] = [CDouble.pi, -CDouble.pi, CDouble.pi]
         
-        var linspace: DataCon<CDouble>?
+        var linspace = DataCon<CDouble>()
+        var ecapsnil = DataCon<CDouble>()
+        var unmod = DataCon<CDouble>()
+        var domnu = DataCon<CDouble>()
         
         let x: [CDouble] = [1, 0, 0]
         let y: [CDouble] = [0, 1, 0]
@@ -46,8 +49,70 @@ class DCCDSpec: QuickSpec {
         let sqrt2: CDouble = sqrt(2.0)
         
         _ = "this a long drive for someone with nothing to think about"
-        // MARK: minmax
-        describe("<#desc#>") {
+        
+        // MARK: .reversed
+        describe(".reversed") {
+            context("on simple data") {
+                let N:Int = 44
+                let lo: CDouble = -523.8
+                let hi: CDouble = 1999.1919
+                beforeEach() {
+                    linspace = DataCon<CDouble>.Linspace(start: lo, stop: hi, n: UInt(N))
+                    unmod = DataCon<CDouble>.Linspace(start: lo, stop: hi, n: UInt(N))
+                }
+                
+                 fit("computes correctly") {
+                    ecapsnil = linspace.reversed()
+                    for idx in 0 ..< N {
+                        expect(ecapsnil[idx]).to(beCloseTo(linspace[N - 1 - idx], within: CDouble.small))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = linspace.reversed()
+                    for idx in 0 ..< N {
+                        expect(linspace[idx]).to(equal(unmod[idx]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".reversed")
+        
+        
+        // MARK: .imaxmag
+        describe(".imaxmag") {
+            context("on simple data") {
+                let N:Int = 4444
+                let lo: CDouble = -523.8
+                let hi: CDouble = 1999.1919
+                beforeEach() {
+                    linspace = DataCon<CDouble>.Linspace(start: lo, stop: hi, n: UInt(N))
+                    unmod = DataCon<CDouble>.Linspace(start: lo, stop: hi, n: UInt(N))
+                    ecapsnil = linspace.reversed()
+                    domnu = unmod.reversed()
+                }
+
+                fit("computes correctly") {
+                    let a: UInt = linspace.imaxmag()
+                    let b: UInt = ecapsnil.imaxmag()
+                    expect(a).to(equal(UInt(N - 1)))
+                    expect(b).to(equal(0))
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = linspace.imaxmag()
+                    _ = ecapsnil.imaxmag()
+                    for idx in 0 ..< N {
+                        expect(linspace[idx]).to(equal(unmod[idx]))
+                        expect(ecapsnil[idx]).to(equal(domnu[idx]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".imaxmag")
+        
+        // MARK: .minmax
+        describe(".minmax") {
             context("on simple data") {
                 let big: CDouble = 17.9
                 let elms: [CDouble] = [-big, 2, -3, 0, 5, big]
@@ -85,15 +150,22 @@ class DCCDSpec: QuickSpec {
                 } //fit("computes correctly")
                 
                 fit("leaves original") {
-                    let mm0 = dc0.minmax()
+                    _ = dc0.minmax()
                     for (a, b) in zip(dc0, elms) {
                         expect(a) == b
                     }
-                    
                 } //fit("leaves original")
-                
+
+                fit("sugared versions work") {
+                    expect(dc0.min()).to(equal(-big))
+                    expect(dc0.imin()).to(equal(0))
+                    expect(dc0.max()).to(equal(big))
+                    expect(dc0.imax()).to(equal(5))
+                }
+
             } // context("on simple data")
-        } //describe("<#desc#>")
+        } //describe(".minmax")
+
         // MARK: .scale
         describe(".scale") {
             context("on simple data") {
@@ -229,29 +301,31 @@ class DCCDSpec: QuickSpec {
         
         // MARK: .deepcopy
         describe(".deepcopy") {
-            var ecapsnil:DataCon<CDouble>?
             context("of linspace") {
-
-                beforeEach {
-                    linspace = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
-                    ecapsnil = linspace!.deepcopy()
+                let N:Int = 4444
+                let lo: CDouble = -523.8
+                let hi: CDouble = 1999.1919
+                beforeEach() {
+                    linspace = DataCon<CDouble>.Linspace(start: lo, stop: hi, n: UInt(N))
+                    unmod = DataCon<CDouble>.Linspace(start: lo, stop: hi, n: UInt(N))
                 }
 
                 fit("has correct element count") {
-                    expect(linspace!.count).to(equal(ecapsnil!.count))
-                    
+                    ecapsnil = linspace.deepcopy()
+                    expect(linspace.count).to(equal(UInt(N)))
                 } //fit("has correct element count")
 
                 fit("elements are copied correctly") {
-                    for (a, b) in zip(linspace!, ecapsnil!) {
+                    ecapsnil = linspace.deepcopy()
+                    for (a, b) in zip(linspace, ecapsnil) {
                         expect(a).to(equal(b))
                     }
                 } // fit("elements are copied correctly")
 
                 fit("copy is deep") {
-                    let truth: CDouble = ecapsnil![0]
-                    linspace![0] = 27
-                    expect(ecapsnil![0]).to(equal(truth))
+                    let truth: CDouble = ecapsnil[0]
+                    linspace[0] = 27
+                    expect(ecapsnil[0]).to(equal(truth))
                 } // fit("copy is deep")
 
             } // context("of linspace")
@@ -282,13 +356,16 @@ class DCCDSpec: QuickSpec {
 
         // MARK: .diff
         describe(".diff") {
-            linspace = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
-            let unmod = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
 
             context("on simple data") {
-                let d = linspace!.diff()
+                let d = linspace.diff()
                 let d_truth: CDouble = 10.0/24.0
 
+                beforeEach() {
+                    linspace = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
+                    unmod = DataCon<CDouble>.Linspace(start: 0, stop: 10, n: 25)
+                }
+                
                 fit("has correct number of elements") {
                     expect(d.count) == 24
                 } // fit("has correct number of elements")
@@ -300,7 +377,7 @@ class DCCDSpec: QuickSpec {
                 } // fit(""computes correctly")
                 
                 fit ("leaves original") {
-                    for (a, b) in zip(linspace!, unmod) {
+                    for (a, b) in zip(linspace, unmod) {
                         expect(a).to(equal(b))
                     }
                 } // fit ("leaves original")

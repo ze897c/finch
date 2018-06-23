@@ -72,9 +72,8 @@ class DCCDSugarSpec: QuickSpec {
                         expect(self.dc0[idx]).to(beCloseTo(a * self.v0[idx], within: CDouble.small))
                         expect(self.dc1[idx]).to(beCloseTo(a * self.v1[idx], within: CDouble.small))
                     }
-
                 } //fit("computes correctly")
-                
+
             } // context("on simple data")
         } //describe("compound mul operator with CDouble")
         

@@ -464,6 +464,19 @@ extension DataCon where DataCon.Element == CDouble {
         return DataCon<CDouble>(initializedPointer: newdata, capacity: UInt(N))
     }
 
+    func reversed(_ n: UInt? = nil, _ offset: UInt? = nil, _ stride: UInt? = nil) -> DataCon<CDouble> {
+        let num = Int(n ?? count)
+        let xstart = Int(offset ?? 0)
+        let xstr = Int(stride ?? 1)
+        
+        let rex = DataCon<CDouble>(capacity: UInt(num))
+        for idx in 0 ..< num {
+            let xdx = xstart + idx * xstr
+            rex[num - 1 - idx] = data[xdx]
+        }
+        return rex
+    }
+    
     // MARK: copies/inits
     
     func deepcopy() -> DataCon<CDouble>

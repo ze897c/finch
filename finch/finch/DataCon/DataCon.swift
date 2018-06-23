@@ -128,6 +128,7 @@ class DataCon<Element: DaCoEl>
         startIndex = 0
         data = UnsafeMutablePointer<Element>.allocate(capacity: N)
         //data.initialize(repeating: start, count: N)
+        data[0] = start
         data[N - 1] = stop
         var x = start + d
         for idx in 1 ..< (N - 1) {
