@@ -49,7 +49,36 @@ class DCCDSpec: QuickSpec {
         let sqrt2: CDouble = sqrt(2.0)
         
         _ = "this a long drive for someone with nothing to think about"
-        
+        // MARK: .map with DataCon
+        describe(".map with DataCon") {
+            context("on simple data") {
+                let f =  {(x: CDouble, y: CDouble) -> CDouble in return x * y}
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                    dc1 = DataCon(elements: v1)
+                }
+                
+                fit("computes correctly") {
+                    dc2 = dc0.map(f: f, dc1)
+                    expect(dc2.count).to(equal(UInt(v0.count)))
+                    for idx in 0 ..< Int(v0.count) {
+                        let truth = v0[idx] * v1[idx]
+                        expect(dc2[idx]).to(beCloseTo(truth, within: CDouble.small))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    dc2 = dc0.map(f: f, dc1)
+                    expect(dc0.count).to(equal(UInt(v0.count)))
+                    for idx in 0 ..< Int(v0.count) {
+                        let truth = v0[idx]
+                        expect(dc0[idx]).to(beCloseTo(truth, within: CDouble.small))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".map with DataCon")
+
         // MARK: .reversed
         describe(".reversed") {
             context("on simple data") {
@@ -82,7 +111,7 @@ class DCCDSpec: QuickSpec {
         // MARK: .imaxmag
         describe(".imaxmag") {
             context("on simple data") {
-                let N:Int = 4444
+                let N:Int = 44
                 let lo: CDouble = -523.8
                 let hi: CDouble = 1999.1919
                 beforeEach() {

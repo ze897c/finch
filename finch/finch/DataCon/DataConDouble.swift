@@ -158,7 +158,7 @@ extension DataCon where DataCon.Element == CDouble {
     ///   - xoffset: UInt; offset for _x_
     ///   - ystride: UInt; stide for _y_
     ///   - yoffset: UInt; offset for _y_
-    func mul(_ y: CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) -> DataCon<Double>
+    func mul(_ y: CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) -> DataCon<CDouble>
     {
         let num = Int(n ?? count)
         let xstart = Int(xoffset ?? 0)
@@ -201,7 +201,7 @@ extension DataCon where DataCon.Element == CDouble {
     ///   - xoffset: UInt; offset for _x_
     ///   - ystride: UInt; stide for _y_
     ///   - yoffset: UInt; offset for _y_
-    func mul(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<Double>
+    func mul(_ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<CDouble>
     {
         let num = Int(n ?? count)
         let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
@@ -213,8 +213,12 @@ extension DataCon where DataCon.Element == CDouble {
         }
         return rex
     }
+
+    // useful?
+    //func vU512Divide(_ numerator: UnsafePointer<vU512>, _ divisor: UnsafePointer<vU512>, _ result: UnsafeMutablePointer<vU512>, _ remainder: UnsafeMutablePointer<vU512>?)
     
     // MARK: map // TODO: add tests
+    // TODO: generic DataCon has mapTo ... which is a map_inplace...downselect
     
     /// f(x, y) -> x
     /// where _x_ is the instance
@@ -249,7 +253,7 @@ extension DataCon where DataCon.Element == CDouble {
     ///   - ystride: UInt; stide for _y_
     ///   - yoffset: UInt; offset for _y_
     ///   - f: (CDouble, CDouble) -> CDouble; function to map
-    func map(f: (CDouble, CDouble) -> CDouble, _ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<Double>
+    func map(f: (CDouble, CDouble) -> CDouble, _ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil) -> DataCon<CDouble>
     {
         let num = Int(n ?? count)
         let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
@@ -261,6 +265,50 @@ extension DataCon where DataCon.Element == CDouble {
         }
         return rex
     }
+    
+    // >>>>>>>>>>>>>>>>
+    
+    /// f(x) -> x
+    /// where _x_ is the instance
+    /// - Parameters:
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - f: (CDouble) -> CDouble; function to map
+    func map_inplace(f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil)
+    {
+        let num = Int(n ?? count)
+        let xstart = Int(xoffset ?? 0)
+        let xstr = Int(xstride ?? 1)
+        for idx in 0 ..< num {
+            let xdx = xstart + idx * xstr
+            data[xdx] = f(data[xdx])
+        }
+    }
+    
+    /// Return: f(x)
+    /// where _x_ is the instance
+    /// options for fine control of offset and stride
+    /// - Parameters:
+    ///   - y: DataCon<CDouble>: _y_
+    ///   - n: UInt; how many elements
+    ///   - xstride: UInt; stide for _x_
+    ///   - xoffset: UInt; offset for _x_
+    ///   - f: (CDouble) -> CDouble; function to map
+    func map(f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) -> DataCon<CDouble>
+    {
+        let num = Int(n ?? count)
+        let xstart = Int(xoffset ?? 0)
+        let xstr = Int(xstride ?? 1)
+        let rex = DataCon<CDouble>(capacity: UInt(num))
+        for idx in 0 ..< num {
+            let xdx = xstart + idx * xstr
+            rex[xdx] = f(data[xdx])
+        }
+        return rex
+    }
+    
+    // <<<<<<<<<<<<<<<<
 
     // MARK: add
 
