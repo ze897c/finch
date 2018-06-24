@@ -115,6 +115,27 @@ class DataCon<Element: DaCoEl>
         return rex
     }
 
+    /// init with singly indexed function
+    init(memview: VectorMemViewProtocol, f: (UInt) ->Element) {
+        count = memview.required_capacity()
+        startIndex = 0
+        data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
+        for idx in 0 ..< count {
+            data[Int(memview.data_index(idx))] = f(idx)
+        }
+    }
+    
+    /// init with singly indexed function
+    init(memview: MatrixMemViewProtocol, f: (UInt, UInt) ->Element) {
+        count = memview.required_capacity()
+        startIndex = 0
+        data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
+        for idx in 0 ..< memview.shape.nrows {
+            for jdx in 0 ..< memview.shape.ncols {
+                data[Int(memview.data_index(idx, jdx))] = f(idx, jdx)
+            }
+        }
+    }
 
     /// linspace init
     /// y = linspace(start, stop, step) generates n points.
@@ -143,7 +164,6 @@ class DataCon<Element: DaCoEl>
     init(capacity: UInt) {
         count = capacity
         data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
-        //data.initialize(repeating: rep, count: capacity)
         startIndex = 0
     }
 
@@ -186,12 +206,6 @@ class DataCon<Element: DaCoEl>
     /// var dc: DataCon<Double> = [1, 2, 3]
     required convenience init(arrayLiteral elms: Element...) {
         self.init(elements: elms)
-////        data = ContiguousArray<Element>(elements)
-//        data.initialize(repeating: Element.Zero, count: elms.count)
-//        for (ix, x) in elms.enumerated() {
-//            data[ix] = x
-//        }
-//        startIndex = 0
     }
 
     init(elements elms: [Element]) {
@@ -203,12 +217,6 @@ class DataCon<Element: DaCoEl>
             data[ix] = x
         }
         startIndex = 0
-        
-        // KILL:
-        // still don't get Swift approach to pointers
-//        elms.withUnsafeBytes { src in
-//            data.initialize(from: src, count: N)
-//        }
     }
 
     // TODO: "required convenience" seems slightly at cross purposes...?
@@ -216,7 +224,7 @@ class DataCon<Element: DaCoEl>
         let strings: [String] = description.removingDelimiters().components(separatedBy: String.VectorSeparators)
         let elms = strings.filter{(x: String)->Bool in return x.count > 0}.map{(x: String)->Element in return Element(x)!}
 
-        self.init(elements: elms)  // seems to cause core dump
+        self.init(elements: elms)
     }
     
     // Higher order functions -- maps, reduces, filters, etc. : behavior of these should reflect what is expected of the class
@@ -315,7 +323,6 @@ class DataCon<Element: DaCoEl>
     }
     
 
-    
     // static conveniences
     
     /// linspace
@@ -341,6 +348,8 @@ class DataCon<Element: DaCoEl>
         }
         return rex
     }
+    // do I need an "embedded" Eye? embedded as in the matrix represented is
+    // within a larger container
     public static func UnitVector(_ n: UInt, in_dimension N: UInt=3) -> DataCon? {
         guard n < N else {
             return nil
@@ -363,7 +372,7 @@ struct DataConIterator<Element:DaCoEl>
         self.daco = daco
         idx = self.daco.startIndex
     }
-    
+
     mutating func next() -> Element? {
         guard idx <= daco.endIndex else {
             return nil
@@ -371,5 +380,5 @@ struct DataConIterator<Element:DaCoEl>
         defer { idx += 1 }
         return daco[idx]
     }
-    
+
 }

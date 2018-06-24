@@ -19,6 +19,9 @@
 		C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0320CB0BDC00D4CE21 /* finchTests.swift */; };
 		C9348C0620CB0BDC00D4CE21 /* finch.h in Headers */ = {isa = PBXBuildFile; fileRef = C9348BF820CB0BDC00D4CE21 /* finch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */; };
+		C979D2AE20DF1BBB00EB7C3F /* MemViewProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */; };
+		C979D2B420DF218E00EB7C3F /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979D2B320DF218E00EB7C3F /* Matrix.swift */; };
+		C979D2B620DF367F00EB7C3F /* MemViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979D2B520DF367F00EB7C3F /* MemViewTests.swift */; };
 		C985B79920CEDE24003B923C /* Exceptions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79820CEDE24003B923C /* Exceptions.swift */; };
 		C985B79B20CEF235003B923C /* Ring.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79A20CEF235003B923C /* Ring.swift */; };
 		C985B79D20CEF29A003B923C /* Group.swift in Sources */ = {isa = PBXBuildFile; fileRef = C985B79C20CEF29A003B923C /* Group.swift */; };
@@ -78,6 +81,9 @@
 		C9348C0320CB0BDC00D4CE21 /* finchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finchTests.swift; sourceTree = "<group>"; };
 		C9348C0520CB0BDC00D4CE21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCon.swift; sourceTree = "<group>"; };
+		C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemViewProtocols.swift; sourceTree = "<group>"; };
+		C979D2B320DF218E00EB7C3F /* Matrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
+		C979D2B520DF367F00EB7C3F /* MemViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemViewTests.swift; sourceTree = "<group>"; };
 		C985B79820CEDE24003B923C /* Exceptions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Exceptions.swift; sourceTree = "<group>"; };
 		C985B79A20CEF235003B923C /* Ring.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ring.swift; sourceTree = "<group>"; };
 		C985B79C20CEF29A003B923C /* Group.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Group.swift; sourceTree = "<group>"; };
@@ -209,6 +215,8 @@
 				C9106E2920D8566E0053AB1C /* DataCon */,
 				C9106E2B20D856920053AB1C /* Utils */,
 				C9106E2A20D856810053AB1C /* Axiomatic */,
+				C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */,
+				C979D2B320DF218E00EB7C3F /* Matrix.swift */,
 			);
 			path = finch;
 			sourceTree = "<group>";
@@ -224,6 +232,7 @@
 				C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */,
 				C9D72E8E20DB155B00A4739A /* DCCDSpec.swift */,
 				C9978FDB20DC7EBA00B88A0B /* DCCDSugarSpec.swift */,
+				C979D2B520DF367F00EB7C3F /* MemViewTests.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -380,7 +389,9 @@
 				C985B79B20CEF235003B923C /* Ring.swift in Sources */,
 				C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */,
 				C985B79920CEDE24003B923C /* Exceptions.swift in Sources */,
+				C979D2B420DF218E00EB7C3F /* Matrix.swift in Sources */,
 				C985B79D20CEF29A003B923C /* Group.swift in Sources */,
+				C979D2AE20DF1BBB00EB7C3F /* MemViewProtocols.swift in Sources */,
 				C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */,
 				C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */,
 				C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */,
@@ -393,6 +404,7 @@
 			files = (
 				C9D72E8F20DB155B00A4739A /* DCCDSpec.swift in Sources */,
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
+				C979D2B620DF367F00EB7C3F /* MemViewTests.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
 				C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */,
 				C99361CB20CE066900A36D2A /* chickenTests.swift in Sources */,

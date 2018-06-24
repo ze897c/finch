@@ -307,8 +307,6 @@ extension DataCon where DataCon.Element == CDouble {
         }
         return rex
     }
-    
-    // <<<<<<<<<<<<<<<<
 
     // MARK: add
 
@@ -549,7 +547,7 @@ extension DataCon where DataCon.Element == CDouble {
         catlas_cset(Int32(rex.count), &v, rex.data, 1)
         return rex
     }
-    
+
     /// return container filled with 1.0s
     /// Params -
     /// count: UInt
