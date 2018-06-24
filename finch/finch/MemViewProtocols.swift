@@ -66,6 +66,12 @@ struct MatrixMemView: MatrixMemViewProtocol {
     let dataoff: UInt
     let datastd: (row_stride: UInt, col_stride: UInt)
     
+    init(_ ns: [UInt], offset: UInt, strides: [UInt]) {
+        shape = (ns[0], ns[1])
+        dataoff = offset
+        datastd = (strides[0], strides[1])
+    }
+    
     init(sq_size: UInt) {
         shape = (sq_size, sq_size)
         dataoff = 0
