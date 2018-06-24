@@ -49,6 +49,58 @@ class DCCDSpec: QuickSpec {
         let sqrt2: CDouble = sqrt(2.0)
         
         _ = "this a long drive for someone with nothing to think about"
+
+        // MARK: .map_inplace with CDouble
+        describe(".map_inplace with CDouble") {
+            context("on simple data") {
+                let y: CDouble = -721.765
+                let f =  {(x: CDouble) -> CDouble in return x * y}
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                }
+                
+                fit("computes correctly") {
+                    dc0.map_inplace(f: f)
+                    expect(dc0.count).to(equal(UInt(v0.count)))
+                    for idx in 0 ..< Int(v0.count) {
+                        let truth = v0[idx] * y
+                        expect(dc0[idx]).to(beCloseTo(truth, within: CDouble.small))
+                    }
+                } //fit("computes correctly")
+            } // context("on simple data")
+        } //describe(".map_inplace with CDouble")
+
+        
+        // MARK: .map_inplace with DataCon
+        describe(".map_inplace with DataCon") {
+            context("on simple data") {
+                let f =  {(x: CDouble, y: CDouble) -> CDouble in return x * y}
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                    dc1 = DataCon(elements: v1)
+                }
+                
+                fit("computes correctly") {
+                    dc0.map_inplace(f: f, dc1)
+                    expect(dc0.count).to(equal(UInt(v0.count)))
+                    for idx in 0 ..< Int(v0.count) {
+                        let truth = v0[idx] * v1[idx]
+                        expect(dc0[idx]).to(beCloseTo(truth, within: CDouble.small))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    dc0.map_inplace(f: f, dc1)
+                    expect(dc1.count).to(equal(UInt(v0.count)))
+                    for idx in 0 ..< Int(v0.count) {
+                        let truth = v1[idx]
+                        expect(dc1[idx]).to(beCloseTo(truth, within: CDouble.small))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe(".map_inplace with DataCon")
+        
         // MARK: .map with DataCon
         describe(".map with DataCon") {
             context("on simple data") {
@@ -344,7 +396,7 @@ class DCCDSpec: QuickSpec {
                     expect(linspace.count).to(equal(UInt(N)))
                 } //fit("has correct element count")
 
-                fit("elements are copied correctly") {
+                fit("copies elements correctly") {
                     ecapsnil = linspace.deepcopy()
                     for (a, b) in zip(linspace, ecapsnil) {
                         expect(a).to(equal(b))
