@@ -536,15 +536,24 @@ extension DataCon where DataCon.Element == CDouble {
         return rex
     }
 
+    /// copy _n_ elements _from_
+    func set(from: DataCon<CDouble>, n: UInt? = nil, xoffset: UInt? = nil, xstride: UInt? = nil, yoffset: UInt? = nil, ystride: UInt? = nil) {
+        let num = Int32(n ?? UInt(min(count, from.count)))
+        let xptr = data + Int(xoffset ?? 0)
+        let xstr = Int32(xstride ?? 1)
+        let yptr = data + Int(yoffset ?? 0)
+        let ystr = Int32(ystride ?? 1)
+        cblas_dcopy(num, xptr, xstr, yptr, ystr)
+    }
+
     /// return container filled with given *Double* value
     /// Params -
     /// val: Double
     /// count: UInt
-    static func BLASConstant( _ val: CDouble, _ n: UInt) -> DataCon<Double>
+    static func BLASConstant(_ val: CDouble, _ n: UInt) -> DataCon<Double>
     {
         let rex: DataCon<CDouble> = DataCon(capacity: n)
-        var v = CDouble(val)
-        catlas_cset(Int32(rex.count), &v, rex.data, 1)
+        catlas_dset(Int32(rex.count), val, rex.data, 1)
         return rex
     }
 

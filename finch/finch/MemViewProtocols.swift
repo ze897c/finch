@@ -61,6 +61,9 @@ extension MatrixMemViewProtocol {
     }
 }
 
+
+// assume non-symetric, dense, _etc_
+// and name symetric, sparse, _etc_ appropriately
 struct MatrixMemView: MatrixMemViewProtocol {
     let shape: (nrows: UInt, ncols: UInt)
     let dataoff: UInt
@@ -81,6 +84,24 @@ struct MatrixMemView: MatrixMemViewProtocol {
         shape = (ns[0], ns[1])
         dataoff = 0
         datastd = (1, ns[0])
+    }
+    init(_ mv: MatrixMemView) {
+        shape = mv.shape
+        dataoff = mv.dataoff
+        datastd = mv.datastd
+    }
+
+    //MARK: accessors
+
+    /// return a view of the _idx_-th row of this view
+    func row(_ idx: UInt) -> MatrixMemView {
+        let off: UInt = data_index(idx, 0)
+        return MatrixMemView([1, shape.ncols], offset: off, strides: [datastd.row_stride, datastd.col_stride])
+    }
+    /// return a view of the _idx_-th col of this view
+    func col(_ idx: UInt) -> MatrixMemView {
+        let off: UInt = data_index(0, idx)
+        return MatrixMemView([shape.nrows, 1], offset: off, strides: [datastd.row_stride, datastd.col_stride])
     }
 }
 

@@ -114,7 +114,7 @@ class DataCon<Element: DaCoEl>
         //memcpy(data, rex.data, Int(self.count))
         return rex
     }
-
+    
     /// init with singly indexed function
     init(memview: VectorMemViewProtocol, f: (UInt) ->Element) {
         count = memview.required_capacity()

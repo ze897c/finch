@@ -11,4 +11,5 @@ import Foundation
 enum Exceptions : Error {
     case OutOfBoundsException
     case DivideByZero
+    case ShapeMismatch
 }
