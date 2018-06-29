@@ -80,4 +80,13 @@ struct Matrix {
         datacon = data_con
         memview = mem_view
     }
+    /// simple ctors when only shape is perscribed
+    init(_ n: UInt) {
+        memview = MatrixMemView(sq_size: n)
+        datacon = DataCon<CDouble>(capacity: n * n)
+    }
+    init(_ nrows: UInt, _ ncols: UInt) {
+        memview = MatrixMemView([nrows, ncols])
+        datacon = DataCon<CDouble>(capacity: nrows * ncols)
+    }
 }
