@@ -43,7 +43,7 @@ class MatrixSpec: QuickSpec {
                 fit("works in simple cases") {
                     for n in UInt(1) ..< UInt(10) {
                         let A = Matrix(n)
-                        expect(A.shape).to(equal((nrows: n, ncols: n)))
+                        expect(A.shape.nrows).to(equal(n))
                     }
                 } //fit("works in simple cases")
                 
@@ -51,11 +51,13 @@ class MatrixSpec: QuickSpec {
             
             context("deepcopy ctor") {
                 
-                fit("<#fit#>") {
-                    <#test code#>
-                } //fit("<#fit#>")
+                fit("creates deep copy") {
+                    let A = Matrix(3)
+                    let B = Matrix(A)
+                    
+                } //fit("creates deep copy")
                 
-            } // context("<#ctx#>")
+            } // context("deepcopy ctor")
         } //describe("init")
     } // spec()
 } // class MatrixSpec

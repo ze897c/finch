@@ -70,12 +70,12 @@ class MatrixMemViewSpec: QuickSpec {
             context("default square") {
 
                 fit("is right type") {
-                    let mmv = MatrixMemView(sq_size: 3)
+                    let mmv = MatrixMemView(3)
                     expect(mmv).to(beAKindOf(MatrixMemView.self))
-                } // fit("<#fit#>")
+                } // fit("is right type")
                 fit("has right properties") {
                     for n in 1 ..< UInt(13) {
-                        let mmv = MatrixMemView(sq_size: n)
+                        let mmv = MatrixMemView(n)
                         expect(mmv.shape.nrows).to(equal(n))
                         expect(mmv.shape.ncols).to(equal(n))
                         expect(mmv.dataoff).to(equal(0))
@@ -83,7 +83,7 @@ class MatrixMemViewSpec: QuickSpec {
                         expect(mmv.datastd.col_stride).to(equal(n))
                         expect(mmv.required_capacity()).to(equal(n * n))
                     }
-                } //
+                } // fit("is right type")
                 
             } // context("default square")
         } //describe("int")

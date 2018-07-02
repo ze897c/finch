@@ -82,11 +82,21 @@ struct Matrix {
     }
     /// simple ctors when only shape is perscribed
     init(_ n: UInt) {
-        memview = MatrixMemView(sq_size: n)
+        memview = MatrixMemView(n)
         datacon = DataCon<CDouble>(capacity: n * n)
     }
     init(_ nrows: UInt, _ ncols: UInt) {
         memview = MatrixMemView([nrows, ncols])
         datacon = DataCon<CDouble>(capacity: nrows * ncols)
+    }
+    
+    // MARK: static ctors
+    static func Eye(_ n: UInt) -> Matrix {
+        let dc = DataCon<CDouble>.BLASConstant(0.0, n * n)
+        let rex = Matrix(dc, MatrixMemView(n))
+        for idx in 0 ..< n {
+            rex.datacon[DataCon<Element>.Index(idx * n)] = 1.0
+        }
+        return rex
     }
 }

@@ -75,7 +75,7 @@ struct MatrixMemView: MatrixMemViewProtocol {
         datastd = (strides[0], strides[1])
     }
     
-    init(sq_size: UInt) {
+    init(_ sq_size: UInt) {
         shape = (sq_size, sq_size)
         dataoff = 0
         datastd = (1, sq_size)
