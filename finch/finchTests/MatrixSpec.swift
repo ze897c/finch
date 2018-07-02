@@ -17,26 +17,55 @@ import os.log
 class MatrixSpec: QuickSpec {
     
     override func spec() {
-        /*
-         init(_ n: UInt) {
-            memview = MatrixMemView(sq_size: n)
-            datacon = DataCon<CDouble>(capacity: n * n)
-         }
-         init(_ nrows: UInt, _ ncols: UInt) {
-            memview = MatrixMemView([nrows, ncols])
-            datacon = DataCon<CDouble>(capacity: nrows * ncols)
-         }
-         
-         init(_ x: Matrix) {
-            memview = MatrixMemView(x.memview)
-            datacon = x.datacon.deepcopy()
-         }
-         init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView) {
-            datacon = data_con
-            memview = mem_view
-         }
-         */
-        
+        // MARK: static builder
+        describe("static builder") {
+            
+            context("Eye") {
+                fit("builds correctly") {
+                    for n in UInt(1) ..< UInt(5) {
+                        let A = Matrix.Eye(n)
+                        expect(A.shape.nrows).to(equal(n))
+                        expect(A.shape.ncols).to(equal(n))
+                        for idx in UInt(0) ..< n * n {
+                            if idx % n == 0 {
+                                expect(A.datacon[DataCon<CDouble>.Index(idx)]).to(equal(1.0))
+                            } else {
+                                expect(A.datacon[DataCon<CDouble>.Index(idx)]).to(equal(0.0))
+                            }
+                        }
+                    }
+                } //fit("works for square")
+            } // context("Eye")
+            
+            context("Zeros") {
+                
+                fit("works for square") {
+                    for n in UInt(1) ..< UInt(5) {
+                        let A = Matrix.Zeros(n)
+                        expect(A.shape.nrows).to(equal(n))
+                        expect(A.shape.ncols).to(equal(n))
+                        for idx in UInt(0) ..< n * n {
+                            expect(A.datacon[DataCon<CDouble>.Index(idx)]).to(equal(0.0))
+                        }
+                    }
+                } //fit("works for square")
+                
+                fit("works for general") {
+                    for n in UInt(1) ..< UInt(5) {
+                        for m in UInt(1) ..< UInt(5) {
+                            let A = Matrix.Zeros(m, n)
+                            expect(A.shape.nrows).to(equal(m))
+                            expect(A.shape.ncols).to(equal(n))
+                            for idx in UInt(0) ..< m * n {
+                                expect(A.datacon[DataCon<CDouble>.Index(idx)]).to(equal(0.0))
+                            }
+                        }
+                    }
+                } //fit("works for general")
+                
+            } // context("on simple data")
+        } //describe("static builder")
+
         // MARK: init
         describe("init") {
             context("square matrix ctor") {
@@ -44,6 +73,8 @@ class MatrixSpec: QuickSpec {
                     for n in UInt(1) ..< UInt(10) {
                         let A = Matrix(n)
                         expect(A.shape.nrows).to(equal(n))
+                        expect(A.shape.ncols).to(equal(n))
+                        expect(A.datacon.count).to(equal(n * n))
                     }
                 } //fit("works in simple cases")
                 
@@ -51,10 +82,23 @@ class MatrixSpec: QuickSpec {
             
             context("deepcopy ctor") {
                 
-                fit("creates deep copy") {
+                fit("creates copy") {
                     let A = Matrix(3)
                     let B = Matrix(A)
-                    
+                    expect(A.shape.nrows).to(equal(B.shape.nrows))
+                    expect(A.shape.ncols).to(equal(B.shape.ncols))
+                    for idx in 0 ..< 9 {
+                        expect(B.datacon[idx]).to(equal(A.datacon[idx]))
+                    }
+                } //fit("creates copy")
+                
+                fit("creates deep copy") {
+                    let newval: CDouble = 1999.99
+                    let A = Matrix(3)
+                    let B = Matrix(A)
+                    B.datacon[0] = newval
+                    expect(B.datacon[0]).to(equal(newval))
+                    expect(A.datacon[0]).toNot(equal(newval))
                 } //fit("creates deep copy")
                 
             } // context("deepcopy ctor")

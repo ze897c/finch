@@ -91,12 +91,27 @@ struct Matrix {
     }
     
     // MARK: static ctors
+    
+    /// identity *Matrix* of size _n_
     static func Eye(_ n: UInt) -> Matrix {
-        let dc = DataCon<CDouble>.BLASConstant(0.0, n * n)
-        let rex = Matrix(dc, MatrixMemView(n))
+        let rex = Matrix.Zeros(n)
         for idx in 0 ..< n {
             rex.datacon[DataCon<Element>.Index(idx * n)] = 1.0
         }
+        return rex
+    }
+
+    /// square *Matrix* of size _n_ of all zeros
+    static func Zeros(_ n: UInt) -> Matrix {
+        let dc = DataCon<CDouble>.BLASConstant(0.0, n * n)
+        let rex = Matrix(dc, MatrixMemView(n))
+        return rex
+    }
+    
+    /// square *Matrix* of size _m x n_ of all zeros
+    static func Zeros(_ m: UInt, _ n: UInt) -> Matrix {
+        let dc = DataCon<CDouble>.BLASConstant(0.0, m * n)
+        let rex = Matrix(dc, MatrixMemView([m, n]))
         return rex
     }
 }
