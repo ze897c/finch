@@ -17,7 +17,49 @@ import os.log
 class MatrixSpec: QuickSpec {
     
     override func spec() {
+        // MARK: subscript
+        describe("subscript") {
+            var A: Matrix? = nil
+            context("when getting from 3x2") {
 
+                beforeEach() {
+                    A = Matrix([[1, 2, 3], [4, 5, 6]])!
+                }
+                
+                fit("gets Matrix") {
+                    let r0 = A![0]
+                    expect(r0).to(beAKindOf(Matrix.self))
+                    let r1 = A![1]
+                    expect(r1).to(beAKindOf(Matrix.self))
+                } //fit("gets Matrix")
+                
+                fit("gets row") {
+                    let r0 = A![0]
+                    expect(r0?.isRowVector).to(beTrue())
+                    let r1 = A![1]
+                    expect(r1?.isRowVector).to(beTrue())
+                } // fit("gets row")
+                
+                fit("leaves original") {
+                    _ = A![0]
+                    _ = A![1]
+                    expect(A!.datacon[0]).to(equal(1))
+                    expect(A!.datacon[1]).to(equal(4))
+                    expect(A!.datacon[2]).to(equal(2))
+                    expect(A!.datacon[3]).to(equal(5))
+                    expect(A!.datacon[4]).to(equal(3))
+                    expect(A!.datacon[5]).to(equal(6))
+                } // fit("leaves original")
+                
+                fit("is view into parent") {
+                    let r0 = A![0]
+                    let r1 = A![1]
+                    expect(r0?.datacon).to(beIdenticalTo(A!.datacon))
+                    expect(r1?.datacon).to(beIdenticalTo(A!.datacon))
+                } // fit("is view into parent")
+                
+            } // context("on simple data")
+        } //describe("subscript")
         // MARK: static builder
         describe("static builder") {
 
