@@ -70,6 +70,18 @@ struct MatrixMemView: MatrixMemViewProtocol {
     let dataoff: UInt
     let datastd: (row_stride: UInt, col_stride: UInt)
     
+    var row_stride: UInt {
+        get {
+            return datastd.row_stride
+        }
+    }
+
+    var col_stride: UInt {
+        get {
+            return datastd.col_stride
+        }
+    }
+
     init(_ ns: [UInt], offset: UInt, strides: [UInt]) {
         shape = (ns[0], ns[1])
         dataoff = offset

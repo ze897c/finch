@@ -17,10 +17,16 @@ import os.log
 class MatrixSpec: QuickSpec {
     
     override func spec() {
+        
         // MARK: subscript
         describe("subscript") {
             var A: Matrix? = nil
-            context("when getting from 3x2") {
+            
+            context("") {
+                
+            }
+            
+            context("when getting row from 3x2") {
 
                 beforeEach() {
                     A = Matrix([[1, 2, 3], [4, 5, 6]])!
@@ -54,12 +60,22 @@ class MatrixSpec: QuickSpec {
                 fit("is view into parent") {
                     let r0 = A![0]
                     let r1 = A![1]
-                    expect(r0?.datacon).to(beIdenticalTo(A!.datacon))
-                    expect(r1?.datacon).to(beIdenticalTo(A!.datacon))
+                    expect(r0!.datacon).to(beIdenticalTo(A!.datacon))
+                    expect(r1!.datacon).to(beIdenticalTo(A!.datacon))
                 } // fit("is view into parent")
                 
-            } // context("on simple data")
+                fit("has correct memview details") {
+                    let r0 = A![0]
+                    let r1 = A![1]
+                    expect(r0?.memview.dataoff).to(equal(0))
+                    expect(r1?.memview.dataoff).to(equal(1))
+                    expect(r0?.memview.row_stride).to(equal(A?.memview.row_stride))
+                    expect(r0?.memview.col_stride).to(equal(A?.memview.col_stride))
+                } // fit("has correct memview details")
+                
+            } // context("when getting row from 3x2")
         } //describe("subscript")
+
         // MARK: static builder
         describe("static builder") {
 
@@ -169,16 +185,47 @@ class MatrixSpec: QuickSpec {
             } // context("indexed function ctor")
             
             context("square matrix ctor") {
-                fit("works in simple cases") {
+                fit("works for n < 10") {
                     for n in UInt(1) ..< UInt(10) {
                         let A = Matrix(n)
                         expect(A.shape.nrows).to(equal(n))
                         expect(A.shape.ncols).to(equal(n))
-                        expect(A.datacon.count).to(equal(n * n))
+                        
                     }
-                } //fit("works in simple cases")
+                } //fit("works for n < 10")
                 
+                fit("has correct memview details") {
+                    for n in UInt(1) ..< UInt(10) {
+                        let A = Matrix(n)
+                        expect(A.datacon.count).to(equal(n * n))
+                        expect(A.memview.row_stride).to(equal(1))
+                        expect(A.memview.col_stride).to(equal(n))
+                    }
+                } // fit("has correct memview details")
+
             } // context("square matrix ctor")
+            
+            context("general init ctor") {
+                fit("inits correct shape") {
+                    for m in UInt(1) ..< UInt(5) {
+                        for n in UInt(1) ..< UInt(5) {
+                            let A = Matrix(m, n)
+                            expect(A.shape.nrows).to(equal(m))
+                            expect(A.shape.ncols).to(equal(n))
+                        }
+                    }
+                } // fit("inits correct shape")
+                fit("has correct memview details") {
+                    for m in UInt(1) ..< UInt(5) {
+                        for n in UInt(1) ..< UInt(5) {
+                            let A = Matrix(m, n)
+                            expect(A.datacon.count).to(equal(m * n))
+                            expect(A.memview.row_stride).to(equal(1))
+                            expect(A.memview.col_stride).to(equal(m))
+                        }
+                    }
+                } // fit("has correct memview details")
+            } // context("general init ctor")
             
             context("deepcopy ctor") {
                 
