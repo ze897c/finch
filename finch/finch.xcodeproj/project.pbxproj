@@ -10,6 +10,8 @@
 		C907579B20CDAB14001B2145 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C907579A20CDAB14001B2145 /* Cocoa.framework */; };
 		C907579E20CDAB14001B2145 /* SourceEditorExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C907579D20CDAB14001B2145 /* SourceEditorExtension.swift */; };
 		C90757A020CDAB14001B2145 /* SourceEditorCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */; };
+		C90DD3E220EBC55500167E18 /* Vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90DD3E120EBC55500167E18 /* Vector.swift */; };
+		C90DD3E420EBD0A400167E18 /* MatrixProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C90DD3E320EBD0A400167E18 /* MatrixProtocol.swift */; };
 		C9106E2620D8560A0053AB1C /* DataConElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2520D8560A0053AB1C /* DataConElement.swift */; };
 		C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2720D856190053AB1C /* DataConDouble.swift */; };
 		C9106E2D20D857450053AB1C /* DataConDoubleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */; };
@@ -70,6 +72,8 @@
 		C907579F20CDAB14001B2145 /* SourceEditorCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceEditorCommand.swift; sourceTree = "<group>"; };
 		C90757A120CDAB14001B2145 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C90757A220CDAB14001B2145 /* openit.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = openit.entitlements; sourceTree = "<group>"; };
+		C90DD3E120EBC55500167E18 /* Vector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Vector.swift; sourceTree = "<group>"; };
+		C90DD3E320EBD0A400167E18 /* MatrixProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatrixProtocol.swift; sourceTree = "<group>"; };
 		C9106E2520D8560A0053AB1C /* DataConElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConElement.swift; sourceTree = "<group>"; };
 		C9106E2720D856190053AB1C /* DataConDouble.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConDouble.swift; sourceTree = "<group>"; };
 		C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConDoubleTest.swift; sourceTree = "<group>"; };
@@ -219,6 +223,8 @@
 				C9106E2A20D856810053AB1C /* Axiomatic */,
 				C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */,
 				C979D2B320DF218E00EB7C3F /* Matrix.swift */,
+				C90DD3E120EBC55500167E18 /* Vector.swift */,
+				C90DD3E320EBD0A400167E18 /* MatrixProtocol.swift */,
 			);
 			path = finch;
 			sourceTree = "<group>";
@@ -395,8 +401,10 @@
 				C979D2B420DF218E00EB7C3F /* Matrix.swift in Sources */,
 				C985B79D20CEF29A003B923C /* Group.swift in Sources */,
 				C979D2AE20DF1BBB00EB7C3F /* MemViewProtocols.swift in Sources */,
+				C90DD3E420EBD0A400167E18 /* MatrixProtocol.swift in Sources */,
 				C9D72E4B20D9A16000A4739A /* DatasConUInt.swift in Sources */,
 				C985B79F20CEF363003B923C /* AxiomProtocols.swift in Sources */,
+				C90DD3E220EBC55500167E18 /* Vector.swift in Sources */,
 				C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

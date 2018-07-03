@@ -1,60 +1,31 @@
 //
-//  Matrix.swift
+//  Vector.swift
 //  finch
 //
-//  Created by Matthew Patterson on 6/23/18.
+//  Created by Matthew Patterson on 7/3/18.
 //  Copyright © 2018 octeps. All rights reserved.
 //
 
 import Foundation
-
 // assumption here is Double, dense, no structural constraint
-struct Matrix : MatrixProtocol {
+struct Vector : MatrixProtocol {
     typealias Element = CDouble
     
     let memview: MatrixMemView
     let datacon: DataCon<CDouble>
 
-//    var shape: (nrows: UInt, ncols: UInt) {
-//        get {
-//            return memview.shape
+//    /// copy the data from the given row into this instances *datacon*
+//    func setrow(_ idx: UInt, _ v: Matrix, fromRow: UInt = 0) throws {
+//        guard v.nrows == 1 && v.ncols == ncols else {
+//            throw Exceptions.ShapeMismatch
 //        }
+//        let xoff = memview.data_index(idx, 0)
+//        let xstr = memview.datastd.col_stride
+//        let yoff = v.memview.data_index(fromRow, 0)
+//        let ystr = v.memview.datastd.col_stride
+//        datacon.set(from: v.datacon, n: v.ncols, xoffset: xoff, xstride: xstr, yoffset: yoff, ystride: ystr)
 //    }
-//    var nrows: UInt {
-//        get {
-//            return memview.shape.nrows
-//        }
-//    }
-//    var ncols: UInt {
-//        get {
-//            return memview.shape.ncols
-//        }
-//    }
-//
-//    var isRowVector: Bool {
-//        get {
-//            return memview.shape.nrows == 1
-//        }
-//    }
-//    var isColVector: Bool {
-//        get {
-//            return memview.shape.ncols == 1
-//        }
-//    }
-    /// copy the data from the given row into this instances *datacon*
-    func setrow(_ idx: UInt, _ v: Matrix, fromRow: UInt? = nil) throws {
-        guard v.nrows == 1 && v.ncols == ncols else {
-            throw Exceptions.ShapeMismatch
-        }
-        let xoff = memview.data_index(idx, 0)
-        let xstr = memview.datastd.col_stride
-        let yoff = v.memview.data_index(fromRow ?? idx, 0)
-        let ystr = v.memview.datastd.col_stride
-        datacon.set(from: v.datacon, n: v.ncols, xoffset: xoff, xstride: xstr, yoffset: yoff, ystride: ystr)
-    }
     
-    // TODO: setcol(_ idx: UInt, _ v: Matrix, fromCol: UInt = 0) throws {
-
     /// get the _idx_-th row, unless is 1-D row,
     /// in which case return _idx_-th col
     subscript(idx: UInt) -> Matrix? {
@@ -65,11 +36,11 @@ struct Matrix : MatrixProtocol {
             return Matrix(datacon, memview.row(idx))
         }
         set {
-//            if isRowVector {
-//                
-//            } else {
-//                return Matrix(datacon, memview.row(idx))
-//            }
+            //            if isRowVector {
+            //
+            //            } else {
+            //                return Matrix(datacon, memview.row(idx))
+            //            }
         }
     }
     
@@ -133,29 +104,29 @@ struct Matrix : MatrixProtocol {
             }
         }
     }
-
+    
     // TODO : write one that maps to a _Slice_:
     // should dispatch through the *memview*
-//    func map_inplace(_ f: (CDouble, UInt, UInt) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
-//        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
-//    }
-//
-//    func map(_ f: (CDouble, UInt, UInt) -> CDouble) -> Matrix {
+    //    func map_inplace(_ f: (CDouble, UInt, UInt) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
+    //        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
+    //    }
+    //
+    //    func map(_ f: (CDouble, UInt, UInt) -> CDouble) -> Matrix {
+    //        let rex = Matrix(self)
+    //        rex.map_inplace(f)
+    //        return rex
+    //    }
+    
+    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
+        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
+    }
+    
+//    func map(_ f: (CDouble) -> CDouble) -> Matrix {
 //        let rex = Matrix(self)
 //        rex.map_inplace(f)
 //        return rex
 //    }
     
-    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
-        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
-    }
-
-    func map(_ f: (CDouble) -> CDouble) -> Matrix {
-        let rex = Matrix(self)
-        rex.map_inplace(f)
-        return rex
-    }
-
     // MARK: static ctors
     
     /// identity *Matrix* of size _n_
@@ -166,7 +137,7 @@ struct Matrix : MatrixProtocol {
         }
         return rex
     }
-
+    
     /// square *Matrix* of size _n_ of all zeros
     static func Zeros(_ n: UInt) -> Matrix {
         let dc = DataCon<CDouble>.BLASConstant(0.0, n * n)

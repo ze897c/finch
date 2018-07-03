@@ -9,11 +9,11 @@
 import Foundation
 
 protocol VectorMemViewProtocol {
-    var shape: (UInt) {get}
+    var shape: UInt {get}
     var dataoff: UInt {get}
-    var datastd: (UInt) {get}
+    var datastd: UInt {get}
     func data_index(_ idx: UInt) -> UInt
-    func shaped_index(idx: UInt) -> UInt
+    func shaped_index(_ idx: UInt) -> UInt
     func required_capacity() -> UInt
 }
 
@@ -125,14 +125,20 @@ protocol Tensor3MemViewProtocol {
 }
 
 //struct VectorMemView: VectorMemViewProtocol {
-//    typealias Element = CDouble
-//    var datacon: DataCon<E>
-//    subscript(_ idx:UInt) -> Element {
-//        get{
-//            return datacon[Int(idx)]
-//        }
-//        set {
-//            datacon[Int(idx)] = newValue
-//        }
+//    let shape: UInt
+//    let dataoff: UInt
+//    let datastd: UInt
+//
+//    init(_ n: UInt) {
+//        
 //    }
+//    
+//    init(_ v: Vector) {
+//        
+//    }
+//    
+//    init(_ n: UInt, _ offset: UInt, _ stride: UInt) {
+//        
+//    }
+//
 //}
