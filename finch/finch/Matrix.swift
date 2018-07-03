@@ -51,7 +51,6 @@ struct Matrix {
         let yoff = v.memview.data_index(fromRow, 0)
         let ystr = v.memview.datastd.col_stride
         datacon.set(from: v.datacon, n: v.ncols, xoffset: xoff, xstride: xstr, yoffset: yoff, ystride: ystr)
-        
     }
     
     /// get the _idx_-th row, unless is 1-D row,
@@ -90,6 +89,50 @@ struct Matrix {
         datacon = DataCon<CDouble>(capacity: nrows * ncols)
     }
     
+    /// ctors with shape and indexed function
+    init(_ n: UInt, _ f: (UInt, UInt) -> CDouble) {
+        memview = MatrixMemView(n)
+        datacon = DataCon<CDouble>(capacity: n * n)
+        map_inplace(f)
+    }
+    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> CDouble) {
+        memview = MatrixMemView([nrows, ncols])
+        datacon = DataCon<CDouble>(capacity: nrows * ncols)
+        map_inplace(f)
+    }
+    
+    // MARK: map
+    func map_inplace(_ f: (UInt, UInt) -> CDouble) {
+        for idx in 0 ..< nrows {
+            for jdx in 0 ..< ncols {
+                let ddx: Int = Int(memview.data_index(idx, jdx))
+                datacon[ddx] = f(idx, jdx)
+            }
+        }
+    }
+
+    // TODO : write one that maps to a _Slice_:
+    // should dispatch through the *memview*
+//    func map_inplace(_ f: (CDouble, UInt, UInt) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
+//        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
+//    }
+//
+//    func map(_ f: (CDouble, UInt, UInt) -> CDouble) -> Matrix {
+//        let rex = Matrix(self)
+//        rex.map_inplace(f)
+//        return rex
+//    }
+    
+    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
+        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
+    }
+
+    func map(_ f: (CDouble) -> CDouble) -> Matrix {
+        let rex = Matrix(self)
+        rex.map_inplace(f)
+        return rex
+    }
+
     // MARK: static ctors
     
     /// identity *Matrix* of size _n_

@@ -68,6 +68,33 @@ class MatrixSpec: QuickSpec {
 
         // MARK: init
         describe("init") {
+            
+            context("indexed function ctor") {
+                fit("has correct form") {
+                    for m in UInt(1) ..< UInt(4) {
+                        for n in UInt(1) ..< UInt(4) {
+                            let A = Matrix(m, n, {(idx: UInt, jdx: UInt) in
+                                return CDouble(idx * jdx)
+                            })
+                            expect(A.shape.nrows).to(equal(m))
+                            expect(A.shape.ncols).to(equal(n))
+                        }
+                    }
+                } // "has correct form"
+                
+                fit("has correct data") {
+                    let A = Matrix(3, 5, {(idx: UInt, jdx: UInt) in
+                        return CDouble(idx * jdx)
+                    })
+                    for idx in UInt(0) ..< UInt(3) {
+                        for jdx in UInt(0) ..< UInt(5) {
+                            let ddx: Int = Int(A.memview.data_index(idx, jdx))
+                            expect(A.datacon[ddx]).to(equal(CDouble(idx * jdx)))
+                        }
+                    }
+                } // "has correct data"
+            } // context("indexed function ctor")
+            
             context("square matrix ctor") {
                 fit("works in simple cases") {
                     for n in UInt(1) ..< UInt(10) {

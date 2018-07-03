@@ -14,14 +14,111 @@ import Quick
 class MatrixMemViewSpec: QuickSpec {
     
     override func spec() {
+        var mv11:MatrixMemView = MatrixMemView([1, 1])
+        var mv13:MatrixMemView = MatrixMemView([1, 3])
+        var mv31:MatrixMemView = MatrixMemView([3, 1])
+        var mv32:MatrixMemView = MatrixMemView([3, 2])
+        var mv23:MatrixMemView = MatrixMemView([2, 3])
+
+        // MARK: col view
+        describe("col view") {
+
+            context("on simple data") {
+
+                beforeEach() {
+                    mv11 = MatrixMemView([1, 1])
+                    mv13 = MatrixMemView([1, 3])
+                    mv31 = MatrixMemView([3, 1])
+                    mv32 = MatrixMemView([3, 2])
+                    mv23 = MatrixMemView([2, 3])
+                }
+                
+                fit("is correct type") {
+                    let rv110 = mv11.col(0)
+                    expect(rv110).to(beAKindOf(MatrixMemView.self))
+
+                    let rv130 = mv13.col(0)
+                    expect(rv130).to(beAKindOf(MatrixMemView.self))
+
+                    let rv310 = mv31.col(0)
+                    let rv311 = mv31.col(1)
+                    let rv312 = mv31.col(2)
+                    expect(rv310).to(beAKindOf(MatrixMemView.self))
+                    expect(rv311).to(beAKindOf(MatrixMemView.self))
+                    expect(rv312).to(beAKindOf(MatrixMemView.self))
+
+                    let rv230 = mv23.col(0)
+                    let rv231 = mv23.col(1)
+                    expect(rv230).to(beAKindOf(MatrixMemView.self))
+                    expect(rv231).to(beAKindOf(MatrixMemView.self))
+
+                    let rv320 = mv32.col(0)
+                    let rv321 = mv32.col(1)
+                    let rv322 = mv32.col(2)
+                    expect(rv320).to(beAKindOf(MatrixMemView.self))
+                    expect(rv321).to(beAKindOf(MatrixMemView.self))
+                    expect(rv322).to(beAKindOf(MatrixMemView.self))
+
+                } //fit("builds correctly")
+                
+                fit("is correct form") {
+                    let rv11 = mv11.col(0)
+                    expect(rv11.shape.nrows).to(equal(1))
+                    expect(rv11.shape.ncols).to(equal(1))
+                    
+                    let rv130 = mv13.col(0)
+                    expect(rv130.shape.nrows).to(equal(1))
+                    expect(rv130.shape.ncols).to(equal(1))
+
+                    let rv131 = mv13.col(1)
+                    expect(rv131.shape.nrows).to(equal(1))
+                    expect(rv131.shape.ncols).to(equal(1))
+
+                    let rv132 = mv13.col(2)
+                    expect(rv132.shape.nrows).to(equal(1))
+                    expect(rv132.shape.ncols).to(equal(1))
+                    
+                    let rv310 = mv31.col(0)
+                    expect(rv310.shape.nrows).to(equal(3))
+                    expect(rv310.shape.ncols).to(equal(1))
+                    
+                    let rv311 = mv31.col(1)
+                    expect(rv311.shape.nrows).to(equal(3))
+                    expect(rv311.shape.ncols).to(equal(1))
+                    
+                    let rv312 = mv31.col(2)
+                    expect(rv312.shape.nrows).to(equal(3))
+                    expect(rv312.shape.ncols).to(equal(1))
+                    
+                    let rv230 = mv23.col(0)
+                    expect(rv230.shape.nrows).to(equal(2))
+                    expect(rv230.shape.ncols).to(equal(1))
+                    
+                    let rv231 = mv23.col(1)
+                    expect(rv231.shape.nrows).to(equal(2))
+                    expect(rv231.shape.ncols).to(equal(1))
+                    
+                    let rv232 = mv23.col(2)
+                    expect(rv232.shape.nrows).to(equal(2))
+                    expect(rv232.shape.ncols).to(equal(1))
+                    
+                    let rv320 = mv32.col(0)
+                    expect(rv320.shape.nrows).to(equal(3))
+                    expect(rv320.shape.ncols).to(equal(1))
+                    
+                    let rv321 = mv32.col(1)
+                    expect(rv321.shape.nrows).to(equal(3))
+                    expect(rv321.shape.ncols).to(equal(1))
+
+                } //fit("is correct form")
+                
+            } // context("on simple data")
+        } //describe("col view")
+
         // MARK: row view
         describe("row view") {
             context("on simple data") {
-                var mv11:MatrixMemView = MatrixMemView([1, 1])
-                var mv13:MatrixMemView = MatrixMemView([1, 3])
-                var mv31:MatrixMemView = MatrixMemView([3, 1])
-                var mv32:MatrixMemView = MatrixMemView([3, 2])
-                var mv23:MatrixMemView = MatrixMemView([2, 3])
+
                 beforeEach() {
                     mv11 = MatrixMemView([1, 1])
                     mv13 = MatrixMemView([1, 3])
@@ -32,22 +129,59 @@ class MatrixMemViewSpec: QuickSpec {
                 
                 fit("is correct type") {
                     let rv11 = mv11.row(0)
-                    let rv13 = mv11.row(0)
-                    let rv31 = mv11.row(0)
-                    let rv23 = mv11.row(0)
-                    let rv32 = mv11.row(0)
+                    let rv13 = mv13.row(0)
+                    let rv31 = mv31.row(0)
+                    let rv23 = mv23.row(0)
+                    let rv32 = mv32.row(0)
                     
                     expect(rv11).to(beAKindOf(MatrixMemView.self))
                     expect(rv13).to(beAKindOf(MatrixMemView.self))
                     expect(rv31).to(beAKindOf(MatrixMemView.self))
                     expect(rv23).to(beAKindOf(MatrixMemView.self))
                     expect(rv32).to(beAKindOf(MatrixMemView.self))
-                    
                 } //fit("builds correctly")
                 
-                fit("leaves original") {
-                    //
-                } //fit("leaves original")
+                fit("is correct form") {
+                    let rv11 = mv11.row(0)
+                    expect(rv11.shape.nrows).to(equal(1))
+                    expect(rv11.shape.ncols).to(equal(1))
+                    
+                    let rv13 = mv13.row(0)
+                    expect(rv13.shape.nrows).to(equal(1))
+                    expect(rv13.shape.ncols).to(equal(3))
+                    
+                    let rv310 = mv31.row(0)
+                    expect(rv310.shape.nrows).to(equal(1))
+                    expect(rv310.shape.ncols).to(equal(1))
+                    
+                    let rv311 = mv31.row(1)
+                    expect(rv311.shape.nrows).to(equal(1))
+                    expect(rv311.shape.ncols).to(equal(1))
+                    
+                    let rv312 = mv31.row(2)
+                    expect(rv312.shape.nrows).to(equal(1))
+                    expect(rv312.shape.ncols).to(equal(1))
+
+                    let rv230 = mv23.row(0)
+                    expect(rv230.shape.nrows).to(equal(1))
+                    expect(rv230.shape.ncols).to(equal(3))
+                    
+                    let rv231 = mv23.row(1)
+                    expect(rv231.shape.nrows).to(equal(1))
+                    expect(rv231.shape.ncols).to(equal(3))
+
+                    let rv320 = mv32.row(0)
+                    expect(rv320.shape.nrows).to(equal(1))
+                    expect(rv320.shape.ncols).to(equal(2))
+
+                    let rv321 = mv32.row(1)
+                    expect(rv321.shape.nrows).to(equal(1))
+                    expect(rv321.shape.ncols).to(equal(2))
+
+                    let rv322 = mv32.row(2)
+                    expect(rv322.shape.nrows).to(equal(1))
+                    expect(rv322.shape.ncols).to(equal(2))
+                } //fit("is correct form")
                 
             } // context("on simple data")
         } //describe("row view")

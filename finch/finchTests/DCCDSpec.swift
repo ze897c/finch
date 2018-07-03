@@ -60,7 +60,7 @@ class DCCDSpec: QuickSpec {
                 }
                 
                 fit("computes correctly") {
-                    dc0.map_inplace(f: f)
+                    dc0.map_inplace(f)
                     expect(dc0.count).to(equal(UInt(v0.count)))
                     for idx in 0 ..< Int(v0.count) {
                         let truth = v0[idx] * y
@@ -81,7 +81,7 @@ class DCCDSpec: QuickSpec {
                 }
                 
                 fit("computes correctly") {
-                    dc0.map_inplace(f: f, dc1)
+                    dc0.map_inplace(f, dc1)
                     expect(dc0.count).to(equal(UInt(v0.count)))
                     for idx in 0 ..< Int(v0.count) {
                         let truth = v0[idx] * v1[idx]
@@ -90,7 +90,7 @@ class DCCDSpec: QuickSpec {
                 } //fit("computes correctly")
                 
                 fit("leaves original") {
-                    dc0.map_inplace(f: f, dc1)
+                    dc0.map_inplace(f, dc1)
                     expect(dc1.count).to(equal(UInt(v0.count)))
                     for idx in 0 ..< Int(v0.count) {
                         let truth = v1[idx]

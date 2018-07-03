@@ -230,7 +230,7 @@ extension DataCon where DataCon.Element == CDouble {
     ///   - ystride: UInt; stide for _y_
     ///   - yoffset: UInt; offset for _y_
     ///   - f: (CDouble, CDouble) -> CDouble; function to map
-    func map_inplace(f: (CDouble, CDouble) -> CDouble, _ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
+    func map_inplace(_ f: (CDouble, CDouble) -> CDouble, _ y: DataCon<CDouble>, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil, ystride: UInt? = nil, yoffset: UInt? = nil)
     {
         let num = Int(n ?? count)
         let (xstart, ystart) = (Int(xoffset ?? 0), Int(yoffset ?? 0))
@@ -265,9 +265,7 @@ extension DataCon where DataCon.Element == CDouble {
         }
         return rex
     }
-    
-    // >>>>>>>>>>>>>>>>
-    
+
     /// f(x) -> x
     /// where _x_ is the instance
     /// - Parameters:
@@ -275,7 +273,7 @@ extension DataCon where DataCon.Element == CDouble {
     ///   - xstride: UInt; stide for _x_
     ///   - xoffset: UInt; offset for _x_
     ///   - f: (CDouble) -> CDouble; function to map
-    func map_inplace(f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil)
+    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil)
     {
         let num = Int(n ?? count)
         let xstart = Int(xoffset ?? 0)
