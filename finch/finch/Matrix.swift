@@ -101,6 +101,23 @@ struct Matrix {
         map_inplace(f)
     }
     
+    init?(_ data: [[CDouble]]) {
+        guard data.allSatisfy({(x: [CDouble]) in
+            return x.count == data[0].count
+        }) else {
+            return nil
+        }
+        memview = MatrixMemView([UInt(data.count), UInt(data[0].count)])
+        datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
+        // TODO: figure out when casts/coersions happen & do they burn time
+        for idx in 0 ..< memview.shape.nrows {
+            for jdx in 0 ..< memview.shape.ncols {
+                let ddx = Int(memview.data_index(idx, jdx))
+                datacon[ddx] = data[Int(idx)][Int(jdx)]
+            }
+        }
+    }
+    
     // MARK: map
     func map_inplace(_ f: (UInt, UInt) -> CDouble) {
         for idx in 0 ..< nrows {

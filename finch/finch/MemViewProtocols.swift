@@ -51,6 +51,7 @@ extension MatrixMemViewProtocol {
     func data_index(_ idx: UInt, _ jdx: UInt) -> UInt {
         return dataoff + datastd.row_stride * idx + datastd.col_stride * jdx
     }
+
     func shaped_index(idx: UInt) -> UInt {
         return 0
     }

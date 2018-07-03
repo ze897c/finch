@@ -17,9 +17,10 @@ import os.log
 class MatrixSpec: QuickSpec {
     
     override func spec() {
+
         // MARK: static builder
         describe("static builder") {
-            
+
             context("Eye") {
                 fit("builds correctly") {
                     for n in UInt(1) ..< UInt(5) {
@@ -69,8 +70,38 @@ class MatrixSpec: QuickSpec {
         // MARK: init
         describe("init") {
             
+            context("from Swift double-indexed") {
+                
+                fit("ill-formed is nil") {
+                    let Z = Matrix([[1, 2, 3], [4, 5]])
+                    expect(Z).to(beNil())
+                } // fit("ill-formed is nil")
+
+                fit("well-formed is not nil") {
+                    let A = Matrix([[1, 2, 3], [4, 5, 6]])
+                    expect(A).toNot(beNil())
+                } // fit("well-formed is not nil")
+
+                fit("well-formed has correct shape") {
+                    let A = Matrix([[1, 2, 3], [4, 5, 6]])!
+                    expect(A.nrows).to(equal(2))
+                    expect(A.ncols).to(equal(3))
+                } // fit("well-formed has correct shape")
+
+                fit("has correct data in datacon") {
+                    let A = Matrix([[1, 2, 3], [4, 5, 6]])!
+                    expect(A.datacon[0]).to(equal(1))
+                    expect(A.datacon[1]).to(equal(4))
+                    expect(A.datacon[2]).to(equal(2))
+                    expect(A.datacon[3]).to(equal(5))
+                    expect(A.datacon[4]).to(equal(3))
+                    expect(A.datacon[5]).to(equal(6))
+                }
+                
+            } // context("from Swift double-indexed")
+            
             context("indexed function ctor") {
-                fit("has correct form") {
+                fit("has correct shape") {
                     for m in UInt(1) ..< UInt(4) {
                         for n in UInt(1) ..< UInt(4) {
                             let A = Matrix(m, n, {(idx: UInt, jdx: UInt) in
@@ -80,7 +111,7 @@ class MatrixSpec: QuickSpec {
                             expect(A.shape.ncols).to(equal(n))
                         }
                     }
-                } // "has correct form"
+                } // fit("has correct shape")
                 
                 fit("has correct data") {
                     let A = Matrix(3, 5, {(idx: UInt, jdx: UInt) in
