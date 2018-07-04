@@ -16,6 +16,7 @@ protocol MatrixProtocol {
     var ncols: UInt {get}
     var isRowVector: Bool {get}
     var isColVector: Bool {get}
+
 }
 
 extension MatrixProtocol {
@@ -45,4 +46,5 @@ extension MatrixProtocol {
             return memview.shape.ncols == 1
         }
     }
+
 }

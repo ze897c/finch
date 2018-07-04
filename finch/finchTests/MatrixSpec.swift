@@ -231,7 +231,7 @@ class MatrixSpec: QuickSpec {
                 
                 fit("creates copy") {
                     let A = Matrix(3)
-                    let B = Matrix(A)
+                    let B = Matrix(deepCopyFrom: A)
                     expect(A.shape.nrows).to(equal(B.shape.nrows))
                     expect(A.shape.ncols).to(equal(B.shape.ncols))
                     for idx in 0 ..< 9 {
@@ -242,7 +242,7 @@ class MatrixSpec: QuickSpec {
                 fit("creates deep copy") {
                     let newval: CDouble = 1999.99
                     let A = Matrix(3)
-                    let B = Matrix(A)
+                    let B = Matrix(deepCopyFrom: A)
                     B.datacon[0] = newval
                     expect(B.datacon[0]).to(equal(newval))
                     expect(A.datacon[0]).toNot(equal(newval))

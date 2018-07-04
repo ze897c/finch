@@ -17,6 +17,7 @@
 		C9106E2D20D857450053AB1C /* DataConDoubleTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */; };
 		C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052B20CC5BD60006DCE8 /* string_extension.swift */; };
 		C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052D20CC5C3A0006DCE8 /* extTests.swift */; };
+		C92A389720ED2B7F000B2693 /* BLASMatrixProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92A389620ED2B7F000B2693 /* BLASMatrixProtocol.swift */; };
 		C9348BFF20CB0BDC00D4CE21 /* finch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9348BF520CB0BDC00D4CE21 /* finch.framework */; };
 		C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0320CB0BDC00D4CE21 /* finchTests.swift */; };
 		C9348C0620CB0BDC00D4CE21 /* finch.h in Headers */ = {isa = PBXBuildFile; fileRef = C9348BF820CB0BDC00D4CE21 /* finch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -79,6 +80,7 @@
 		C9106E2C20D857450053AB1C /* DataConDoubleTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataConDoubleTest.swift; sourceTree = "<group>"; };
 		C91F052B20CC5BD60006DCE8 /* string_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = string_extension.swift; sourceTree = "<group>"; };
 		C91F052D20CC5C3A0006DCE8 /* extTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extTests.swift; sourceTree = "<group>"; };
+		C92A389620ED2B7F000B2693 /* BLASMatrixProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLASMatrixProtocol.swift; sourceTree = "<group>"; };
 		C9348BF520CB0BDC00D4CE21 /* finch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = finch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9348BF820CB0BDC00D4CE21 /* finch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = finch.h; sourceTree = "<group>"; };
 		C9348BF920CB0BDC00D4CE21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -191,6 +193,19 @@
 			path = Utils;
 			sourceTree = "<group>";
 		};
+		C92A389520ED2B20000B2693 /* MatrixLike */ = {
+			isa = PBXGroup;
+			children = (
+				C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */,
+				C979D2B320DF218E00EB7C3F /* Matrix.swift */,
+				C90DD3E120EBC55500167E18 /* Vector.swift */,
+				C90DD3E320EBD0A400167E18 /* MatrixProtocol.swift */,
+				C92A389620ED2B7F000B2693 /* BLASMatrixProtocol.swift */,
+			);
+			name = MatrixLike;
+			path = "New Group";
+			sourceTree = "<group>";
+		};
 		C9348BEB20CB0BDB00D4CE21 = {
 			isa = PBXGroup;
 			children = (
@@ -221,10 +236,7 @@
 				C9106E2920D8566E0053AB1C /* DataCon */,
 				C9106E2B20D856920053AB1C /* Utils */,
 				C9106E2A20D856810053AB1C /* Axiomatic */,
-				C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */,
-				C979D2B320DF218E00EB7C3F /* Matrix.swift */,
-				C90DD3E120EBC55500167E18 /* Vector.swift */,
-				C90DD3E320EBD0A400167E18 /* MatrixProtocol.swift */,
+				C92A389520ED2B20000B2693 /* MatrixLike */,
 			);
 			path = finch;
 			sourceTree = "<group>";
@@ -395,6 +407,7 @@
 			files = (
 				C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */,
 				C9106E2620D8560A0053AB1C /* DataConElement.swift in Sources */,
+				C92A389720ED2B7F000B2693 /* BLASMatrixProtocol.swift in Sources */,
 				C985B79B20CEF235003B923C /* Ring.swift in Sources */,
 				C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */,
 				C985B79920CEDE24003B923C /* Exceptions.swift in Sources */,

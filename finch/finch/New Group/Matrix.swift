@@ -9,51 +9,18 @@
 import Foundation
 
 // assumption here is Double, dense, no structural constraint
-struct Matrix : MatrixProtocol {
+struct Matrix : BLASMatrixProtocol {
     typealias Element = CDouble
     
     let memview: MatrixMemView
     let datacon: DataCon<CDouble>
 
-//    var shape: (nrows: UInt, ncols: UInt) {
-//        get {
-//            return memview.shape
-//        }
-//    }
-//    var nrows: UInt {
-//        get {
-//            return memview.shape.nrows
-//        }
-//    }
-//    var ncols: UInt {
-//        get {
-//            return memview.shape.ncols
-//        }
-//    }
-//
-//    var isRowVector: Bool {
-//        get {
-//            return memview.shape.nrows == 1
-//        }
-//    }
-//    var isColVector: Bool {
-//        get {
-//            return memview.shape.ncols == 1
-//        }
-//    }
-    /// copy the data from the given row into this instances *datacon*
-    func setrow(_ idx: UInt, _ v: Matrix, fromRow: UInt? = nil) throws {
-        guard v.nrows == 1 && v.ncols == ncols else {
-            throw Exceptions.ShapeMismatch
-        }
-        let xoff = memview.data_index(idx, 0)
-        let xstr = memview.datastd.col_stride
-        let yoff = v.memview.data_index(fromRow ?? idx, 0)
-        let ystr = v.memview.datastd.col_stride
-        datacon.set(from: v.datacon, n: v.ncols, xoffset: xoff, xstride: xstr, yoffset: yoff, ystride: ystr)
+    /// map the function, returning new
+    func map(_ f: (CDouble) -> CDouble) -> Matrix {
+        let rex = Matrix(deepCopyFrom: self)
+        rex.map_inplace(f)
+        return rex
     }
-    
-    // TODO: setcol(_ idx: UInt, _ v: Matrix, fromCol: UInt = 0) throws {
 
     /// get the _idx_-th row, unless is 1-D row,
     /// in which case return _idx_-th col
@@ -76,10 +43,15 @@ struct Matrix : MatrixProtocol {
     // MARK: inits
     
     /// deepcopy ctor
-    /// normal swift assignment gives shallow
-    init(_ x: Matrix) {
+    init(deepCopyFrom x: Matrix) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon.deepcopy()
+    }
+    
+    /// normal swift assignment gives shallow...or does it
+    init(_ x: Matrix) {
+        memview = MatrixMemView(x.memview)
+        datacon = x.datacon
     }
     init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView) {
         datacon = data_con
@@ -122,38 +94,6 @@ struct Matrix : MatrixProtocol {
                 datacon[ddx] = data[Int(idx)][Int(jdx)]
             }
         }
-    }
-    
-    // MARK: map
-    func map_inplace(_ f: (UInt, UInt) -> CDouble) {
-        for idx in 0 ..< nrows {
-            for jdx in 0 ..< ncols {
-                let ddx: Int = Int(memview.data_index(idx, jdx))
-                datacon[ddx] = f(idx, jdx)
-            }
-        }
-    }
-
-    // TODO : write one that maps to a _Slice_:
-    // should dispatch through the *memview*
-//    func map_inplace(_ f: (CDouble, UInt, UInt) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
-//        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
-//    }
-//
-//    func map(_ f: (CDouble, UInt, UInt) -> CDouble) -> Matrix {
-//        let rex = Matrix(self)
-//        rex.map_inplace(f)
-//        return rex
-//    }
-    
-    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
-        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
-    }
-
-    func map(_ f: (CDouble) -> CDouble) -> Matrix {
-        let rex = Matrix(self)
-        rex.map_inplace(f)
-        return rex
     }
 
     // MARK: static ctors
