@@ -43,13 +43,18 @@ struct Matrix : BLASMatrixProtocol {
     // MARK: inits
     
     /// deepcopy ctor
-    init(deepCopyFrom x: Matrix) {
+    init(deepCopyFrom x: BLASMatrixProtocol) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon.deepcopy()
     }
     
+//    init(deepCopyFrom x: Matrix) {
+//        memview = MatrixMemView(x.memview)
+//        datacon = x.datacon.deepcopy()
+//    }
+    
     /// normal swift assignment gives shallow...or does it
-    init(_ x: Matrix) {
+    init(_ x: BLASMatrixProtocol) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon
     }

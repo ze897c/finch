@@ -15,7 +15,8 @@ protocol BLASMatrixProtocol : MatrixProtocol {
     var datacon: DataCon<CDouble> {get}
 
     init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView)
-
+    init(_ x: BLASMatrixProtocol)
+    init(deepCopyFrom x: BLASMatrixProtocol)
     /// {
     /// init from swift data
     /// return nil if ragged
