@@ -28,19 +28,21 @@ struct Vector : MatrixProtocol {
     
     /// get the _idx_-th row, unless is 1-D row,
     /// in which case return _idx_-th col
-    subscript(idx: UInt) -> Matrix? {
+    /// NOTE: unsafe...
+    subscript(idx: UInt) -> Element {
         get {
-            guard idx < nrows else {
-                return nil
+            if isRowVector {
+                return datacon[DataCon<Element>.Index(memview.data_index(idx, 0))]
+            } else {
+                return datacon[DataCon<Element>.Index(memview.data_index(0, idx))]
             }
-            return Matrix(datacon, memview.row(idx))
         }
         set {
-            //            if isRowVector {
-            //
-            //            } else {
-            //                return Matrix(datacon, memview.row(idx))
-            //            }
+            if isRowVector {
+                datacon[DataCon<Element>.Index(memview.data_index(idx, 0))] = CDouble(newValue)
+            } else {
+                datacon[DataCon<Element>.Index(memview.data_index(0, idx))] = CDouble(newValue)
+            }
         }
     }
     
@@ -48,7 +50,7 @@ struct Vector : MatrixProtocol {
     
     /// deepcopy ctor
     /// normal swift assignment gives shallow
-    init(_ x: Matrix) {
+    init(_ x: Vector) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon.deepcopy()
     }
@@ -56,35 +58,32 @@ struct Vector : MatrixProtocol {
         datacon = data_con
         memview = mem_view
     }
-    /// simple ctors when only shape is perscribed
+    /// simple ctor: when only length is perscribed
+    /// defaults to column vector
     init(_ n: UInt) {
-        memview = MatrixMemView(n)
-        datacon = DataCon<CDouble>(capacity: n * n)
-    }
-    init(_ nrows: UInt, _ ncols: UInt) {
-        memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<CDouble>(capacity: nrows * ncols)
+        memview = MatrixMemView([UInt(1), n])
+        datacon = DataCon<CDouble>(capacity: n)
     }
     
     /// ctors with shape and indexed function
-    init(_ n: UInt, _ f: (UInt, UInt) -> CDouble) {
+    init(_ n: UInt, _ f: (UInt) -> CDouble) {
         memview = MatrixMemView(n)
         datacon = DataCon<CDouble>(capacity: n * n)
         map_inplace(f)
     }
-    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> CDouble) {
-        memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<CDouble>(capacity: nrows * ncols)
-        map_inplace(f)
-    }
+//    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt) -> CDouble) {
+//        memview = MatrixMemView([nrows, ncols])
+//        datacon = DataCon<CDouble>(capacity: nrows * ncols)
+//        map_inplace(f)
+//    }
     
     init?(_ data: [[CDouble]]) {
         guard data.allSatisfy({(x: [CDouble]) in
-            return x.count == data[0].count
+            return x.count == 1
         }) else {
             return nil
         }
-        memview = MatrixMemView([UInt(data.count), UInt(data[0].count)])
+        memview = MatrixMemView([UInt(data.count), UInt(1)])
         datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
         // TODO: figure out when casts/coersions happen & do they burn time
         for idx in 0 ..< memview.shape.nrows {
@@ -96,11 +95,12 @@ struct Vector : MatrixProtocol {
     }
     
     // MARK: map
-    func map_inplace(_ f: (UInt, UInt) -> CDouble) {
+    // TODO: fix...
+    func map_inplace(_ f: (UInt) -> CDouble) {
         for idx in 0 ..< nrows {
             for jdx in 0 ..< ncols {
                 let ddx: Int = Int(memview.data_index(idx, jdx))
-                datacon[ddx] = f(idx, jdx)
+                datacon[ddx] = f(idx)
             }
         }
     }
@@ -130,7 +130,7 @@ struct Vector : MatrixProtocol {
     // MARK: static ctors
     
     /// identity *Matrix* of size _n_
-    static func Eye(_ n: UInt) -> Matrix {
+    static func E(_ n: UInt) -> Matrix {
         let rex = Matrix.Zeros(n)
         for idx in 0 ..< n {
             rex.datacon[DataCon<Element>.Index(idx * n)] = 1.0
