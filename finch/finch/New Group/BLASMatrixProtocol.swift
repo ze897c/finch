@@ -14,18 +14,39 @@ protocol BLASMatrixProtocol : MatrixProtocol {
     var memview: MatrixMemView {get}
     var datacon: DataCon<CDouble> {get}
 
+    /// full boat ctor
     init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView)
+    
+    /// shallow ctor
     init(_ x: BLASMatrixProtocol)
+    /// deep ctor
     init(deepCopyFrom x: BLASMatrixProtocol)
+
     /// {
     /// init from swift data
     /// return nil if ragged
     init?(_ x: [[CDouble]])
     /// }
     
-    // MARK: static ctors
-    
+    /// {
+    /// simple ctors when only shape is perscribed
+    init(_ n: UInt)
+    init?(_ nrows: UInt, _ ncols: UInt) // is failable to still be valid for *Vector*
+    /// }
 
+    /// {
+    /// ctors with shape and indexed function
+    // failable to still be valid for *Vector*
+    init?(_ n: UInt, _ f: (UInt, UInt) -> CDouble)
+    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> CDouble)
+    /// }
+
+    /// {
+    /// ctors with shape and fixed value
+    // failable to still be valid for *Vector*
+    init(_ n: UInt, doubleValue x: CDouble)
+    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: CDouble)
+    /// }
 }
 
 extension BLASMatrixProtocol {
@@ -39,7 +60,15 @@ extension BLASMatrixProtocol {
             }
         }
     }
-    
+    func map_inplace(_ f: (UInt) -> CDouble) {
+        for idx in 0 ..< nrows {
+            for jdx in 0 ..< ncols {
+                let ddx: Int = Int(memview.data_index(idx, jdx))
+                datacon[ddx] = f(idx)
+            }
+        }
+    }
+
     // MARK: set row/col/etc.
     
     // TODO : write one that maps to a _Slice_:
@@ -80,4 +109,14 @@ extension BLASMatrixProtocol {
 
     // TODO: setelem(_ idx: UInt, _ jdx: UInt, _ CDouble val) throws {
     // TODO: setelem(_ idx: UInt, _ jdx: UInt, fromMatrix MatrixProtocol A) throws {
+    
+    func setfromCDoubleData(_ data: [[CDouble]]) {
+        // TODO: figure out when casts/coersions happen & do they burn time
+        for idx in 0 ..< memview.shape.nrows {
+            for jdx in 0 ..< memview.shape.ncols {
+                let ddx = Int(memview.data_index(idx, jdx))
+                datacon[ddx] = data[Int(idx)][Int(jdx)]
+            }
+        }
+    }
 }

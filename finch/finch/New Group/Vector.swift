@@ -8,7 +8,8 @@
 
 import Foundation
 // assumption here is Double, dense, no structural constraint
-struct Vector : MatrixProtocol {
+struct Vector : BLASMatrixProtocol {
+
     typealias Element = CDouble
     
     let memview: MatrixMemView
@@ -47,36 +48,56 @@ struct Vector : MatrixProtocol {
     }
     
     // MARK: inits
-    
-    /// deepcopy ctor
-    /// normal swift assignment gives shallow
-    init(_ x: Vector) {
-        memview = MatrixMemView(x.memview)
-        datacon = x.datacon.deepcopy()
-    }
+
     init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView) {
         datacon = data_con
         memview = mem_view
     }
+    /// {
     /// simple ctor: when only length is perscribed
     /// defaults to column vector
     init(_ n: UInt) {
         memview = MatrixMemView([UInt(1), n])
         datacon = DataCon<CDouble>(capacity: n)
     }
-    
+    init(nrows n: UInt) {
+        memview = MatrixMemView([n, UInt(1)])
+        datacon = DataCon<CDouble>(capacity: n)
+    }
+    /// }
+
+    /// {
     /// ctors with shape and indexed function
     init(_ n: UInt, _ f: (UInt) -> CDouble) {
-        memview = MatrixMemView(n)
+        memview = MatrixMemView([n, 1])
         datacon = DataCon<CDouble>(capacity: n * n)
         map_inplace(f)
     }
-//    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt) -> CDouble) {
-//        memview = MatrixMemView([nrows, ncols])
-//        datacon = DataCon<CDouble>(capacity: nrows * ncols)
-//        map_inplace(f)
-//    }
+    init(nrows n: UInt, _ f: (UInt) -> CDouble) {
+        memview = MatrixMemView( [1, n])
+        datacon = DataCon<CDouble>(capacity: n * n)
+        map_inplace(f)
+    }
+    /// }
     
+    /// {
+    /// construct with size and constant *CDouble*
+    init(_ n: UInt, doubleValue x: CDouble) {
+        memview = MatrixMemView([n, 1])
+        datacon = DataCon<CDouble>(repeating: x, count: Int(n))
+    }
+    init(nrows n: UInt, doubleValue x: CDouble) {
+        memview = MatrixMemView([1, n])
+        datacon = DataCon<CDouble>(repeating: x, count: Int(n))
+    }
+    // essentially deleting this ctor
+    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: CDouble) {
+        return nil
+    }
+    /// }
+
+    /// {
+    /// construct from Swift double array of *CDouble*
     init?(_ data: [[CDouble]]) {
         guard data.allSatisfy({(x: [CDouble]) in
             return x.count == 1
@@ -85,43 +106,47 @@ struct Vector : MatrixProtocol {
         }
         memview = MatrixMemView([UInt(data.count), UInt(1)])
         datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
-        // TODO: figure out when casts/coersions happen & do they burn time
-        for idx in 0 ..< memview.shape.nrows {
-            for jdx in 0 ..< memview.shape.ncols {
-                let ddx = Int(memview.data_index(idx, jdx))
-                datacon[ddx] = data[Int(idx)][Int(jdx)]
-            }
+        setfromCDoubleData(data)
+    }
+    init?(rowData data: [[CDouble]]) {
+        guard data.count == 1 else {
+            return nil
         }
+        memview = MatrixMemView([ UInt(1), UInt(data.count)])
+        datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
+        setfromCDoubleData(data)
+    }
+    /// }
+    
+    /// copy constructor
+    /// uses reference to underlying storage
+    init(_ x: BLASMatrixProtocol) {
+        memview = MatrixMemView(x.memview)
+        datacon = x.datacon
+    }
+
+    /// deepcopy ctor
+    init(deepCopyFrom x: BLASMatrixProtocol) {
+        memview = MatrixMemView(x.memview)
+        datacon = x.datacon.deepcopy()
     }
     
+    // {
+    // _remove_ inits that don't make strict sense for *Vector*
+    init?(_ nrows: UInt, _ ncols: UInt) {
+        return nil
+    }
+    init?(_ n: UInt, _ f: (UInt, UInt) -> CDouble) {
+        return nil
+    }
+    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> CDouble) {
+        return nil
+    }
+    // }
+
     // MARK: map
-    // TODO: fix...
-    func map_inplace(_ f: (UInt) -> CDouble) {
-        for idx in 0 ..< nrows {
-            for jdx in 0 ..< ncols {
-                let ddx: Int = Int(memview.data_index(idx, jdx))
-                datacon[ddx] = f(idx)
-            }
-        }
-    }
     
-    // TODO : write one that maps to a _Slice_:
-    // should dispatch through the *memview*
-    //    func map_inplace(_ f: (CDouble, UInt, UInt) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
-    //        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
-    //    }
-    //
-    //    func map(_ f: (CDouble, UInt, UInt) -> CDouble) -> Matrix {
-    //        let rex = Matrix(self)
-    //        rex.map_inplace(f)
-    //        return rex
-    //    }
-    
-    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
-        datacon.map_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
-    }
-    
-//    func map(_ f: (CDouble) -> CDouble) -> Matrix {
+//    func map(_ f: (CDouble) -> CDouble) -> Vector {
 //        let rex = Matrix(self)
 //        rex.map_inplace(f)
 //        return rex
@@ -140,15 +165,11 @@ struct Vector : MatrixProtocol {
     
     /// square *Matrix* of size _n_ of all zeros
     static func Zeros(_ n: UInt) -> Matrix {
-        let dc = DataCon<CDouble>.BLASConstant(0.0, n * n)
-        let rex = Matrix(dc, MatrixMemView(n))
-        return rex
+        return Matrix(DataCon<CDouble>.BLASConstant(0.0, n), MatrixMemView([n, 1]))
     }
     
     /// square *Matrix* of size _m x n_ of all zeros
-    static func Zeros(_ m: UInt, _ n: UInt) -> Matrix {
-        let dc = DataCon<CDouble>.BLASConstant(0.0, m * n)
-        let rex = Matrix(dc, MatrixMemView([m, n]))
-        return rex
+    static func Zeros(nrows n: UInt) -> Matrix {
+        return Matrix(DataCon<CDouble>.BLASConstant(0.0, n), MatrixMemView([1, n]))
     }
 }

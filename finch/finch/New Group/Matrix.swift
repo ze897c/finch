@@ -47,12 +47,7 @@ struct Matrix : BLASMatrixProtocol {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon.deepcopy()
     }
-    
-//    init(deepCopyFrom x: Matrix) {
-//        memview = MatrixMemView(x.memview)
-//        datacon = x.datacon.deepcopy()
-//    }
-    
+
     /// normal swift assignment gives shallow...or does it
     init(_ x: BLASMatrixProtocol) {
         memview = MatrixMemView(x.memview)
@@ -62,6 +57,7 @@ struct Matrix : BLASMatrixProtocol {
         datacon = data_con
         memview = mem_view
     }
+
     /// simple ctors when only shape is perscribed
     init(_ n: UInt) {
         memview = MatrixMemView(n)
@@ -82,6 +78,16 @@ struct Matrix : BLASMatrixProtocol {
         memview = MatrixMemView([nrows, ncols])
         datacon = DataCon<CDouble>(capacity: nrows * ncols)
         map_inplace(f)
+    }
+    
+    /// ctors with shape and fixed value
+    init(_ n: UInt, doubleValue x: CDouble) {
+        memview = MatrixMemView(n)
+        datacon = DataCon<CDouble>(repeating: x, count: Int(n * n))
+    }
+    init(_ nrows: UInt, _ ncols: UInt, doubleValue x: CDouble) {
+        memview = MatrixMemView([nrows, ncols])
+        datacon = DataCon<CDouble>(repeating: x, count: Int(nrows * ncols))
     }
     
     init?(_ data: [[CDouble]]) {
