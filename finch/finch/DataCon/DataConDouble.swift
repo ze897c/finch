@@ -273,7 +273,7 @@ extension DataCon where DataCon.Element == CDouble {
     ///   - xstride: UInt; stide for _x_
     ///   - xoffset: UInt; offset for _x_
     ///   - f: (CDouble) -> CDouble; function to map
-    func map_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil)
+    func flatmap_inplace(_ f: (CDouble) -> CDouble, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil)
     {
         let num = Int(n ?? count)
         let xstart = Int(xoffset ?? 0)

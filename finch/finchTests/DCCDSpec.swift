@@ -60,7 +60,7 @@ class DCCDSpec: QuickSpec {
                 }
                 
                 fit("computes correctly") {
-                    dc0.map_inplace(f)
+                    dc0.flatmap_inplace(f)
                     expect(dc0.count).to(equal(UInt(v0.count)))
                     for idx in 0 ..< Int(v0.count) {
                         let truth = v0[idx] * y

@@ -13,10 +13,10 @@ struct Matrix : BLASMatrixProtocol {
     typealias Element = CDouble
     
     let memview: MatrixMemView
-    let datacon: DataCon<CDouble>
+    let datacon: DataCon<Element>
 
     /// map the function, returning new
-    func map(_ f: (CDouble) -> CDouble) -> Matrix {
+    func map(_ f: (Element) -> Element) -> Matrix {
         let rex = Matrix(deepCopyFrom: self)
         rex.map_inplace(f)
         return rex
@@ -43,17 +43,17 @@ struct Matrix : BLASMatrixProtocol {
     // MARK: inits
     
     /// deepcopy ctor
-    init(deepCopyFrom x: BLASMatrixProtocol) {
+    init(deepCopyFrom x: Matrix) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon.deepcopy()
     }
 
     /// normal swift assignment gives shallow...or does it
-    init(_ x: BLASMatrixProtocol) {
+    init(_ x: Matrix) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon
     }
-    init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView) {
+    init(_ data_con: DataCon<Element>, _ mem_view: MatrixMemView) {
         datacon = data_con
         memview = mem_view
     }
@@ -61,43 +61,43 @@ struct Matrix : BLASMatrixProtocol {
     /// simple ctors when only shape is perscribed
     init(_ n: UInt) {
         memview = MatrixMemView(n)
-        datacon = DataCon<CDouble>(capacity: n * n)
+        datacon = DataCon<Element>(capacity: n * n)
     }
     init(_ nrows: UInt, _ ncols: UInt) {
         memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<CDouble>(capacity: nrows * ncols)
+        datacon = DataCon<Element>(capacity: nrows * ncols)
     }
     
     /// ctors with shape and indexed function
-    init(_ n: UInt, _ f: (UInt, UInt) -> CDouble) {
+    init(_ n: UInt, _ f: (UInt, UInt) -> Element) {
         memview = MatrixMemView(n)
-        datacon = DataCon<CDouble>(capacity: n * n)
+        datacon = DataCon<Element>(capacity: n * n)
         map_inplace(f)
     }
-    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> CDouble) {
+    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> Element) {
         memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<CDouble>(capacity: nrows * ncols)
+        datacon = DataCon<Element>(capacity: nrows * ncols)
         map_inplace(f)
     }
     
     /// ctors with shape and fixed value
-    init(_ n: UInt, doubleValue x: CDouble) {
+    init(_ n: UInt, doubleValue x: Element) {
         memview = MatrixMemView(n)
-        datacon = DataCon<CDouble>(repeating: x, count: Int(n * n))
+        datacon = DataCon<Element>(repeating: x, count: Int(n * n))
     }
-    init(_ nrows: UInt, _ ncols: UInt, doubleValue x: CDouble) {
+    init(_ nrows: UInt, _ ncols: UInt, doubleValue x: Element) {
         memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<CDouble>(repeating: x, count: Int(nrows * ncols))
+        datacon = DataCon<Element>(repeating: x, count: Int(nrows * ncols))
     }
     
-    init?(_ data: [[CDouble]]) {
-        guard data.allSatisfy({(x: [CDouble]) in
+    init?(_ data: [[Element]]) {
+        guard data.allSatisfy({(x: [Element]) in
             return x.count == data[0].count
         }) else {
             return nil
         }
         memview = MatrixMemView([UInt(data.count), UInt(data[0].count)])
-        datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
+        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
         // TODO: figure out when casts/coersions happen & do they burn time
         for idx in 0 ..< memview.shape.nrows {
             for jdx in 0 ..< memview.shape.ncols {
@@ -120,14 +120,14 @@ struct Matrix : BLASMatrixProtocol {
 
     /// square *Matrix* of size _n_ of all zeros
     static func Zeros(_ n: UInt) -> Matrix {
-        let dc = DataCon<CDouble>.BLASConstant(0.0, n * n)
+        let dc = DataCon<Element>.BLASConstant(0.0, n * n)
         let rex = Matrix(dc, MatrixMemView(n))
         return rex
     }
     
     /// square *Matrix* of size _m x n_ of all zeros
     static func Zeros(_ m: UInt, _ n: UInt) -> Matrix {
-        let dc = DataCon<CDouble>.BLASConstant(0.0, m * n)
+        let dc = DataCon<Element>.BLASConstant(0.0, m * n)
         let rex = Matrix(dc, MatrixMemView([m, n]))
         return rex
     }

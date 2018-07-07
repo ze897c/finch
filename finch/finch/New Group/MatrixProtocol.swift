@@ -16,7 +16,6 @@ protocol MatrixProtocol {
     var ncols: UInt {get}
     var isRowVector: Bool {get}
     var isColVector: Bool {get}
-
 }
 
 extension MatrixProtocol {

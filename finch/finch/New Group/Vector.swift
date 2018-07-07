@@ -13,7 +13,7 @@ struct Vector : BLASMatrixProtocol {
     typealias Element = CDouble
     
     let memview: MatrixMemView
-    let datacon: DataCon<CDouble>
+    let datacon: DataCon<Element>
 
 //    /// copy the data from the given row into this instances *datacon*
 //    func setrow(_ idx: UInt, _ v: Matrix, fromRow: UInt = 0) throws {
@@ -40,16 +40,16 @@ struct Vector : BLASMatrixProtocol {
         }
         set {
             if isRowVector {
-                datacon[DataCon<Element>.Index(memview.data_index(idx, 0))] = CDouble(newValue)
+                datacon[DataCon<Element>.Index(memview.data_index(idx, 0))] = Element(newValue)
             } else {
-                datacon[DataCon<Element>.Index(memview.data_index(0, idx))] = CDouble(newValue)
+                datacon[DataCon<Element>.Index(memview.data_index(0, idx))] = Element(newValue)
             }
         }
     }
     
     // MARK: inits
 
-    init(_ data_con: DataCon<CDouble>, _ mem_view: MatrixMemView) {
+    init(_ data_con: DataCon<Element>, _ mem_view: MatrixMemView) {
         datacon = data_con
         memview = mem_view
     }
@@ -58,75 +58,75 @@ struct Vector : BLASMatrixProtocol {
     /// defaults to column vector
     init(_ n: UInt) {
         memview = MatrixMemView([UInt(1), n])
-        datacon = DataCon<CDouble>(capacity: n)
+        datacon = DataCon<Element>(capacity: n)
     }
     init(nrows n: UInt) {
         memview = MatrixMemView([n, UInt(1)])
-        datacon = DataCon<CDouble>(capacity: n)
+        datacon = DataCon<Element>(capacity: n)
     }
     /// }
 
     /// {
     /// ctors with shape and indexed function
-    init(_ n: UInt, _ f: (UInt) -> CDouble) {
+    init(_ n: UInt, _ f: (UInt) -> Element) {
         memview = MatrixMemView([n, 1])
-        datacon = DataCon<CDouble>(capacity: n * n)
+        datacon = DataCon<Element>(capacity: n * n)
         map_inplace(f)
     }
-    init(nrows n: UInt, _ f: (UInt) -> CDouble) {
+    init(nrows n: UInt, _ f: (UInt) -> Element) {
         memview = MatrixMemView( [1, n])
-        datacon = DataCon<CDouble>(capacity: n * n)
+        datacon = DataCon<Element>(capacity: n * n)
         map_inplace(f)
     }
     /// }
     
     /// {
-    /// construct with size and constant *CDouble*
-    init(_ n: UInt, doubleValue x: CDouble) {
+    /// construct with size and constant *Element*
+    init(_ n: UInt, doubleValue x: Element) {
         memview = MatrixMemView([n, 1])
-        datacon = DataCon<CDouble>(repeating: x, count: Int(n))
+        datacon = DataCon<Element>(repeating: x, count: Int(n))
     }
-    init(nrows n: UInt, doubleValue x: CDouble) {
+    init(nrows n: UInt, doubleValue x: Element) {
         memview = MatrixMemView([1, n])
-        datacon = DataCon<CDouble>(repeating: x, count: Int(n))
+        datacon = DataCon<Element>(repeating: x, count: Int(n))
     }
     // essentially deleting this ctor
-    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: CDouble) {
+    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: Element) {
         return nil
     }
     /// }
 
     /// {
-    /// construct from Swift double array of *CDouble*
-    init?(_ data: [[CDouble]]) {
-        guard data.allSatisfy({(x: [CDouble]) in
+    /// construct from Swift double array of *Element*
+    init?(_ data: [[Element]]) {
+        guard data.allSatisfy({(x: [Element]) in
             return x.count == 1
         }) else {
             return nil
         }
         memview = MatrixMemView([UInt(data.count), UInt(1)])
-        datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
-        setfromCDoubleData(data)
+        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
+        setfromElementData(data)
     }
-    init?(rowData data: [[CDouble]]) {
+    init?(rowData data: [[Element]]) {
         guard data.count == 1 else {
             return nil
         }
         memview = MatrixMemView([ UInt(1), UInt(data.count)])
-        datacon = DataCon<CDouble>(capacity: memview.shape.nrows * memview.shape.ncols)
-        setfromCDoubleData(data)
+        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
+        setfromElementData(data)
     }
     /// }
     
     /// copy constructor
     /// uses reference to underlying storage
-    init(_ x: BLASMatrixProtocol) {
+    init(_ x: Vector) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon
     }
 
     /// deepcopy ctor
-    init(deepCopyFrom x: BLASMatrixProtocol) {
+    init(deepCopyFrom x: Vector) {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon.deepcopy()
     }
@@ -136,17 +136,17 @@ struct Vector : BLASMatrixProtocol {
     init?(_ nrows: UInt, _ ncols: UInt) {
         return nil
     }
-    init?(_ n: UInt, _ f: (UInt, UInt) -> CDouble) {
+    init?(_ n: UInt, _ f: (UInt, UInt) -> Element) {
         return nil
     }
-    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> CDouble) {
+    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> Element) {
         return nil
     }
     // }
 
     // MARK: map
     
-//    func map(_ f: (CDouble) -> CDouble) -> Vector {
+//    func map(_ f: (Element) -> Element) -> Vector {
 //        let rex = Matrix(self)
 //        rex.map_inplace(f)
 //        return rex
@@ -165,11 +165,11 @@ struct Vector : BLASMatrixProtocol {
     
     /// square *Matrix* of size _n_ of all zeros
     static func Zeros(_ n: UInt) -> Matrix {
-        return Matrix(DataCon<CDouble>.BLASConstant(0.0, n), MatrixMemView([n, 1]))
+        return Matrix(DataCon<Element>.BLASConstant(0.0, n), MatrixMemView([n, 1]))
     }
     
     /// square *Matrix* of size _m x n_ of all zeros
     static func Zeros(nrows n: UInt) -> Matrix {
-        return Matrix(DataCon<CDouble>.BLASConstant(0.0, n), MatrixMemView([1, n]))
+        return Matrix(DataCon<Element>.BLASConstant(0.0, n), MatrixMemView([1, n]))
     }
 }
