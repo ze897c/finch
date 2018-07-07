@@ -66,6 +66,7 @@ extension MatrixMemViewProtocol {
 // assume non-symetric, dense, _etc_
 // and name symetric, sparse, _etc_ appropriately
 struct MatrixMemView: MatrixMemViewProtocol {
+
     let shape: (nrows: UInt, ncols: UInt)
     let dataoff: UInt
     let datastd: (row_stride: UInt, col_stride: UInt)
@@ -82,7 +83,7 @@ struct MatrixMemView: MatrixMemViewProtocol {
         }
     }
 
-    init(_ ns: [UInt], offset: UInt, strides: [UInt]) {
+    init(_ ns: [UInt], _ offset: UInt, _ strides: [UInt]) {
         shape = (ns[0], ns[1])
         dataoff = offset
         datastd = (strides[0], strides[1])
@@ -109,12 +110,16 @@ struct MatrixMemView: MatrixMemViewProtocol {
     /// return a view of the _idx_-th row of this view
     func row(_ idx: UInt) -> MatrixMemView {
         let off: UInt = data_index(idx, 0)
-        return MatrixMemView([1, shape.ncols], offset: off, strides: [datastd.row_stride, datastd.col_stride])
+        return MatrixMemView([1, shape.ncols], off, [datastd.row_stride, datastd.col_stride])
     }
     /// return a view of the _idx_-th col of this view
     func col(_ idx: UInt) -> MatrixMemView {
         let off: UInt = data_index(0, idx)
-        return MatrixMemView([shape.nrows, 1], offset: off, strides: [datastd.row_stride, datastd.col_stride])
+        return MatrixMemView([shape.nrows, 1], off, [datastd.row_stride, datastd.col_stride])
+    }
+    
+    func transpose() -> MatrixMemView {
+        return MatrixMemView([shape.ncols, shape.nrows], dataoff, [datastd.col_stride, datastd.row_stride])
     }
 }
 

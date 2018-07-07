@@ -18,6 +18,7 @@
 		C91F052C20CC5BD60006DCE8 /* string_extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052B20CC5BD60006DCE8 /* string_extension.swift */; };
 		C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C91F052D20CC5C3A0006DCE8 /* extTests.swift */; };
 		C92A389720ED2B7F000B2693 /* BLASMatrixProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92A389620ED2B7F000B2693 /* BLASMatrixProtocol.swift */; };
+		C92A389920F15B6D000B2693 /* VectorSpec.swift in Sources */ = {isa = PBXBuildFile; fileRef = C92A389820F15B6D000B2693 /* VectorSpec.swift */; };
 		C9348BFF20CB0BDC00D4CE21 /* finch.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C9348BF520CB0BDC00D4CE21 /* finch.framework */; };
 		C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0320CB0BDC00D4CE21 /* finchTests.swift */; };
 		C9348C0620CB0BDC00D4CE21 /* finch.h in Headers */ = {isa = PBXBuildFile; fileRef = C9348BF820CB0BDC00D4CE21 /* finch.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -81,6 +82,7 @@
 		C91F052B20CC5BD60006DCE8 /* string_extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = string_extension.swift; sourceTree = "<group>"; };
 		C91F052D20CC5C3A0006DCE8 /* extTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extTests.swift; sourceTree = "<group>"; };
 		C92A389620ED2B7F000B2693 /* BLASMatrixProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLASMatrixProtocol.swift; sourceTree = "<group>"; };
+		C92A389820F15B6D000B2693 /* VectorSpec.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VectorSpec.swift; sourceTree = "<group>"; };
 		C9348BF520CB0BDC00D4CE21 /* finch.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = finch.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		C9348BF820CB0BDC00D4CE21 /* finch.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = finch.h; sourceTree = "<group>"; };
 		C9348BF920CB0BDC00D4CE21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -254,6 +256,7 @@
 				C9978FDB20DC7EBA00B88A0B /* DCCDSugarSpec.swift */,
 				C979D2B520DF367F00EB7C3F /* MemViewTests.swift */,
 				C979D2B720E2882E00EB7C3F /* MatrixSpec.swift */,
+				C92A389820F15B6D000B2693 /* VectorSpec.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -429,6 +432,7 @@
 				C9D72E8F20DB155B00A4739A /* DCCDSpec.swift in Sources */,
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
 				C979D2B620DF367F00EB7C3F /* MemViewTests.swift in Sources */,
+				C92A389920F15B6D000B2693 /* VectorSpec.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
 				C979D2B820E2882E00EB7C3F /* MatrixSpec.swift in Sources */,
 				C9D72E4D20D9C29300A4739A /* DataConTests.swift in Sources */,

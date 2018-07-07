@@ -106,6 +106,15 @@ struct Matrix : BLASMatrixProtocol {
             }
         }
     }
+    
+    // MARK: modify
+    func transpose() -> Matrix {
+        return Matrix(datacon, memview.transpose())
+    }
+    // TODO: ...
+    func transpose_inplace() -> Matrix {
+        return Matrix(datacon, memview.transpose())
+    }
 
     // MARK: static ctors
     

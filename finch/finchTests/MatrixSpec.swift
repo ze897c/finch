@@ -18,6 +18,37 @@ class MatrixSpec: QuickSpec {
     
     override func spec() {
         
+        // TODO: test that *Vector* from *Matrix* lives & works after *Matrix* deletion
+        
+        // MARK: functional init
+        describe("functional init") {
+            context("on simple data") {
+                //
+                let f0 = {(idx: UInt, jdx: UInt) -> CDouble in return CDouble(idx ^ jdx)}
+                beforeEach() {
+                    //
+                }
+
+                fit("inits data correctly") {
+                    let A = Matrix(3, 4, f0)
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            let ddx: Int = Int(A.memview.data_index(idx, jdx))
+                            expect(A.datacon[ddx]).to(beCloseTo(CDouble(idx ^ jdx)))
+                        }
+                    }
+                } //fit("inits data correctly")
+                
+                fit("has correct properties") {
+                    let A = Matrix(3, 4, f0)
+                    expect(A.nrows).to(equal(3))
+                    expect(A.ncols).to(equal(4))
+                    expect(A.datacon.count).to(equal(3 * 4))
+                } //fit("has correct properties")
+                
+            } // context("on simple data")
+        } //describe("functional init")
+        
         // MARK: subscript
         describe("subscript") {
             var A: Matrix? = nil

@@ -196,7 +196,7 @@ class MatrixMemViewSpec: QuickSpec {
 
                 fit("is right type") {
                     let (m, n) = (UInt(2), UInt(3))
-                    let mmv = MatrixMemView([m, n], offset: UInt(2), strides:[UInt(1), m])
+                    let mmv = MatrixMemView([m, n], UInt(2), [UInt(1), m])
                     expect(mmv).to(beAKindOf(MatrixMemView.self))
                 } // fit("is right type")
 
@@ -204,7 +204,7 @@ class MatrixMemViewSpec: QuickSpec {
                     for m in 3 ..< UInt(5) {
                         for n in 3 ..< UInt(7) {
                             for off in 0 ..< UInt(4) {
-                                let mmv = MatrixMemView([m, n], offset: off, strides:[UInt(1), m])
+                                let mmv = MatrixMemView([m, n], off, [UInt(1), m])
                                 expect(mmv.shape.nrows).to(equal(m))
                                 expect(mmv.shape.ncols).to(equal(n))
                                 expect(mmv.dataoff).to(equal(off))

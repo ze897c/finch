@@ -111,6 +111,16 @@ extension BLASMatrixProtocol where Element == CDouble {
     // TODO: setelem(_ idx: UInt, _ jdx: UInt, _ Element val) throws {
     // TODO: setelem(_ idx: UInt, _ jdx: UInt, fromMatrix MatrixProtocol A) throws {
     
+    func setfromElementData(_ data: [CDouble]) {
+        // TODO: figure out when casts/coersions happen & do they burn time
+        for idx in 0 ..< memview.shape.nrows {
+            for jdx in 0 ..< memview.shape.ncols {
+                let ddx = Int(memview.data_index(idx, jdx))
+                datacon[ddx] = data[ddx]
+            }
+        }
+    }
+    
     func setfromElementData(_ data: [[CDouble]]) {
         // TODO: figure out when casts/coersions happen & do they burn time
         for idx in 0 ..< memview.shape.nrows {

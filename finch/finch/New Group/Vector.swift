@@ -33,16 +33,16 @@ struct Vector : BLASMatrixProtocol {
     subscript(idx: UInt) -> Element {
         get {
             if isRowVector {
-                return datacon[DataCon<Element>.Index(memview.data_index(idx, 0))]
-            } else {
                 return datacon[DataCon<Element>.Index(memview.data_index(0, idx))]
+            } else {
+                return datacon[DataCon<Element>.Index(memview.data_index(idx, 0))]
             }
         }
         set {
             if isRowVector {
-                datacon[DataCon<Element>.Index(memview.data_index(idx, 0))] = Element(newValue)
-            } else {
                 datacon[DataCon<Element>.Index(memview.data_index(0, idx))] = Element(newValue)
+            } else {
+                datacon[DataCon<Element>.Index(memview.data_index(idx, 0))] = Element(newValue)
             }
         }
     }
@@ -98,6 +98,12 @@ struct Vector : BLASMatrixProtocol {
 
     /// {
     /// construct from Swift double array of *Element*
+    init(_ data: [Element]) {
+        memview = MatrixMemView([UInt(data.count), UInt(1)])
+        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
+        setfromElementData(data)
+    }
+    
     init?(_ data: [[Element]]) {
         guard data.allSatisfy({(x: [Element]) in
             return x.count == 1
@@ -151,6 +157,15 @@ struct Vector : BLASMatrixProtocol {
 //        rex.map_inplace(f)
 //        return rex
 //    }
+    
+    // MARK: modify
+    func transpose() -> Vector {
+        return Vector(datacon, memview.transpose())
+    }
+    // TODO: ...
+    func transpose_inplace() {
+        //return Matrix(datacon, memview.transpose())
+    }
     
     // MARK: static ctors
     
