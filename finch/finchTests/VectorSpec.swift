@@ -32,11 +32,12 @@ class VectorSpec: QuickSpec {
                     for idx in 0 ..< UInt(self.v1.count) {
                         expect(V[idx]).to(equal(self.v1[Int(idx)]))
                     }
-                } //fit("inits correctly")
+                } // fit("inits correctly")
                 
-                fit("leaves original") {
-                    // <#code#>
-                } //fit("leaves original")
+                fit("has correct properties") {
+                    let V = Vector(self.v1)
+                    expect(V.isColVector).to(beTrue())
+                } // fit("has correct properties")
                 
             } // context("from Sequence")
         } //describe("init")

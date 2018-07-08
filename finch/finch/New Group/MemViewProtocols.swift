@@ -40,9 +40,11 @@ protocol MatrixMemViewProtocol {
     var shape: (nrows: UInt, ncols: UInt) {get}
     var dataoff: UInt {get}
     var datastd: (row_stride: UInt, col_stride: UInt) {get}
+    var count: UInt {get}
     func data_index(_ idx: UInt, _ jdx: UInt) -> UInt
     func shaped_index(idx: UInt) -> UInt
     func required_capacity() -> UInt
+    
 }
 
 extension MatrixMemViewProtocol {
@@ -59,6 +61,12 @@ extension MatrixMemViewProtocol {
     /// including offset & striding
     func required_capacity() -> UInt {
         return data_index(shape.nrows - 1, shape.ncols - 1) + 1
+    }
+    
+    var count: UInt {
+        get {
+            return shape.nrows * shape.ncols
+        }
     }
 }
 

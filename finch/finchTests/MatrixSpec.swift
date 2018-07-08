@@ -65,9 +65,9 @@ class MatrixSpec: QuickSpec {
                 
                 fit("gets Matrix") {
                     let r0 = A![0]
-                    expect(r0).to(beAKindOf(Matrix.self))
+                    expect(r0).to(beAKindOf(Vector.self))
                     let r1 = A![1]
-                    expect(r1).to(beAKindOf(Matrix.self))
+                    expect(r1).to(beAKindOf(Vector.self))
                 } //fit("gets Matrix")
                 
                 fit("gets row") {

@@ -22,21 +22,24 @@ struct Matrix : BLASMatrixProtocol {
         return rex
     }
 
-    /// get the _idx_-th row, unless is 1-D row,
-    /// in which case return _idx_-th col
-    subscript(idx: UInt) -> Matrix? {
+    /// get/set the _idx_-th row as a *Vector*
+    /// get returns *nil* when data unavailable
+    /// set is just unsafe
+    subscript(idx: UInt) -> Vector? {
         get {
             guard idx < nrows else {
                 return nil
             }
-            return Matrix(datacon, memview.row(idx))
+            return Vector(datacon, memview.row(idx))
         }
-        set {
-//            if isRowVector {
-//                
-//            } else {
-//                return Matrix(datacon, memview.row(idx))
-//            }
+        set (x) {
+            let v = x!
+            let fromOffset = v.memview.dataoff
+            let fromStride = v.isRowVector ? v.memview.datastd.col_stride : v.memview.datastd.row_stride
+            let toOffset = memview.dataoff
+            let toStride = memview.datastd.col_stride
+            self.datacon.set(from: v.datacon, n: fromOffset, xoffset: fromStride, xstride: toOffset, yoffset: toStride)
+            // TODO - add *throws* ??
         }
     }
     
