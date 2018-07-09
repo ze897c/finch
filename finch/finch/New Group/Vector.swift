@@ -28,19 +28,20 @@ struct Vector : BLASMatrixProtocol, Sequence {
     
     var description: String {
         get {
-            let beg = isRowVector ? "[[" : "["
-            let end = isRowVector ? "]]" : "]"
-            let begsep = isRowVector ? ", " : "["
-            let endsep = isRowVector ? "" : "]\n"
-            var rex = self.reduce(beg, {(rex: String, x: CDouble) -> String in
-                return "\(rex)\(begsep)\(x)\(endsep)"
-            })
-            if !isRowVector {
-                // back up one to erase newline...more efficient than tests in reducor
-                rex.removeLast(1)
-            }
-            rex += end
-            return rex
+            return Matrix(datacon, memview).description
+//            let beg = isRowVector ? "[[" : "["
+//            let end = isRowVector ? "]]" : "]"
+//            let begsep = isRowVector ? ", " : "["
+//            let endsep = isRowVector ? "" : "]\n"
+//            var rex = self.reduce(beg, {(rex: String, x: CDouble) -> String in
+//                return "\(rex)\(begsep)\(x)\(endsep)"
+//            })
+//            if !isRowVector {
+//                // back up one to erase newline...more efficient than tests in reducor
+//                rex.removeLast(1)
+//            }
+//            rex += end
+//            return rex
         }
     }
     
@@ -144,7 +145,7 @@ struct Vector : BLASMatrixProtocol, Sequence {
         }) else {
             return nil
         }
-        memview = data.count == 1 ? MatrixMemView([UInt(1), UInt(data.count)]) : MatrixMemView([UInt(data.count), UInt(1)])
+        memview = data.count == 1 ? MatrixMemView([UInt(1), UInt(data[0].count)]) : MatrixMemView([UInt(data.count), UInt(1)])
         datacon = DataCon<DataElement>(capacity: memview.required_capacity())
         setfromData(data)
     }

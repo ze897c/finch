@@ -138,15 +138,19 @@ class MatrixSpec: QuickSpec {
                     A = Matrix([[1, 2, 3], [4, 5, 6]])!
                 }
                 
-                fit("sets row and leaves original") {
+                fit("sets row") {
                     A![0] = Vector([[7, 8, 9]])!
                     expect(A!.datacon[0]).to(equal(7))
-                    expect(A!.datacon[1]).to(equal(4))
                     expect(A!.datacon[2]).to(equal(8))
-                    expect(A!.datacon[3]).to(equal(5))
                     expect(A!.datacon[4]).to(equal(9))
-                    expect(A!.datacon[5]).to(equal(6))
                 } // fit("sets row")
+                
+                fit("leaves original") {
+                    A![0] = Vector([[7, 8, 9]])!
+                    expect(A!.datacon[1]).to(equal(4))
+                    expect(A!.datacon[3]).to(equal(5))
+                    expect(A!.datacon[5]).to(equal(6))
+                } // fit("leaves original")
             } // context("when setting row of 3x2")
             
             context("when getting row from 3x2") {

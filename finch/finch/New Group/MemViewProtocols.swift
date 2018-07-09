@@ -36,6 +36,10 @@ extension VectorMemViewProtocol {
     }
 }
 
+enum MatrixMemViewCodingKeys: String, CodingKey {
+    case nrows, ncols, dataoff, row_stride, col_stride
+}
+
 protocol MatrixMemViewProtocol {
     var shape: (nrows: UInt, ncols: UInt) {get}
     var dataoff: UInt {get}
@@ -44,7 +48,6 @@ protocol MatrixMemViewProtocol {
     func data_index(_ idx: UInt, _ jdx: UInt) -> UInt
     func shaped_index(idx: UInt) -> UInt
     func required_capacity() -> UInt
-    
 }
 
 extension MatrixMemViewProtocol {
@@ -73,8 +76,34 @@ extension MatrixMemViewProtocol {
 
 // assume non-symetric, dense, _etc_
 // and name symetric, sparse, _etc_ appropriately
-struct MatrixMemView: MatrixMemViewProtocol {
+struct MatrixMemView: MatrixMemViewProtocol, Codable {
+    
 
+    // func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key>
+    // func unkeyedContainer() -> UnkeyedEncodingContainer
+    // func singleValueContainer() -> SingleValueEncodingContainer
+    
+    
+    // MARK: enc/dec
+    public func encode(to encoder: Encoder) throws
+    {
+        var container = encoder.container(keyedBy: MatrixMemViewCodingKeys.self)
+        try container.encode(shape.nrows, forKey: .nrows)
+        try container.encode(shape.ncols, forKey: .ncols)
+        try container.encode(dataoff, forKey: .dataoff)
+        try container.encode(datastd.row_stride, forKey: .row_stride)
+        try container.encode(datastd.col_stride, forKey: .col_stride)
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: MatrixMemViewCodingKeys.self)
+        shape.nrows = try container.decode(UInt.self, forKey: .nrows)
+        shape.ncols = try container.decode(UInt.self, forKey: .ncols)
+        dataoff = try container.decode(UInt.self, forKey: .dataoff)
+        datastd.row_stride = try container.decode(UInt.self, forKey: .row_stride)
+        datastd.col_stride = try container.decode(UInt.self, forKey: .col_stride)
+    }
+    
     let shape: (nrows: UInt, ncols: UInt)
     let dataoff: UInt
     let datastd: (row_stride: UInt, col_stride: UInt)

@@ -10,7 +10,11 @@ import Foundation
 import Accelerate
 
 // assumption here is Double, dense, no structural constraint
-struct Matrix : BLASMatrixProtocol, Sequence {
+struct Matrix:
+    BLASMatrixProtocol,
+    Sequence//,
+    //Codable // https://www.raywenderlich.com/172145/encoding-decoding-and-serialization-in-swift-4
+{
     typealias DataElement = CDouble
     typealias Element = Vector
 
@@ -19,9 +23,11 @@ struct Matrix : BLASMatrixProtocol, Sequence {
 
     var description: String {
         get {
-            return self.reduce("[", {(rex: String, v: Vector) -> String in
-                return rex + v.datacon.description
+            var rex = self.reduce("[", {(rex: String, v: Vector) -> String in
+                return "\(rex)\(v.datacon.description)\n"
             })
+            rex.removeLast(1)
+            return rex
         }
     }
     
@@ -285,13 +291,12 @@ struct Matrix : BLASMatrixProtocol, Sequence {
         get {
             return Vector(datacon, memview.row(idx))
         }
-        set (x) {
-            let v = x
+        set (v) {
             let fromOffset = v.memview.dataoff
             let fromStride = v.isRowVector ? v.memview.datastd.col_stride : v.memview.datastd.row_stride
-            let toOffset = memview.dataoff
+            let toOffset = memview.data_index(idx, 0)
             let toStride = memview.datastd.col_stride
-            self.datacon.set(from: v.datacon, n: fromOffset, xoffset: fromStride, xstride: toOffset, yoffset: toStride)
+            self.datacon.set(from: v.datacon, n: v.count, xoffset: fromOffset, xstride:  fromStride, yoffset: toOffset, ystride: toStride)
             // TODO - add *throws* ??
         }
     }

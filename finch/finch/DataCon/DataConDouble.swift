@@ -535,9 +535,11 @@ extension DataCon where DataCon.Element == CDouble {
     }
 
     /// copy _n_ elements _from_
-    func set(from: DataCon<CDouble>, n: UInt? = nil, xoffset: UInt? = nil, xstride: UInt? = nil, yoffset: UInt? = nil, ystride: UInt? = nil) {
+    func set(from: DataCon<CDouble>, n: UInt? = nil, xoffset: UInt? = nil, xstride: UInt? = nil, yoffset: UInt? = nil, ystride: UInt? = nil)
+    {
+        // _x_ is src, _y_ is dst
         let num = Int32(n ?? UInt(min(count, from.count)))
-        let xptr = data + Int(xoffset ?? 0)
+        let xptr = from.data + Int(xoffset ?? 0)
         let xstr = Int32(xstride ?? 1)
         let yptr = data + Int(yoffset ?? 0)
         let ystr = Int32(ystride ?? 1)
