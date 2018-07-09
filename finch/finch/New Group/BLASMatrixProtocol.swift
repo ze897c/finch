@@ -10,18 +10,18 @@ import Foundation
 
 protocol BLASMatrixProtocol : MatrixProtocol {
     //typealias Element = Element
-    associatedtype Element: DaCoEl
+    associatedtype DataElement: DaCoEl
 
     var memview: MatrixMemView {get}
-    var datacon: DataCon<Element> {get}
-
+    var datacon: DataCon<DataElement> {get}
+    
     /// full boat ctor
-    init(_ data_con: DataCon<Element>, _ mem_view: MatrixMemView)
+    init(_ data_con: DataCon<DataElement>, _ mem_view: MatrixMemView)
     
     /// {
     /// init from swift data
     /// return nil if ragged
-    init?(_ x: [[Element]])
+    init?(_ x: [[DataElement]])
     /// }
     
     /// {
@@ -33,27 +33,27 @@ protocol BLASMatrixProtocol : MatrixProtocol {
     /// {
     /// ctors with shape and indexed function
     // failable to still be valid for *Vector*
-    init?(_ n: UInt, _ f: (UInt, UInt) -> Element)
-    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> Element)
+    init?(_ n: UInt, _ f: (UInt, UInt) -> DataElement)
+    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> DataElement)
     /// }
 
     /// {
     /// ctors with shape and fixed value
     // failable to still be valid for *Vector*
-    init(_ n: UInt, doubleValue x: Element)
-    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: Element)
+    init(_ n: UInt, doubleValue x: DataElement)
+    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: DataElement)
     /// }
 }
 
-extension BLASMatrixProtocol where Element == CDouble {
-    
+extension BLASMatrixProtocol where DataElement == CDouble {
+
 //    /// shallow ctor
 //    init(_ x: BLASMatrixProtocol)
 //    /// deep ctor
 //    init(deepCopyFrom x: BLASMatrixProtocol)
     
     // MARK: map
-    func map_inplace(_ f: (UInt, UInt) -> Element) {
+    func map_inplace(_ f: (UInt, UInt) -> DataElement) {
         for idx in 0 ..< nrows {
             for jdx in 0 ..< ncols {
                 let ddx: Int = Int(memview.data_index(idx, jdx))
@@ -61,7 +61,7 @@ extension BLASMatrixProtocol where Element == CDouble {
             }
         }
     }
-    func map_inplace(_ f: (UInt) -> Element) {
+    func map_inplace(_ f: (UInt) -> DataElement) {
         for idx in 0 ..< nrows {
             for jdx in 0 ..< ncols {
                 let ddx: Int = Int(memview.data_index(idx, jdx))
@@ -84,7 +84,7 @@ extension BLASMatrixProtocol where Element == CDouble {
     //        return rex
     //    }
     
-    func map_inplace(_ f: (Element) -> Element, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
+    func map_inplace(_ f: (DataElement) -> DataElement, n: UInt? = nil, xstride: UInt? = nil, xoffset: UInt? = nil) {
         datacon.flatmap_inplace(f, n: n, xstride: xstride, xoffset: xoffset)
     }
     
@@ -111,7 +111,7 @@ extension BLASMatrixProtocol where Element == CDouble {
     // TODO: setelem(_ idx: UInt, _ jdx: UInt, _ Element val) throws {
     // TODO: setelem(_ idx: UInt, _ jdx: UInt, fromMatrix MatrixProtocol A) throws {
     
-    func setfromElementData(_ data: [CDouble]) {
+    func setfromData(_ data: [CDouble]) {
         // TODO: figure out when casts/coersions happen & do they burn time
         for idx in 0 ..< memview.shape.nrows {
             for jdx in 0 ..< memview.shape.ncols {
@@ -121,7 +121,7 @@ extension BLASMatrixProtocol where Element == CDouble {
         }
     }
     
-    func setfromElementData(_ data: [[CDouble]]) {
+    func setfromData(_ data: [[CDouble]]) {
         // TODO: figure out when casts/coersions happen & do they burn time
         for idx in 0 ..< memview.shape.nrows {
             for jdx in 0 ..< memview.shape.ncols {

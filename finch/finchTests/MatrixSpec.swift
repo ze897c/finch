@@ -81,6 +81,28 @@ class MatrixSpec: QuickSpec {
         describe("subscript") {
             var A: Matrix? = nil
             
+            context("when getting value in 3x2") {
+                beforeEach() {
+                    A = Matrix([[1, 2, 3], [4, 5, 6]])!
+                }
+                
+                fit("sets correctly") {
+                    A![0][0] = 6
+                    A![0][1] = 5
+                    A![0][2] = 4
+                    A![1][0] = 3
+                    A![1][1] = 2
+                    A![1][2] = 1
+                    expect(A!.datacon[0]).to(equal(6))
+                    expect(A!.datacon[1]).to(equal(3))
+                    expect(A!.datacon[2]).to(equal(5))
+                    expect(A!.datacon[3]).to(equal(2))
+                    expect(A!.datacon[4]).to(equal(4))
+                    expect(A!.datacon[5]).to(equal(1))
+                } // fit("sets correctly")
+                
+            } // context("when getting value in 3x2")
+            
             context("when getting value from 3x2") {
                 beforeEach() {
                     A = Matrix([[1, 2, 3], [4, 5, 6]])!
@@ -110,6 +132,22 @@ class MatrixSpec: QuickSpec {
                 } // fit("leaves original")
                 
             } // context("when getting row from 3x2")
+            
+            context("when setting row of 3x2") {
+                beforeEach() {
+                    A = Matrix([[1, 2, 3], [4, 5, 6]])!
+                }
+                
+                fit("sets row and leaves original") {
+                    A![0] = Vector([[7, 8, 9]])!
+                    expect(A!.datacon[0]).to(equal(7))
+                    expect(A!.datacon[1]).to(equal(4))
+                    expect(A!.datacon[2]).to(equal(8))
+                    expect(A!.datacon[3]).to(equal(5))
+                    expect(A!.datacon[4]).to(equal(9))
+                    expect(A!.datacon[5]).to(equal(6))
+                } // fit("sets row")
+            } // context("when setting row of 3x2")
             
             context("when getting row from 3x2") {
 

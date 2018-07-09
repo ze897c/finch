@@ -8,13 +8,47 @@
 
 import Foundation
 // assumption here is Double, dense, no structural constraint
-struct Vector : BLASMatrixProtocol {
+struct Vector : BLASMatrixProtocol, Sequence {
 
+    typealias DataElement = CDouble
     typealias Element = CDouble
     
     let memview: MatrixMemView
-    let datacon: DataCon<Element>
-
+    let datacon: DataCon<DataElement>
+    
+    var shape: (nrows: UInt, ncols: UInt) {
+        return memview.shape
+    }
+    
+    var count: UInt {
+        get {
+            return shape.nrows * shape.ncols
+        }
+    }
+    
+    var description: String {
+        get {
+            let beg = isRowVector ? "[[" : "["
+            let end = isRowVector ? "]]" : "]"
+            let begsep = isRowVector ? ", " : "["
+            let endsep = isRowVector ? "" : "]\n"
+            var rex = self.reduce(beg, {(rex: String, x: CDouble) -> String in
+                return "\(rex)\(begsep)\(x)\(endsep)"
+            })
+            if !isRowVector {
+                // back up one to erase newline...more efficient than tests in reducor
+                rex.removeLast(1)
+            }
+            rex += end
+            return rex
+        }
+    }
+    
+    // MARK: iterator
+    func makeIterator() -> VectorIterator {
+        return VectorIterator(self)
+    }
+    
 //    /// copy the data from the given row into this instances *datacon*
 //    func setrow(_ idx: UInt, _ v: Matrix, fromRow: UInt = 0) throws {
 //        guard v.nrows == 1 && v.ncols == ncols else {
@@ -30,26 +64,26 @@ struct Vector : BLASMatrixProtocol {
     /// get the _idx_-th row, unless is 1-D row,
     /// in which case return _idx_-th col
     /// NOTE: unsafe...
-    subscript(idx: UInt) -> Element {
+    subscript(idx: UInt) -> DataElement {
         get {
             if isRowVector {
-                return datacon[DataCon<Element>.Index(memview.data_index(0, idx))]
+                return datacon[DataCon<DataElement>.Index(memview.data_index(0, idx))]
             } else {
-                return datacon[DataCon<Element>.Index(memview.data_index(idx, 0))]
+                return datacon[DataCon<DataElement>.Index(memview.data_index(idx, 0))]
             }
         }
         set {
             if isRowVector {
-                datacon[DataCon<Element>.Index(memview.data_index(0, idx))] = Element(newValue)
+                datacon[DataCon<DataElement>.Index(memview.data_index(0, idx))] = DataElement(newValue)
             } else {
-                datacon[DataCon<Element>.Index(memview.data_index(idx, 0))] = Element(newValue)
+                datacon[DataCon<DataElement>.Index(memview.data_index(idx, 0))] = DataElement(newValue)
             }
         }
     }
     
     // MARK: inits
 
-    init(_ data_con: DataCon<Element>, _ mem_view: MatrixMemView) {
+    init(_ data_con: DataCon<DataElement>, _ mem_view: MatrixMemView) {
         datacon = data_con
         memview = mem_view
     }
@@ -58,69 +92,69 @@ struct Vector : BLASMatrixProtocol {
     /// defaults to column vector
     init(_ n: UInt) {
         memview = MatrixMemView([UInt(1), n])
-        datacon = DataCon<Element>(capacity: n)
+        datacon = DataCon<DataElement>(capacity: n)
     }
     init(nrows n: UInt) {
         memview = MatrixMemView([n, UInt(1)])
-        datacon = DataCon<Element>(capacity: n)
+        datacon = DataCon<DataElement>(capacity: n)
     }
     /// }
 
     /// {
     /// ctors with shape and indexed function
-    init(_ n: UInt, _ f: (UInt) -> Element) {
+    init(_ n: UInt, _ f: (UInt) -> DataElement) {
         memview = MatrixMemView([n, 1])
-        datacon = DataCon<Element>(capacity: n * n)
+        datacon = DataCon<DataElement>(capacity: n * n)
         map_inplace(f)
     }
-    init(nrows n: UInt, _ f: (UInt) -> Element) {
+    init(nrows n: UInt, _ f: (UInt) -> DataElement) {
         memview = MatrixMemView( [1, n])
-        datacon = DataCon<Element>(capacity: n * n)
+        datacon = DataCon<DataElement>(capacity: n * n)
         map_inplace(f)
     }
     /// }
     
     /// {
-    /// construct with size and constant *Element*
-    init(_ n: UInt, doubleValue x: Element) {
+    /// construct with size and constant *DataElement*
+    init(_ n: UInt, doubleValue x: DataElement) {
         memview = MatrixMemView([n, 1])
-        datacon = DataCon<Element>(repeating: x, count: Int(n))
+        datacon = DataCon<DataElement>(repeating: x, count: Int(n))
     }
-    init(nrows n: UInt, doubleValue x: Element) {
+    init(nrows n: UInt, doubleValue x: DataElement) {
         memview = MatrixMemView([1, n])
-        datacon = DataCon<Element>(repeating: x, count: Int(n))
+        datacon = DataCon<DataElement>(repeating: x, count: Int(n))
     }
     // essentially deleting this ctor
-    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: Element) {
+    init?(_ nrows: UInt, _ ncols: UInt, doubleValue x: DataElement) {
         return nil
     }
     /// }
 
     /// {
-    /// construct from Swift double array of *Element*
-    init(_ data: [Element]) {
+    /// construct from Swift double array of *DataElement*
+    init(_ data: [DataElement]) {
         memview = MatrixMemView([UInt(data.count), UInt(1)])
-        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
-        setfromElementData(data)
+        datacon = DataCon<DataElement>(capacity: memview.shape.nrows * memview.shape.ncols)
+        setfromData(data)
     }
     
-    init?(_ data: [[Element]]) {
-        guard data.allSatisfy({(x: [Element]) in
+    init?(_ data: [[DataElement]]) {
+        guard data.count == 1 || data.allSatisfy({(x: [DataElement]) in
             return x.count == 1
         }) else {
             return nil
         }
-        memview = MatrixMemView([UInt(data.count), UInt(1)])
-        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
-        setfromElementData(data)
+        memview = data.count == 1 ? MatrixMemView([UInt(1), UInt(data.count)]) : MatrixMemView([UInt(data.count), UInt(1)])
+        datacon = DataCon<DataElement>(capacity: memview.required_capacity())
+        setfromData(data)
     }
-    init?(rowData data: [[Element]]) {
+    init?(rowData data: [[DataElement]]) {
         guard data.count == 1 else {
             return nil
         }
         memview = MatrixMemView([ UInt(1), UInt(data.count)])
-        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
-        setfromElementData(data)
+        datacon = DataCon<DataElement>(capacity: memview.shape.nrows * memview.shape.ncols)
+        setfromData(data)
     }
     /// }
     
@@ -142,17 +176,17 @@ struct Vector : BLASMatrixProtocol {
     init?(_ nrows: UInt, _ ncols: UInt) {
         return nil
     }
-    init?(_ n: UInt, _ f: (UInt, UInt) -> Element) {
+    init?(_ n: UInt, _ f: (UInt, UInt) -> DataElement) {
         return nil
     }
-    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> Element) {
+    init?(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> DataElement) {
         return nil
     }
     // }
 
     // MARK: map
     
-//    func map(_ f: (Element) -> Element) -> Vector {
+//    func map(_ f: (DataElement) -> DataElement) -> Vector {
 //        let rex = Matrix(self)
 //        rex.map_inplace(f)
 //        return rex
@@ -173,18 +207,39 @@ struct Vector : BLASMatrixProtocol {
     static func E(_ n: UInt) -> Matrix {
         let rex = Matrix.Zeros(n)
         for idx in 0 ..< n {
-            rex.datacon[DataCon<Element>.Index(idx * n)] = 1.0
+            rex.datacon[DataCon<DataElement>.Index(idx * n)] = 1.0
         }
         return rex
     }
     
     /// square *Matrix* of size _n_ of all zeros
     static func Zeros(_ n: UInt) -> Matrix {
-        return Matrix(DataCon<Element>.BLASConstant(0.0, n), MatrixMemView([n, 1]))
+        return Matrix(DataCon<DataElement>.BLASConstant(0.0, n), MatrixMemView([n, 1]))
     }
     
     /// square *Matrix* of size _m x n_ of all zeros
     static func Zeros(nrows n: UInt) -> Matrix {
-        return Matrix(DataCon<Element>.BLASConstant(0.0, n), MatrixMemView([1, n]))
+        return Matrix(DataCon<DataElement>.BLASConstant(0.0, n), MatrixMemView([1, n]))
+    }
+}
+
+struct VectorIterator
+    :
+    IteratorProtocol
+{
+    let vector: Vector
+    var idx: UInt
+    
+    init(_ v: Vector) {
+        vector = v
+        idx = 0
+    }
+    
+    mutating func next() -> Vector.DataElement? {
+        guard idx <= vector.count else {
+            return nil
+        }
+        defer { idx += 1 }
+        return vector[idx]
     }
 }

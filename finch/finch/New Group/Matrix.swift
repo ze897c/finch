@@ -10,12 +10,26 @@ import Foundation
 import Accelerate
 
 // assumption here is Double, dense, no structural constraint
-struct Matrix : BLASMatrixProtocol {
-    typealias Element = CDouble
-    
+struct Matrix : BLASMatrixProtocol, Sequence {
+    typealias DataElement = CDouble
+    typealias Element = Vector
+
     let memview: MatrixMemView
-    let datacon: DataCon<Element>
+    let datacon: DataCon<DataElement>
+
+    var description: String {
+        get {
+            return self.reduce("[", {(rex: String, v: Vector) -> String in
+                return rex + v.datacon.description
+            })
+        }
+    }
     
+    // MARK: iterator
+    func makeIterator() -> RowIterator {
+        return RowIterator(self)
+    }
+
     /// the BLAS stride of the underlying container: zero if not stridable
     /// return -
     /// nil if not vector-stride-able, else vector-stride
@@ -60,7 +74,7 @@ struct Matrix : BLASMatrixProtocol {
     }
     
     /*
-     /// Computes the sum of the absolute values of elements in a vector (double-precision).
+     /// Computes the sum of the absolute values of DataElements in a vector (double-precision).
      func cblas_dasum(Int32, UnsafePointer<Double>!, Int32) -> Double
      
      /// Computes a constant times a vector plus a vector (double-precision).
@@ -258,7 +272,7 @@ struct Matrix : BLASMatrixProtocol {
     }
 
     /// map the function, returning new
-    func map(_ f: (Element) -> Element) -> Matrix {
+    func map(_ f: (DataElement) -> DataElement) -> Matrix {
         let rex = Matrix(deepCopyFrom: self)
         rex.map_inplace(f)
         return rex
@@ -280,6 +294,15 @@ struct Matrix : BLASMatrixProtocol {
             self.datacon.set(from: v.datacon, n: fromOffset, xoffset: fromStride, xstride: toOffset, yoffset: toStride)
             // TODO - add *throws* ??
         }
+    }
+    
+    /// get the rows as iterator
+    func rows() -> RowIterator {
+        return RowIterator(self)
+    }
+    /// get the cols as iterator
+    func cols() -> ColIterator {
+        return ColIterator(self)
     }
     
     /// get a row
@@ -311,7 +334,7 @@ struct Matrix : BLASMatrixProtocol {
         memview = MatrixMemView(x.memview)
         datacon = x.datacon
     }
-    init(_ data_con: DataCon<Element>, _ mem_view: MatrixMemView) {
+    init(_ data_con: DataCon<DataElement>, _ mem_view: MatrixMemView) {
         datacon = data_con
         memview = mem_view
     }
@@ -319,43 +342,43 @@ struct Matrix : BLASMatrixProtocol {
     /// simple ctors when only shape is perscribed
     init(_ n: UInt) {
         memview = MatrixMemView(n)
-        datacon = DataCon<Element>(capacity: n * n)
+        datacon = DataCon<DataElement>(capacity: n * n)
     }
     init(_ nrows: UInt, _ ncols: UInt) {
         memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<Element>(capacity: nrows * ncols)
+        datacon = DataCon<DataElement>(capacity: nrows * ncols)
     }
     
     /// ctors with shape and indexed function
-    init(_ n: UInt, _ f: (UInt, UInt) -> Element) {
+    init(_ n: UInt, _ f: (UInt, UInt) -> DataElement) {
         memview = MatrixMemView(n)
-        datacon = DataCon<Element>(capacity: n * n)
+        datacon = DataCon<DataElement>(capacity: n * n)
         map_inplace(f)
     }
-    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> Element) {
+    init(_ nrows: UInt, _ ncols: UInt, _ f: (UInt, UInt) -> DataElement) {
         memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<Element>(capacity: nrows * ncols)
+        datacon = DataCon<DataElement>(capacity: nrows * ncols)
         map_inplace(f)
     }
     
     /// ctors with shape and fixed value
-    init(_ n: UInt, doubleValue x: Element) {
+    init(_ n: UInt, doubleValue x: DataElement) {
         memview = MatrixMemView(n)
-        datacon = DataCon<Element>(repeating: x, count: Int(n * n))
+        datacon = DataCon<DataElement>(repeating: x, count: Int(n * n))
     }
-    init(_ nrows: UInt, _ ncols: UInt, doubleValue x: Element) {
+    init(_ nrows: UInt, _ ncols: UInt, doubleValue x: DataElement) {
         memview = MatrixMemView([nrows, ncols])
-        datacon = DataCon<Element>(repeating: x, count: Int(nrows * ncols))
+        datacon = DataCon<DataElement>(repeating: x, count: Int(nrows * ncols))
     }
     
-    init?(_ data: [[Element]]) {
-        guard data.allSatisfy({(x: [Element]) in
+    init?(_ data: [[DataElement]]) {
+        guard data.allSatisfy({(x: [DataElement]) in
             return x.count == data[0].count
         }) else {
             return nil
         }
         memview = MatrixMemView([UInt(data.count), UInt(data[0].count)])
-        datacon = DataCon<Element>(capacity: memview.shape.nrows * memview.shape.ncols)
+        datacon = DataCon<DataElement>(capacity: memview.shape.nrows * memview.shape.ncols)
         // TODO: figure out when casts/coersions happen & do they burn time
         for idx in 0 ..< memview.shape.nrows {
             for jdx in 0 ..< memview.shape.ncols {
@@ -380,22 +403,64 @@ struct Matrix : BLASMatrixProtocol {
     static func Eye(_ n: UInt) -> Matrix {
         let rex = Matrix.Zeros(n)
         for idx in 0 ..< n {
-            rex.datacon[DataCon<Element>.Index(idx * n)] = 1.0
+            rex.datacon[DataCon<DataElement>.Index(idx * n)] = 1.0
         }
         return rex
     }
 
     /// square *Matrix* of size _n_ of all zeros
     static func Zeros(_ n: UInt) -> Matrix {
-        let dc = DataCon<Element>.BLASConstant(0.0, n * n)
+        let dc = DataCon<DataElement>.BLASConstant(0.0, n * n)
         let rex = Matrix(dc, MatrixMemView(n))
         return rex
     }
     
     /// square *Matrix* of size _m x n_ of all zeros
     static func Zeros(_ m: UInt, _ n: UInt) -> Matrix {
-        let dc = DataCon<Element>.BLASConstant(0.0, m * n)
+        let dc = DataCon<DataElement>.BLASConstant(0.0, m * n)
         let rex = Matrix(dc, MatrixMemView([m, n]))
         return rex
+    }
+}
+
+struct RowIterator
+    :
+    IteratorProtocol
+{
+    let matrix: Matrix
+    var idx: UInt
+    
+    init(_ A: Matrix) {
+        self.matrix = A
+        idx = 0
+    }
+    
+    mutating func next() -> Vector? {
+        guard idx <= matrix.nrows else {
+            return nil
+        }
+        defer { idx += 1 }
+        return matrix[idx]
+    }
+}
+
+struct ColIterator
+    :
+    IteratorProtocol
+{
+    let matrix: Matrix
+    var idx: UInt
+    
+    init(_ A: Matrix) {
+        self.matrix = A
+        idx = 0
+    }
+    
+    mutating func next() -> Vector? {
+        guard idx <= matrix.ncols else {
+            return nil
+        }
+        defer { idx += 1 }
+        return matrix.col(idx)
     }
 }

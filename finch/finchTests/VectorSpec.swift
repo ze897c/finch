@@ -17,16 +17,24 @@ import os.log
 class VectorSpec: QuickSpec {
     let v0: [CDouble] = [1.0, 2.0, 3.0]
     let v1: [CDouble] = [1.0, -2.0, 3.0, -4.0, 5.0]
+    let d0: [[CDouble]] = [[1, 2, 3]]
+    let d1: [[CDouble]] = [[1], [2], [3]]
     override func spec() {
         // MARK: init
         describe("init") {
             
+            context("row vector from double sequence") {
+                fit("inits correctly") {
+                    let V = Vector(self.d0)!
+                    for idx in 0 ..< UInt(self.d0[0].count) {
+                        let truth = self.d0[0][Int(idx)]
+                        expect(V[idx]).to(equal(truth))
+                    }
+                } // fit("inits correctly")
+            } // context("row vector from double sequence")
+            
             context("from Sequence") {
-                
-                beforeEach() {
-                    //
-                }
-                
+
                 fit("inits correctly") {
                     let V = Vector(self.v1)
                     for idx in 0 ..< UInt(self.v1.count) {
