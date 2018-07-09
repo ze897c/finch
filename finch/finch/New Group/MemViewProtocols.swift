@@ -36,9 +36,7 @@ extension VectorMemViewProtocol {
     }
 }
 
-enum MatrixMemViewCodingKeys: String, CodingKey {
-    case nrows, ncols, dataoff, row_stride, col_stride
-}
+
 
 protocol MatrixMemViewProtocol {
     var shape: (nrows: UInt, ncols: UInt) {get}
@@ -77,7 +75,9 @@ extension MatrixMemViewProtocol {
 // assume non-symetric, dense, _etc_
 // and name symetric, sparse, _etc_ appropriately
 struct MatrixMemView: MatrixMemViewProtocol, Codable {
-    
+    enum CodingKeys: String, CodingKey {
+        case nrows, ncols, dataoff, row_stride, col_stride
+    }
 
     // func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key>
     // func unkeyedContainer() -> UnkeyedEncodingContainer
@@ -87,7 +87,7 @@ struct MatrixMemView: MatrixMemViewProtocol, Codable {
     // MARK: enc/dec
     public func encode(to encoder: Encoder) throws
     {
-        var container = encoder.container(keyedBy: MatrixMemViewCodingKeys.self)
+        var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(shape.nrows, forKey: .nrows)
         try container.encode(shape.ncols, forKey: .ncols)
         try container.encode(dataoff, forKey: .dataoff)
@@ -96,7 +96,7 @@ struct MatrixMemView: MatrixMemViewProtocol, Codable {
     }
     
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: MatrixMemViewCodingKeys.self)
+        let container = try decoder.container(keyedBy: CodingKeys.self)
         shape.nrows = try container.decode(UInt.self, forKey: .nrows)
         shape.ncols = try container.decode(UInt.self, forKey: .ncols)
         dataoff = try container.decode(UInt.self, forKey: .dataoff)

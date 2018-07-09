@@ -20,6 +20,52 @@ class MatrixMemViewSpec: QuickSpec {
         var mv32:MatrixMemView = MatrixMemView([3, 2])
         var mv23:MatrixMemView = MatrixMemView([2, 3])
 
+        // MARK: encode
+        describe("encode") {
+            context("on simple data") {
+                beforeEach() {
+                    mv32 = MatrixMemView([3, 2])
+                    mv23 = MatrixMemView([2, 3])
+                }
+                
+                fit("encodes and decodes") {
+                    let encoder = JSONEncoder()
+                    let decoder = JSONDecoder()
+                    var jsonData23 = try! encoder.encode(mv23)
+                    let jsonData32 = try! encoder.encode(mv32)
+                    //let jsonString = String(data: jsonData, encoding: .utf8)
+                    expect(1).to(equal(1)) // just making sure we made it this far
+
+                    // ?? just figuring out how to do python.id
+//                    var jimmy = jsonData23
+//                    withUnsafePointer(to: &jsonData23) {
+//                        print("value has address: \($0)")
+//                    }
+//                    withUnsafePointer(to: &jimmy) {
+//                        print("eulav has address: \($0)")
+//                    }
+                    
+                    do {
+                        let re_mv23 = try decoder.decode(MatrixMemView.self, from: jsonData23)
+                        let re_mv32 = try decoder.decode(MatrixMemView.self, from: jsonData32)
+                        expect(re_mv23).to(beAKindOf(MatrixMemView.self))
+                        expect(re_mv32).to(beAKindOf(MatrixMemView.self))
+                    } catch _ {
+                        // TODO: there must be a way to handle this from Q/N
+                        fail()
+                    }
+                    
+                    
+                } //fit("encodes and decodes")
+                
+                fit("leaves original") {
+                    // <#code#>
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("encode")
+        
+        
         // MARK: col view
         describe("col view") {
 

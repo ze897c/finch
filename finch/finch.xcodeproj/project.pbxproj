@@ -23,6 +23,8 @@
 		C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0320CB0BDC00D4CE21 /* finchTests.swift */; };
 		C9348C0620CB0BDC00D4CE21 /* finch.h in Headers */ = {isa = PBXBuildFile; fileRef = C9348BF820CB0BDC00D4CE21 /* finch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		C9348C1020CB0C3C00D4CE21 /* DataCon.swift in Sources */ = {isa = PBXBuildFile; fileRef = C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */; };
+		C964BD5C20F4122F00D7372B /* SimpleProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C964BD5B20F4122F00D7372B /* SimpleProtocols.swift */; };
+		C964BD5E20F412DE00D7372B /* UtilsSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = C964BD5D20F412DE00D7372B /* UtilsSpecs.swift */; };
 		C979D2AE20DF1BBB00EB7C3F /* MemViewProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */; };
 		C979D2B420DF218E00EB7C3F /* Matrix.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979D2B320DF218E00EB7C3F /* Matrix.swift */; };
 		C979D2B620DF367F00EB7C3F /* MemViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C979D2B520DF367F00EB7C3F /* MemViewTests.swift */; };
@@ -90,6 +92,8 @@
 		C9348C0320CB0BDC00D4CE21 /* finchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = finchTests.swift; sourceTree = "<group>"; };
 		C9348C0520CB0BDC00D4CE21 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C9348C0F20CB0C3C00D4CE21 /* DataCon.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataCon.swift; sourceTree = "<group>"; };
+		C964BD5B20F4122F00D7372B /* SimpleProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleProtocols.swift; sourceTree = "<group>"; };
+		C964BD5D20F412DE00D7372B /* UtilsSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UtilsSpecs.swift; sourceTree = "<group>"; };
 		C979D2AD20DF1BBB00EB7C3F /* MemViewProtocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemViewProtocols.swift; sourceTree = "<group>"; };
 		C979D2B320DF218E00EB7C3F /* Matrix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Matrix.swift; sourceTree = "<group>"; };
 		C979D2B520DF367F00EB7C3F /* MemViewTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MemViewTests.swift; sourceTree = "<group>"; };
@@ -191,6 +195,7 @@
 			children = (
 				C91F052B20CC5BD60006DCE8 /* string_extension.swift */,
 				C985B79820CEDE24003B923C /* Exceptions.swift */,
+				C964BD5B20F4122F00D7372B /* SimpleProtocols.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -257,6 +262,7 @@
 				C979D2B520DF367F00EB7C3F /* MemViewTests.swift */,
 				C979D2B720E2882E00EB7C3F /* MatrixSpec.swift */,
 				C92A389820F15B6D000B2693 /* VectorSpec.swift */,
+				C964BD5D20F412DE00D7372B /* UtilsSpecs.swift */,
 			);
 			path = finchTests;
 			sourceTree = "<group>";
@@ -413,6 +419,7 @@
 				C92A389720ED2B7F000B2693 /* BLASMatrixProtocol.swift in Sources */,
 				C985B79B20CEF235003B923C /* Ring.swift in Sources */,
 				C9106E2820D856190053AB1C /* DataConDouble.swift in Sources */,
+				C964BD5C20F4122F00D7372B /* SimpleProtocols.swift in Sources */,
 				C985B79920CEDE24003B923C /* Exceptions.swift in Sources */,
 				C979D2B420DF218E00EB7C3F /* Matrix.swift in Sources */,
 				C985B79D20CEF29A003B923C /* Group.swift in Sources */,
@@ -432,6 +439,7 @@
 				C9D72E8F20DB155B00A4739A /* DCCDSpec.swift in Sources */,
 				C9348C0420CB0BDC00D4CE21 /* finchTests.swift in Sources */,
 				C979D2B620DF367F00EB7C3F /* MemViewTests.swift in Sources */,
+				C964BD5E20F412DE00D7372B /* UtilsSpecs.swift in Sources */,
 				C92A389920F15B6D000B2693 /* VectorSpec.swift in Sources */,
 				C91F052E20CC5C3A0006DCE8 /* extTests.swift in Sources */,
 				C979D2B820E2882E00EB7C3F /* MatrixSpec.swift in Sources */,
