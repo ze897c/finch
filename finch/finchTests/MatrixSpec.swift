@@ -18,6 +18,34 @@ class MatrixSpec: QuickSpec {
     
     override func spec() {
         
+        
+        // MARK: addition
+        describe("addition") {
+            let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
+            let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi, CDouble.pi], [-CDouble.pi, CDouble.pi, -CDouble.pi]]
+            context("on simple data") {
+                var A: Matrix = Matrix(d0)!
+                var B: Matrix = Matrix(d1)!
+                beforeEach() {
+                    A = Matrix(d0)!
+                    B = Matrix(d1)!
+                }
+                
+                fit("computes correctly") {
+                    //<#code#>
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            expect(A[idx][jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
+                        }
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("addition")
+
         // TODO: test that *Vector* from *Matrix* lives & works after *Matrix* deletion
         
         // MARK: functional init
@@ -53,9 +81,35 @@ class MatrixSpec: QuickSpec {
         describe("subscript") {
             var A: Matrix? = nil
             
-            context("") {
+            context("when getting value from 3x2") {
+                beforeEach() {
+                    A = Matrix([[1, 2, 3], [4, 5, 6]])!
+                }
+                fit("gets correct value") {
+                    expect(A![0][0]).to(equal(1))
+                    expect(A![0][1]).to(equal(2))
+                    expect(A![0][2]).to(equal(3))
+                    expect(A![1][0]).to(equal(4))
+                    expect(A![1][1]).to(equal(5))
+                    expect(A![1][2]).to(equal(6))
+                } // fit("gets correct value")
                 
-            }
+                fit("leaves original") {
+                    _ = A![0][0]
+                    _ = A![0][1]
+                    _ = A![0][2]
+                    _ = A![1][0]
+                    _ = A![1][1]
+                    _ = A![1][2]
+                    expect(A!.datacon[0]).to(equal(1))
+                    expect(A!.datacon[1]).to(equal(4))
+                    expect(A!.datacon[2]).to(equal(2))
+                    expect(A!.datacon[3]).to(equal(5))
+                    expect(A!.datacon[4]).to(equal(3))
+                    expect(A!.datacon[5]).to(equal(6))
+                } // fit("leaves original")
+                
+            } // context("when getting row from 3x2")
             
             context("when getting row from 3x2") {
 
@@ -72,9 +126,9 @@ class MatrixSpec: QuickSpec {
                 
                 fit("gets row") {
                     let r0 = A![0]
-                    expect(r0?.isRowVector).to(beTrue())
+                    expect(r0.isRowVector).to(beTrue())
                     let r1 = A![1]
-                    expect(r1?.isRowVector).to(beTrue())
+                    expect(r1.isRowVector).to(beTrue())
                 } // fit("gets row")
                 
                 fit("leaves original") {
@@ -91,17 +145,17 @@ class MatrixSpec: QuickSpec {
                 fit("is view into parent") {
                     let r0 = A![0]
                     let r1 = A![1]
-                    expect(r0!.datacon).to(beIdenticalTo(A!.datacon))
-                    expect(r1!.datacon).to(beIdenticalTo(A!.datacon))
+                    expect(r0.datacon).to(beIdenticalTo(A!.datacon))
+                    expect(r1.datacon).to(beIdenticalTo(A!.datacon))
                 } // fit("is view into parent")
                 
                 fit("has correct memview details") {
                     let r0 = A![0]
                     let r1 = A![1]
-                    expect(r0?.memview.dataoff).to(equal(0))
-                    expect(r1?.memview.dataoff).to(equal(1))
-                    expect(r0?.memview.row_stride).to(equal(A?.memview.row_stride))
-                    expect(r0?.memview.col_stride).to(equal(A?.memview.col_stride))
+                    expect(r0.memview.dataoff).to(equal(0))
+                    expect(r1.memview.dataoff).to(equal(1))
+                    expect(r0.memview.row_stride).to(equal(A?.memview.row_stride))
+                    expect(r0.memview.col_stride).to(equal(A?.memview.col_stride))
                 } // fit("has correct memview details")
                 
             } // context("when getting row from 3x2")

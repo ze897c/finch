@@ -9,6 +9,7 @@
 import Foundation
 
 enum Exceptions : Error {
+    case Unknown(_ msg: String)
     case OutOfBoundsException
     case DivideByZero
     case ShapeMismatch

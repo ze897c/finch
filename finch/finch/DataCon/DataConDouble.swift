@@ -412,7 +412,7 @@ extension DataCon where DataCon.Element == CDouble {
         catlas_daxpby(num, CDouble(alpha), aptr, astr, CDouble(beta), bptr, bstr)
     }
 
-    /// alpha * x + b * y -> x
+    /// alpha * x + beta * y -> x
     /// where _x_ is the instance
     /// uses *catlas_daxpby*
     /// - Parameters:

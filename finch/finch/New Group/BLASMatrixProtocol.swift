@@ -130,4 +130,17 @@ extension BLASMatrixProtocol where Element == CDouble {
             }
         }
     }
+    
+    var data_mtble_ptr: UnsafeMutablePointer<CDouble> {
+        get {
+            return datacon.data + Int(memview.dataoff)
+        }
+    }
+    
+    var data_const_ptr: UnsafePointer<CDouble> {
+        get {
+            return UnsafePointer<CDouble>(datacon.data + Int(memview.dataoff))
+        }
+    }
+
 }
