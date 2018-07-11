@@ -76,125 +76,135 @@ struct Vector : BLASMatrixProtocol, Sequence {
         return 0 // TODO:
     }
     
+    /// a * x + b * y -> x
+    /// UNSAFE
+    func axpby_inplace(_ y: Vector, _ a: CDouble, _ b: CDouble) {
+        datacon.axpby_inplace(a, y.datacon, b, n: count, xstride: stride, xoffset: offset, ystride: y.stride, yoffset: y.offset)
+    }
+    
     /// unsafe
-    static func add(_ a: Vector, _ b: Vector) -> Vector {
-        return a // TODO:
+    func add(_ b: Vector) -> Vector {
+        return self // TODO:
     }
 
-    static func sub(_ a: Vector, _ b: Vector) -> Vector {
-        return a // TODO:
+    func sub(_ b: Vector) -> Vector {
+        return self // TODO:
     }
 
-    static func add(_ a: Vector, _ b: CDouble) -> Vector {
-        return a // TODO:
+    func add(_ b: CDouble) -> Vector {
+        return self // TODO:
     }
 
-    static func sub(_ a: Vector, _ b: CDouble) -> Vector {
-        return a // TODO:
+    func sub(_ b: CDouble) -> Vector {
+        return self // TODO:
     }
 
-    static func mul(_ a: Vector, _ b: CDouble) -> Vector {
-        return a // TODO:
+    func mul(_ b: CDouble) -> Vector {
+        return self // TODO:
     }
 
-    static func add_inplace(_ a: Vector, _ b: Vector) {
+    mutating func add_inplace(_ b: Vector) {
         //return a // TODO:
     }
 
-    static func sub_inplace(_ a: Vector, _ b: Vector) {
+    mutating func sub_inplace(_ b: Vector) {
         //return a // TODO:
     }
 
-    static func add_inplace(_ a: inout Vector, _ b: [CDouble]) {
-        for idx in 0..<a.count {
-            a[idx] += b[Int(idx)]
+    mutating func add_inplace(_ b: [CDouble]) {
+        for idx in 0..<count {
+            self[idx] += b[Int(idx)]
         }
     }
     
-    static func sub_inplace(_ a: inout Vector, _ b: [CDouble]) {
-        for idx in 0..<a.count {
-            a[idx] -= b[Int(idx)]
+    mutating func sub_inplace(_ b: [CDouble]) {
+        for idx in 0..<count {
+            self[idx] -= b[Int(idx)]
         }
     }
     
-    static func add_inplace(_ a: inout Vector, _ b: CDouble) {
-        for idx in 0..<a.count {
-            a[idx] += b
+    mutating func add_inplace(_ b: CDouble) {
+        for idx in 0..<count {
+            self[idx] += b
         }
     }
 
-    static func sub_inplace(_ a: inout Vector, _ b: CDouble) {
-        for idx in 0..<a.count {
-            a[idx] -= b
+    mutating func sub_inplace(_ b: CDouble) {
+        for idx in 0..<count {
+            self[idx] -= b
         }
     }
 
-    static func mul_inplace(_ a: Vector, _ b: Vector) {
-        //return a // TODO:
+    /// x * y -> x
+    /// where _x_ is the instance & operation is elementwise
+    mutating func mul_inplace(_ y: Vector) {
+        datacon.mul_inplace(y.datacon, n: count, xstride: stride, xoffset: offset, ystride: y.stride, yoffset: y.offset)
     }
 
-    static func mul_inplace(_ a: Vector, _ b: CDouble) {
-        //return a // TODO:
+    /// x * b -> x
+    /// where _x_ is the instance
+    func mul_inplace(_ b: CDouble) {
+        datacon.scale_inplace(b, n: count, stride: stride, offset: offset)
     }
 
     static func +(_ a: Vector, _ b: Vector) -> Vector? {
         guard a.count == b.count else {
             return nil
         }
-        return add(a, b)
+        return a.add(b)
     }
     
     static func -(_ a: Vector, _ b: Vector) -> Vector? {
         guard a.count == b.count else {
             return nil
         }
-        return sub(a, b)
+        return a.sub(b)
     }
     
     static func +=(_ a: inout Vector, _ b: CDouble) {
-        add_inplace(&a, b)
+        a.add_inplace(b)
     }
 
     static func -=(_ a: inout Vector, _ b: CDouble) {
-        sub_inplace(&a, b)
+        a.sub_inplace(b)
     }
 
     static func +=(_ a: inout Vector, _ b: [CDouble]) throws {
         guard a.count == b.count else {
             throw Exceptions.ShapeMismatch
         }
-        add_inplace(&a, b)
+        a.add_inplace(b)
     }
     
     static func -=(_ a: inout Vector, _ b: [CDouble]) throws {
         guard a.count == b.count else {
             throw Exceptions.ShapeMismatch
         }
-        sub_inplace(&a, b)
+        a.sub_inplace(b)
     }
     
     static func *(_ a: Vector, _ b: CDouble) -> Vector {
-        return mul(a, b)
+        return a.mul(b)
     }
     static func *(_ b: CDouble, _ a: Vector) -> Vector {
-        return mul(a, b)
+        return a.mul(b)
     }
-    static func *=(_ a: Vector, _ b: CDouble) {
-        mul_inplace(a, b)
+    static func *=(_ a: inout Vector, _ b: CDouble) {
+        a.mul_inplace(b)
     }
     
-    static func +=(_ a: Vector, _ b: Vector) throws {
+    static func +=(_ a: inout Vector, _ b: Vector) throws {
         guard a.count == b.count else {
             throw Exceptions.ShapeMismatch
         }
-        add_inplace(a, b)
+        a.add_inplace(b)
     }
     
-    static func -=(_ a: Vector, _ b: Vector) throws {
+    static func -=(_ a: inout Vector, _ b: Vector) throws {
         guard a.count == b.count else {
             throw Exceptions.ShapeMismatch
         }
-        sub_inplace(a, b)
+        a.sub_inplace(b)
     }
 
     func dot(_ v: Vector) throws -> CDouble {

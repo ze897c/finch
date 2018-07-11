@@ -52,7 +52,15 @@ class VectorSpec: QuickSpec {
                 } //fit("computes correctly")
                 
                 fit("leaves original") {
-                    // <#code#>
+                    _ = self.V3!.imaxmag()
+                    _ = self.V5!.imaxmag()
+                    expect(self.V3).to(beAKindOf(Vector.self))
+                    expect(self.V5).to(beAKindOf(Vector.self))
+                    for idx in 0..<d3.count {
+                        expect(self.V3![UInt(idx)]).to(equal(d3[idx]))
+                        expect(self.V5![UInt(idx)]).to(equal(d5[idx][0]))
+                    }
+
                 } //fit("leaves original")
                 
             } // context("on simple data")

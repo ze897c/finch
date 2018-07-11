@@ -155,7 +155,7 @@ struct Matrix:
         let ldb = Int32(B.nrows)
         let c = C.data_mtble_ptr
         let ldc = Int32(C.nrows)
-        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, M, N, K, 1.0, a, lda, b, ldb, 1.0, c, ldc)
+        cblas_dgemm(CblasColMajor, CblasNoTrans, CblasNoTrans, M, N, K, alpha, a, lda, b, ldb, beta, c, ldc)
     }
     
     static func *(_ x: Matrix, _ y: Matrix) -> Matrix? {
