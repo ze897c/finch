@@ -231,7 +231,7 @@ struct Matrix:
         }
         let rex = Matrix(deepCopyFrom: y)
         do {
-            try rex.axpby_inplace(a: -1.0, b: 1.0, y: y)
+            try rex.axpby_inplace(a: -1.0, b: 1.0, y: x)
         } catch Exceptions.ShapeMismatch {
             throw Exceptions.ShapeMismatch  // may be something else to do
         } catch _ {
@@ -257,7 +257,7 @@ struct Matrix:
     static prefix func - (_ x: Matrix) -> Matrix {
         return x.negate()
     }
-    
+
     func negate_inplace(n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil)
     {
         datacon.negate_inplace(n: count, stride: stride, offset: data_offset)

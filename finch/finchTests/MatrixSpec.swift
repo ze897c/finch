@@ -86,9 +86,11 @@ class MatrixSpec: QuickSpec {
                 } //fit("computes correctly")
 
                 fit("leaves original") {
+                    let C = try! A + B
                     for idx in 0 ..< A.nrows {
                         for jdx in 0 ..< A.ncols {
                             expect(A[idx][jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
+                            expect(B[idx][jdx]).to(equal(d1[Int(idx)][Int(jdx)]))
                         }
                     }
                 } //fit("leaves original")
@@ -96,6 +98,42 @@ class MatrixSpec: QuickSpec {
             } // context("on simple data")
         } //describe("addition")
 
+        // MARK: subtraction
+        describe("subtraction") {
+            let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
+            let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi, CDouble.pi], [-CDouble.pi, CDouble.pi, -CDouble.pi]]
+            context("on simple data") {
+                beforeEach() {
+                    A = Matrix(d0)!
+                    B = Matrix(d1)!
+                }
+                
+                fit("computes correctly") {
+                    let C = try! A - B
+                    expect(C).to(beAKindOf(Matrix.self))
+                    expect(C.nrows).to(equal(A.nrows))
+                    expect(C.ncols).to(equal(A.ncols))
+                    for idx in 0 ..< C.nrows {
+                        for jdx in 0 ..< C.ncols {
+                            let truth = d0[Int(idx)][Int(jdx)] - d1[Int(idx)][Int(jdx)]
+                            expect(C[idx][jdx]).to(equal(truth))
+                        }
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = try! A - B
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            expect(A[idx][jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
+                            expect(B[idx][jdx]).to(equal(d1[Int(idx)][Int(jdx)]))
+                        }
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("subtraction")
+        
         // TODO: test that *Vector* from *Matrix* lives & works after *Matrix* deletion
         
         // MARK: functional init
