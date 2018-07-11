@@ -20,6 +20,38 @@ class MatrixSpec: QuickSpec {
         var A = Matrix(1)
         var B = Matrix(1)
 
+        // MARK: set via double subscript
+        describe("set via double subscript") {
+            context("on simple data") {
+                let d0: [[CDouble]] = [[1, -2], [-4.5, 6.7]]
+                let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi], [-CDouble.pi, CDouble.pi]]
+                let newa00: CDouble = 7
+                let scalar: CDouble = -912.873
+                beforeEach() {
+                    A = Matrix(d0)!
+                    A[0][0] = newa00
+                    A[0][1] *= scalar
+                    A[1][0] *= scalar
+                    A[1][0] *= scalar
+                }
+                
+                fit("sets correctly") {
+                    expect(A).to(beAKindOf(Matrix.self))
+                    expect(A.nrows).to(equal(UInt(d0.count)))
+                    expect(A.ncols).to(equal(UInt(d0[0].count)))
+                    
+                    expect(A[0][0]).to(equal(newa00))
+                    expect(A[0][1]).to(equal(d0[0][1] * scalar))
+                    expect(A[1][0]).to(equal(d0[1][0] * scalar * scalar))
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    expect(A[1][1]).to(equal(d0[1][1]))
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("set via double subscript")
+        
         // MARK: matrix multiplication
         describe("matrix multiplication") {
             context("on simple data") {
@@ -30,7 +62,7 @@ class MatrixSpec: QuickSpec {
                     A = Matrix(d0)!
                     B = Matrix(d1)!
                 }
-                
+
                 fit("computes correctly") {
                     let C = (A * B)!
                     
@@ -38,8 +70,8 @@ class MatrixSpec: QuickSpec {
                     expect(C.nrows).to(equal(A.nrows))
                     expect(C.ncols).to(equal(A.ncols))
                     
-                    for idx in 0 ..< A.nrows {
-                        for jdx in 0 ..< A.ncols {
+                    for idx in 0 ..< C.nrows {
+                        for jdx in 0 ..< C.ncols {
                             let truth: CDouble = A[idx][0] * B[0][jdx] + A[idx][1] * B[1][jdx]
                             expect(C[idx][jdx]).to(equal(truth))
                         }
@@ -47,7 +79,15 @@ class MatrixSpec: QuickSpec {
                 } //fit("computes correctly")
                 
                 fit("leaves original") {
-                    // <#code#>
+                    _ = (A * B)!
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            let atruth: CDouble = A[idx][jdx]
+                            let btruth: CDouble = B[idx][jdx]
+                            expect(A[idx][jdx]).to(equal(atruth))
+                            expect(B[idx][jdx]).to(equal(btruth))
+                        }
+                    }
                 } //fit("leaves original")
                 
             } // context("on simple data")
