@@ -17,24 +17,74 @@ import os.log
 class MatrixSpec: QuickSpec {
     
     override func spec() {
-        
+        var A = Matrix(1)
+        var B = Matrix(1)
+
+        // MARK: rows
+        describe("rows") {
+            
+            context("on simple data") {
+                let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
+                let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi, CDouble.pi], [-CDouble.pi, CDouble.pi, -CDouble.pi]]
+                
+                beforeEach() {
+                    A = Matrix(d0)!
+                    B = Matrix(d1)!
+                }
+
+                fit("gets correctly") {
+                    var idx: UInt = 0
+                    for row in A {
+                        expect(row.count).to(equal(UInt(d0[0].count)))
+                        for jdx in 0..<A.ncols {
+                            expect(row[jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
+                        }
+                        idx += 1
+                    }
+                } //fit("gets correctly")
+
+                fit("leaves original") {
+                    var idx: UInt = 0
+                    for row in A {
+                        expect(row.count).to(equal(UInt(d0[0].count)))
+                        for jdx in 0..<A.ncols {
+                            expect(row[jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
+                        }
+                        idx += 1
+                    }
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            expect(A[idx][jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
+                        }
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("rows")
         
         // MARK: addition
         describe("addition") {
             let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
             let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi, CDouble.pi], [-CDouble.pi, CDouble.pi, -CDouble.pi]]
             context("on simple data") {
-                var A: Matrix = Matrix(d0)!
-                var B: Matrix = Matrix(d1)!
                 beforeEach() {
                     A = Matrix(d0)!
                     B = Matrix(d1)!
                 }
-                
+
                 fit("computes correctly") {
-                    //<#code#>
+                    let C = try! A + B
+                    expect(C).to(beAKindOf(Matrix.self))
+                    expect(C.nrows).to(equal(A.nrows))
+                    expect(C.ncols).to(equal(A.ncols))
+                    for idx in 0 ..< C.nrows {
+                        for jdx in 0 ..< C.ncols {
+                            let truth = d0[Int(idx)][Int(jdx)] + d1[Int(idx)][Int(jdx)]
+                            expect(C[idx][jdx]).to(equal(truth))
+                        }
+                    }
                 } //fit("computes correctly")
-                
+
                 fit("leaves original") {
                     for idx in 0 ..< A.nrows {
                         for jdx in 0 ..< A.ncols {
@@ -58,7 +108,7 @@ class MatrixSpec: QuickSpec {
                 }
 
                 fit("inits data correctly") {
-                    let A = Matrix(3, 4, f0)
+                    A = Matrix(3, 4, f0)
                     for idx in 0 ..< A.nrows {
                         for jdx in 0 ..< A.ncols {
                             let ddx: Int = Int(A.memview.data_index(idx, jdx))

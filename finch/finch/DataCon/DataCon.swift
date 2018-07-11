@@ -26,6 +26,10 @@ class DataCon<Element: DaCoEl>
     IDProtocol
 //    where Element:Numeric
 {
+    // MARK: class members
+    typealias Index = Int
+    typealias Indices = Range<DataCon.Index>
+    typealias ArrayLiteralElement = Element
 
     // MARK: enc/dec
     enum PropsKeys: String, CodingKey {
@@ -70,13 +74,6 @@ class DataCon<Element: DaCoEl>
     // func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key>
     // func unkeyedContainer() -> UnkeyedEncodingContainer
     // func singleValueContainer() -> SingleValueEncodingContainer
-
- 
-    
-    // MARK: class members
-    typealias Index = Int
-    typealias Indices = Range<DataCon.Index>
-    typealias ArrayLiteralElement = Element
     //var data: ContiguousArray<Element>
     
 

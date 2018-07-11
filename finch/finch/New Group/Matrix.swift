@@ -23,10 +23,15 @@ struct Matrix:
 
     var description: String {
         get {
-            var rex = self.reduce("[", {(rex: String, v: Vector) -> String in
-                return "\(rex)\(v.datacon.description)\n"
-            })
-            rex.removeLast(1)
+            var rex = "["
+            for row in self {
+                rex += "["
+                for (ix, x) in row.enumerated() {
+                    rex += "\(ix == 0 ? "" : ", ")\(x)"
+                }
+                rex += "]\n"
+            }
+            rex += "]"
             return rex
         }
     }
@@ -167,9 +172,7 @@ struct Matrix:
         }
         return rex
     }
-    
 
-    
     /// a * x + b * y -> x
     func axpby_inplace(a: CDouble, b: CDouble, y: Matrix) throws {
         // TODO: here, and everywhere else, it is unsafe to use the same pointer more
@@ -311,16 +314,16 @@ struct Matrix:
     }
     
     /// get a row
-    func row(_ idx: UInt, safe: Bool = true, deepcopy: Bool = false) -> Vector? {
-        guard !safe || idx < nrows else {
+    func row(_ idx: UInt, deepcopy: Bool = false) -> Vector? {
+        guard idx < nrows else {
             return nil
         }
         return Vector(deepcopy ? datacon.deepcopy(): datacon, memview.row(idx))
     }
     
     /// get a col
-    func col(_ idx: UInt, safe: Bool = true, deepcopy: Bool = false) -> Vector? {
-        guard !safe || idx < nrows else {
+    func col(_ idx: UInt, deepcopy: Bool = false) -> Vector? {
+        guard idx < ncols else {
             return nil
         }
         return Vector(deepcopy ? datacon.deepcopy(): datacon, memview.col(idx))
@@ -441,11 +444,11 @@ struct RowIterator
     }
     
     mutating func next() -> Vector? {
-        guard idx <= matrix.nrows else {
+        guard idx < matrix.nrows else {
             return nil
         }
         defer { idx += 1 }
-        return matrix[idx]
+        return matrix.row(idx)
     }
 }
 
@@ -462,7 +465,7 @@ struct ColIterator
     }
     
     mutating func next() -> Vector? {
-        guard idx <= matrix.ncols else {
+        guard idx < matrix.ncols else {
             return nil
         }
         defer { idx += 1 }

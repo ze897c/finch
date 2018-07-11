@@ -237,7 +237,7 @@ struct VectorIterator
     }
     
     mutating func next() -> Vector.DataElement? {
-        guard idx <= vector.count else {
+        guard idx < vector.count else {
             return nil
         }
         defer { idx += 1 }

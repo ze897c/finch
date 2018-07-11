@@ -31,7 +31,7 @@ class MatrixMemViewSpec: QuickSpec {
                 fit("encodes and decodes") {
                     let encoder = JSONEncoder()
                     let decoder = JSONDecoder()
-                    var jsonData23 = try! encoder.encode(mv23)
+                    let jsonData23 = try! encoder.encode(mv23)
                     let jsonData32 = try! encoder.encode(mv32)
                     //let jsonString = String(data: jsonData, encoding: .utf8)
                     expect(1).to(equal(1)) // just making sure we made it this far

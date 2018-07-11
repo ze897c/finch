@@ -22,10 +22,11 @@ class VectorSpec: QuickSpec {
     override func spec() {
         // MARK: init
         describe("init") {
-            
+
             context("row vector from double sequence") {
                 fit("inits correctly") {
                     let V = Vector(self.d0)!
+                    expect(V.count).to(equal(UInt(self.v0.count)))
                     for idx in 0 ..< UInt(self.d0[0].count) {
                         let truth = self.d0[0][Int(idx)]
                         expect(V[idx]).to(equal(truth))
@@ -37,6 +38,7 @@ class VectorSpec: QuickSpec {
 
                 fit("inits correctly") {
                     let V = Vector(self.v1)
+                    expect(V.count).to(equal(UInt(self.v1.count)))
                     for idx in 0 ..< UInt(self.v1.count) {
                         expect(V[idx]).to(equal(self.v1[Int(idx)]))
                     }
