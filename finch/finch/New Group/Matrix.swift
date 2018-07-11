@@ -68,7 +68,7 @@ struct Matrix:
     
     var data_interleaved: Bool {
         get {
-             return memview.count == datacon.count
+             return memview.count != datacon.count
         }
     }
     
@@ -157,6 +157,10 @@ struct Matrix:
         let rex = Matrix(x.nrows, y.ncols)
         dgemm(A: x, B: y, C: rex, alpha: 1.0, beta: 0.0)
         return rex
+    }
+    
+    static func *(_ a: CDouble, _ x: Matrix) -> Matrix {
+        return x * a
     }
     
     static func *(_ x: Matrix, _ a: CDouble) -> Matrix {
