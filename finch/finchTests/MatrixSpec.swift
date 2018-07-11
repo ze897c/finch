@@ -20,6 +20,39 @@ class MatrixSpec: QuickSpec {
         var A = Matrix(1)
         var B = Matrix(1)
 
+        // MARK: matrix multiplication
+        describe("matrix multiplication") {
+            context("on simple data") {
+                let d0: [[CDouble]] = [[1, -2], [-4.5, 6.7]]
+                let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi], [-CDouble.pi, CDouble.pi]]
+
+                beforeEach() {
+                    A = Matrix(d0)!
+                    B = Matrix(d1)!
+                }
+                
+                fit("computes correctly") {
+                    let C = (A * B)!
+                    
+                    expect(C).to(beAKindOf(Matrix.self))
+                    expect(C.nrows).to(equal(A.nrows))
+                    expect(C.ncols).to(equal(A.ncols))
+                    
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            let truth: CDouble = A[idx][0] * B[0][jdx] + A[idx][1] * B[1][jdx]
+                            expect(C[idx][jdx]).to(equal(truth))
+                        }
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    // <#code#>
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("matrix multiplication")
+        
         // MARK: rows
         describe("rows") {
             
@@ -35,6 +68,7 @@ class MatrixSpec: QuickSpec {
                 fit("gets correctly") {
                     var idx: UInt = 0
                     for row in A {
+                        expect(row).to(beAKindOf(Vector.self))
                         expect(row.count).to(equal(UInt(d0[0].count)))
                         for jdx in 0..<A.ncols {
                             expect(row[jdx]).to(equal(d0[Int(idx)][Int(jdx)]))
