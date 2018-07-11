@@ -111,6 +111,14 @@ struct Matrix:
      
      */
     
+    // MARK: manip
+    mutating func swap_rows(_ idx: UInt, _ jdx: UInt) {
+        try! row(idx)!.swap(row(jdx)!)
+    }
+    
+    mutating func swap_cols(_ idx: UInt, _ jdx: UInt) {
+        try! col(idx)!.swap(col(jdx)!)
+    }
     
     /// This function multiplies A * B and multiplies the resulting matrix by alpha.
     /// It then multiplies matrix C by beta.
@@ -318,7 +326,7 @@ struct Matrix:
     }
     
     /// get a row
-    func row(_ idx: UInt, deepcopy: Bool = false) -> Vector? {
+    mutating func row(_ idx: UInt, deepcopy: Bool = false) -> Vector? {
         guard idx < nrows else {
             return nil
         }
@@ -326,7 +334,7 @@ struct Matrix:
     }
     
     /// get a col
-    func col(_ idx: UInt, deepcopy: Bool = false) -> Vector? {
+    mutating func col(_ idx: UInt, deepcopy: Bool = false) -> Vector? {
         guard idx < ncols else {
             return nil
         }
@@ -404,10 +412,10 @@ struct Matrix:
     func transpose() -> Matrix {
         return Matrix(datacon, memview.transpose())
     }
-    // TODO: ...
-    func transpose_inplace() -> Matrix {
-        return Matrix(datacon, memview.transpose())
-    }
+    // TODO: ... what would the efficiency hit be to have memview mutable?
+//    func transpose_inplace() -> Matrix {
+//        memview = memview.transpose()
+//    }
 
     // MARK: static ctors
     
@@ -439,7 +447,7 @@ struct RowIterator
     :
     IteratorProtocol
 {
-    let matrix: Matrix
+    var matrix: Matrix
     var idx: UInt
     
     init(_ A: Matrix) {
@@ -460,7 +468,7 @@ struct ColIterator
     :
     IteratorProtocol
 {
-    let matrix: Matrix
+    var matrix: Matrix
     var idx: UInt
     
     init(_ A: Matrix) {

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+
 // assumption here is Double, dense, no structural constraint
 struct Vector : BLASMatrixProtocol, Sequence {
 
@@ -26,42 +27,199 @@ struct Vector : BLASMatrixProtocol, Sequence {
         }
     }
     
-    var description: String {
+    var offset: UInt {
         get {
-            return Matrix(datacon, memview).description
-//            let beg = isRowVector ? "[[" : "["
-//            let end = isRowVector ? "]]" : "]"
-//            let begsep = isRowVector ? ", " : "["
-//            let endsep = isRowVector ? "" : "]\n"
-//            var rex = self.reduce(beg, {(rex: String, x: CDouble) -> String in
-//                return "\(rex)\(begsep)\(x)\(endsep)"
-//            })
-//            if !isRowVector {
-//                // back up one to erase newline...more efficient than tests in reducor
-//                rex.removeLast(1)
-//            }
-//            rex += end
-//            return rex
+            return memview.dataoff
         }
     }
     
+    var stride: UInt {
+        get {
+            return isRowVector ? memview.col_stride : memview.row_stride
+        }
+    }
+
+    var description: String {
+        get {
+            return asMatrix.description
+        }
+    }
+    
+    var asMatrix: Matrix {
+        get {
+            return Matrix(datacon, memview)
+        }
+    }
+    
+    // MARK: idaminmax(s)
+    func imaxmag() -> UInt {
+        return datacon.imaxmag(count, offset, stride)
+    }
+
+    // MARK: manip
+    
+    /// swap vectors in place
+    func swap(_ b: Vector) throws {
+        guard count == b.count else {
+            throw Exceptions.ShapeMismatch
+        }
+        datacon.swap(b.datacon, count, offset, stride, b.offset, b.stride)
+    }
+    
+    // TODO: dasum
+    
+    // MARK: math/algebra
+    func distance(_ v: Vector) -> CDouble? {
+        guard count == v.count else {
+            return nil
+        }
+        return 0 // TODO:
+    }
+    
+    /// unsafe
+    static func add(_ a: Vector, _ b: Vector) -> Vector {
+        return a // TODO:
+    }
+
+    static func sub(_ a: Vector, _ b: Vector) -> Vector {
+        return a // TODO:
+    }
+
+    static func add(_ a: Vector, _ b: CDouble) -> Vector {
+        return a // TODO:
+    }
+
+    static func sub(_ a: Vector, _ b: CDouble) -> Vector {
+        return a // TODO:
+    }
+
+    static func mul(_ a: Vector, _ b: CDouble) -> Vector {
+        return a // TODO:
+    }
+
+    static func add_inplace(_ a: Vector, _ b: Vector) {
+        //return a // TODO:
+    }
+
+    static func sub_inplace(_ a: Vector, _ b: Vector) {
+        //return a // TODO:
+    }
+
+    static func add_inplace(_ a: inout Vector, _ b: [CDouble]) {
+        for idx in 0..<a.count {
+            a[idx] += b[Int(idx)]
+        }
+    }
+    
+    static func sub_inplace(_ a: inout Vector, _ b: [CDouble]) {
+        for idx in 0..<a.count {
+            a[idx] -= b[Int(idx)]
+        }
+    }
+    
+    static func add_inplace(_ a: inout Vector, _ b: CDouble) {
+        for idx in 0..<a.count {
+            a[idx] += b
+        }
+    }
+
+    static func sub_inplace(_ a: inout Vector, _ b: CDouble) {
+        for idx in 0..<a.count {
+            a[idx] -= b
+        }
+    }
+
+    static func mul_inplace(_ a: Vector, _ b: Vector) {
+        //return a // TODO:
+    }
+
+    static func mul_inplace(_ a: Vector, _ b: CDouble) {
+        //return a // TODO:
+    }
+
+    static func +(_ a: Vector, _ b: Vector) -> Vector? {
+        guard a.count == b.count else {
+            return nil
+        }
+        return add(a, b)
+    }
+    
+    static func -(_ a: Vector, _ b: Vector) -> Vector? {
+        guard a.count == b.count else {
+            return nil
+        }
+        return sub(a, b)
+    }
+    
+    static func +=(_ a: inout Vector, _ b: CDouble) {
+        add_inplace(&a, b)
+    }
+
+    static func -=(_ a: inout Vector, _ b: CDouble) {
+        sub_inplace(&a, b)
+    }
+
+    static func +=(_ a: inout Vector, _ b: [CDouble]) throws {
+        guard a.count == b.count else {
+            throw Exceptions.ShapeMismatch
+        }
+        add_inplace(&a, b)
+    }
+    
+    static func -=(_ a: inout Vector, _ b: [CDouble]) throws {
+        guard a.count == b.count else {
+            throw Exceptions.ShapeMismatch
+        }
+        sub_inplace(&a, b)
+    }
+    
+    static func *(_ a: Vector, _ b: CDouble) -> Vector {
+        return mul(a, b)
+    }
+    static func *(_ b: CDouble, _ a: Vector) -> Vector {
+        return mul(a, b)
+    }
+    static func *=(_ a: Vector, _ b: CDouble) {
+        mul_inplace(a, b)
+    }
+    
+    static func +=(_ a: Vector, _ b: Vector) throws {
+        guard a.count == b.count else {
+            throw Exceptions.ShapeMismatch
+        }
+        add_inplace(a, b)
+    }
+    
+    static func -=(_ a: Vector, _ b: Vector) throws {
+        guard a.count == b.count else {
+            throw Exceptions.ShapeMismatch
+        }
+        sub_inplace(a, b)
+    }
+
+    func dot(_ v: Vector) throws -> CDouble {
+        guard count == v.count else {
+            throw Exceptions.ShapeMismatch
+        }
+        return inner_product(v)
+    }
+    
+    func inner_product(_ v: Vector) -> CDouble {
+        return 0 // TODO:
+    }
+    
+    func outer_product(_ v: Vector) -> Matrix? {
+        guard count == v.count else {
+            return nil
+        }
+        return Matrix(1, 1) // TODO:
+    }
+
     // MARK: iterator
     func makeIterator() -> VectorIterator {
         return VectorIterator(self)
     }
-    
-//    /// copy the data from the given row into this instances *datacon*
-//    func setrow(_ idx: UInt, _ v: Matrix, fromRow: UInt = 0) throws {
-//        guard v.nrows == 1 && v.ncols == ncols else {
-//            throw Exceptions.ShapeMismatch
-//        }
-//        let xoff = memview.data_index(idx, 0)
-//        let xstr = memview.datastd.col_stride
-//        let yoff = v.memview.data_index(fromRow, 0)
-//        let ystr = v.memview.datastd.col_stride
-//        datacon.set(from: v.datacon, n: v.ncols, xoffset: xoff, xstride: xstr, yoffset: yoff, ystride: ystr)
-//    }
-    
+
     /// get the _idx_-th row, unless is 1-D row,
     /// in which case return _idx_-th col
     /// NOTE: unsafe...
@@ -244,3 +402,4 @@ struct VectorIterator
         return vector[idx]
     }
 }
+

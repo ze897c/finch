@@ -19,7 +19,45 @@ class VectorSpec: QuickSpec {
     let v1: [CDouble] = [1.0, -2.0, 3.0, -4.0, 5.0]
     let d0: [[CDouble]] = [[1, 2, 3]]
     let d1: [[CDouble]] = [[1], [2], [3]]
+    
+    var V0: Vector? = nil
+    var V1: Vector? = nil
+    var V2: Vector? = nil
+    var V3: Vector? = nil
+    var V4: Vector? = nil
+    var V5: Vector? = nil
     override func spec() {
+        
+        // MARK: imaxmag
+        describe("imaxmag") {
+            context("on simple data") {
+                let pi: CDouble = CDouble.pi
+                let d2: [CDouble] = [pi, -2 * pi, -pi]
+                let d3: [CDouble] = [pi, -3 * pi, 4 * pi, -pi]
+                let d4: [[CDouble]] = [[pi], [-2 * pi], [-pi]]
+                let d5: [[CDouble]] = [[pi], [-3 * pi], [4 * pi], [-pi]]
+                
+                beforeEach() {
+                    self.V2 = Vector(d2)
+                    self.V3 = Vector(d3)
+                    self.V4 = Vector(d4)!
+                    self.V5 = Vector(d5)!
+                }
+                
+                fit("computes correctly") {
+                    expect(self.V2!.imaxmag()).to(equal(1))
+                    expect(self.V3!.imaxmag()).to(equal(2))
+                    expect(self.V4!.imaxmag()).to(equal(1))
+                    expect(self.V5!.imaxmag()).to(equal(2))
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    // <#code#>
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("imaxmag")
+        
         // MARK: init
         describe("init") {
 

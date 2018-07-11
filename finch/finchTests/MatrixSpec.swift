@@ -19,12 +19,112 @@ class MatrixSpec: QuickSpec {
     override func spec() {
         var A = Matrix(1)
         var B = Matrix(1)
+        
+        // MARK: transpose
+        describe("transpose") {
+            context("on simple data") {
+                let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
+                
+                beforeEach() {
+                    A = Matrix(d0)!
+                }
+                
+                fit("computes correctly") {
+                    let B = A.transpose()
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            expect(B[idx][jdx]).to(equal(A[jdx][idx]))
+                        }
+                    }
+                } //fit("computes correctly")
+                
+                fit("has correct properties") {
+                    let B = A.transpose()
+                    expect(B).to(beAKindOf(Matrix.self))
+                    expect(B.nrows).to(equal(A.ncols))
+                    expect(B.ncols).to(equal(A.nrows))
 
+                } // fit("has correct properties")
+                
+                fit("leaves original") {
+                    _ = A.transpose()
+                    for idx in 0 ..< A.nrows {
+                        for jdx in 0 ..< A.ncols {
+                            let atruth: CDouble = A[idx][jdx]
+                            expect(A[idx][jdx]).to(equal(atruth))
+                        }
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("transpose")
+        
+        // MARK: swap
+        describe("swap") {
+            context("on simple data") {
+                let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
+                
+                beforeEach() {
+                    A = Matrix(d0)!
+                }
+                
+                fit("swaps correctly") {
+                    A.swap_rows(0, 1)
+                    for idx in 0 ..< UInt(2) {
+                        let kdx = Int( idx == 0 ? 1 : 0)
+                        for jdx in 0 ..< A.ncols {
+                            expect(A[idx][jdx]).to(equal(d0[kdx][Int(jdx)]))
+                        }
+                    }
+                } //fit("swaps correctly")
+
+                fit("leaves properties") {
+                    expect(A).to(beAKindOf(Matrix.self))
+                    expect(A.nrows).to(equal(UInt(d0.count)))
+                    expect(A.ncols).to(equal(UInt(d0[0].count)))
+                } // fit("leaves properties")
+                
+            } // context("on simple data")
+        } //describe("swap")
+
+        // MARK: set via col and subscript
+        describe("set via col and subscript") {
+            context("on simple data") {
+                let d0: [[CDouble]] = [[1, -2], [-4.5, 6.7]]
+                let newa00: CDouble = 7
+                let scalar: CDouble = -912.873
+
+                beforeEach() {
+                    A = Matrix(d0)!
+                    
+                    var v: Vector = A.col(0)!
+                    var w: Vector = A.col(1)!
+                    v[0] = newa00
+                    v[1] *= scalar
+                    w[0] *= scalar
+                    w[0] *= scalar
+                }
+
+                fit("sets correctly") {
+                    expect(A[0][0]).to(equal(newa00))
+                    expect(A[1][0]).to(equal(d0[1][0] * scalar))
+                    expect(A[0][1]).to(equal(d0[0][1] * scalar * scalar))
+                } //fit("sets correctly")
+
+                fit("leaves original") {
+                    expect(A).to(beAKindOf(Matrix.self))
+                    expect(A.nrows).to(equal(UInt(d0.count)))
+                    expect(A.ncols).to(equal(UInt(d0[0].count)))
+                    expect(A[1][1]).to(equal(d0[1][1]))
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("set via col and subscript")
+        
         // MARK: set via double subscript
         describe("set via double subscript") {
             context("on simple data") {
                 let d0: [[CDouble]] = [[1, -2], [-4.5, 6.7]]
-                let d1: [[CDouble]] = [[CDouble.pi, -CDouble.pi], [-CDouble.pi, CDouble.pi]]
                 let newa00: CDouble = 7
                 let scalar: CDouble = -912.873
                 beforeEach() {
@@ -36,16 +136,15 @@ class MatrixSpec: QuickSpec {
                 }
                 
                 fit("sets correctly") {
-                    expect(A).to(beAKindOf(Matrix.self))
-                    expect(A.nrows).to(equal(UInt(d0.count)))
-                    expect(A.ncols).to(equal(UInt(d0[0].count)))
-                    
                     expect(A[0][0]).to(equal(newa00))
                     expect(A[0][1]).to(equal(d0[0][1] * scalar))
                     expect(A[1][0]).to(equal(d0[1][0] * scalar * scalar))
-                } //fit("computes correctly")
+                } //fit("sets correctly")
                 
                 fit("leaves original") {
+                    expect(A).to(beAKindOf(Matrix.self))
+                    expect(A.nrows).to(equal(UInt(d0.count)))
+                    expect(A.ncols).to(equal(UInt(d0[0].count)))
                     expect(A[1][1]).to(equal(d0[1][1]))
                 } //fit("leaves original")
                 

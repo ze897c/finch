@@ -30,10 +30,31 @@ extension CDouble: DaCoEl {
     }
 }
 
+//extension UnsafeMutablePointer: where Element == CDouble {
+//    static func + (_ x: UnsafeMutablePointer<Element>, _ n: UInt) {
+//
+//    }
+//}
+
 extension DataCon where DataCon.Element == CDouble {
 //    func cblas_dasum(Int32, UnsafePointer<Double>!, Int32) -> Double
 //    Computes the sum of the absolute values of elements in a vector (double-precision).
 
+    
+    // MARK: manip
+    
+    /// swap in place
+    /// UNSAFE
+    func swap(_ b: DataCon<Element>, _ n: UInt, _ aoff: UInt, _ astd: UInt, _ boff: UInt, _ bstd: UInt) {
+        
+        let N = Int32(n)
+        let aptr = data + Int(aoff)
+        let astd = Int32(astd)
+        let bptr = b.data + Int(boff)
+        let bstd = Int32(bstd)
+        cblas_dswap(N, aptr, astd, bptr, bstd)
+    }
+    
     // MARK: min/max
     
     /// return index of minimum value
