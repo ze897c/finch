@@ -33,8 +33,7 @@ extension CDouble: DaCoEl {
 extension DataCon where DataCon.Element == CDouble {
 //    func cblas_dasum(Int32, UnsafePointer<Double>!, Int32) -> Double
 //    Computes the sum of the absolute values of elements in a vector (double-precision).
-    
-    
+
     // MARK: min/max
     
     /// return index of minimum value

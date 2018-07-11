@@ -75,16 +75,16 @@ extension MatrixMemViewProtocol {
 // assume non-symetric, dense, _etc_
 // and name symetric, sparse, _etc_ appropriately
 struct MatrixMemView: MatrixMemViewProtocol, Codable {
+
+    // MARK: enc/dec
+    // https://www.raywenderlich.com/172145/encoding-decoding-and-serialization-in-swift-4
+    // https://swiftunboxed.com/stdlib/json-encoder-encodable/
+    // https://www.mikeash.com/pyblog/friday-qa-2017-07-28-a-binary-coder-for-swift.html
+    // https://benscheirman.com/2017/06/swift-json/
     enum CodingKeys: String, CodingKey {
         case nrows, ncols, dataoff, row_stride, col_stride
     }
 
-    // func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key>
-    // func unkeyedContainer() -> UnkeyedEncodingContainer
-    // func singleValueContainer() -> SingleValueEncodingContainer
-    
-    
-    // MARK: enc/dec
     public func encode(to encoder: Encoder) throws
     {
         var container = encoder.container(keyedBy: CodingKeys.self)

@@ -48,7 +48,26 @@ class DCCDSpec: QuickSpec {
         let xyz: [CDouble] = [1, 1, 1]
         let sqrt2: CDouble = sqrt(2.0)
         
-        _ = "this a long drive for someone with nothing to think about"
+        // MARK: enc-dec
+        describe("enc-dec") {
+            context("on simple data") {
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                }
+                
+                fit("computes correctly") {
+                    let encoder = JSONEncoder()
+                    let decoder = JSONDecoder()
+                    let jsonData = try! encoder.encode(dc0)
+                    let jsonString = String(data: jsonData, encoding: .utf8)
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    // <#code#>
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("enc-dec")
 
         // MARK: .map_inplace with CDouble
         describe(".map_inplace with CDouble") {

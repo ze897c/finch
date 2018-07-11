@@ -21,27 +21,65 @@ class DataCon<Element: DaCoEl>
     Equatable,
     ExpressibleByArrayLiteral,
     LosslessStringConvertible,
-    Sequence
+    Sequence,
+    Codable,
+    IDProtocol
 //    where Element:Numeric
 {
 
+    // MARK: enc/dec
+    enum PropsKeys: String, CodingKey {
+        case count
+    }
+
+    enum DataKeys: String, CodingKey {
+        case data
+    }
+
+    public func encode(to encoder: Encoder) throws
+    {
+        var elems = encoder.unkeyedContainer()
+        try elems.encode(count)
+        for x in self {
+            try elems.encode(x)
+            //try (x as Encodable).encode(to: elems as! Encoder)
+        }
+    }
+    
+    required init(from decoder: Decoder) throws {
+        var elems = try decoder.unkeyedContainer()
+        count = try elems.decode(UInt.self)
+        data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
+        for idx in 0..<Int(count) {
+            try data[idx] = elems.decode(Element.self)
+        }
+    }
+    
+    // MARK: instance members
+    let count: UInt
+    let data: UnsafeMutablePointer<Element>
+    
+    let startIndex: DataCon.Index = 0
+    var endIndex: DataCon.Index {
+        guard count > 0 else {
+            return 0 // bogus?
+        }
+        return DataCon.Index(count) - 1
+    }
+
+    // func container<Key>(keyedBy type: Key.Type) -> KeyedEncodingContainer<Key>
+    // func unkeyedContainer() -> UnkeyedEncodingContainer
+    // func singleValueContainer() -> SingleValueEncodingContainer
+
+ 
+    
     // MARK: class members
     typealias Index = Int
     typealias Indices = Range<DataCon.Index>
     typealias ArrayLiteralElement = Element
     //var data: ContiguousArray<Element>
     
-    // MARK: instance members
-    let count: UInt
-    let data: UnsafeMutablePointer<Element>
-    
-    let startIndex: DataCon.Index
-    var endIndex: DataCon.Index {
-        guard count > 0 else {
-            return 0 // bogus?
-        }
-        return startIndex + DataCon.Index(count) - 1
-    }
+
 //    var count: DataCon.Index {
 //        return DataCon.Index(data.count)
 //    }
@@ -118,7 +156,6 @@ class DataCon<Element: DaCoEl>
     /// init with singly indexed function
     init(memview: VectorMemViewProtocol, f: (UInt) ->Element) {
         count = memview.required_capacity()
-        startIndex = 0
         data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
         for idx in 0 ..< count {
             data[Int(memview.data_index(idx))] = f(idx)
@@ -128,7 +165,6 @@ class DataCon<Element: DaCoEl>
     /// init with singly indexed function
     init(memview: MatrixMemViewProtocol, f: (UInt, UInt) ->Element) {
         count = memview.required_capacity()
-        startIndex = 0
         data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
         for idx in 0 ..< memview.shape.nrows {
             for jdx in 0 ..< memview.shape.ncols {
@@ -146,7 +182,6 @@ class DataCon<Element: DaCoEl>
         }
         let N = Int(n)
         count = UInt(N)
-        startIndex = 0
         data = UnsafeMutablePointer<Element>.allocate(capacity: N)
         //data.initialize(repeating: start, count: N)
         data[0] = start
@@ -164,14 +199,12 @@ class DataCon<Element: DaCoEl>
     init(capacity: UInt) {
         count = capacity
         data = UnsafeMutablePointer<Element>.allocate(capacity: Int(count))
-        startIndex = 0
     }
 
     /// initialize from initialized unsafe pointer and capacity
     init(initializedPointer p: UnsafeMutablePointer<Element>, capacity: UInt) {
         count = capacity
         data = p
-        startIndex = 0
     }
     
     /// initialize by repeating given element and capacity
@@ -180,7 +213,6 @@ class DataCon<Element: DaCoEl>
         count = UInt(capacity)
         data = UnsafeMutablePointer<Element>.allocate(capacity: capacity)
         data.initialize(repeating: rep, count: capacity)
-        startIndex = 0
     }
     
     // TODO: add deinit
@@ -216,7 +248,6 @@ class DataCon<Element: DaCoEl>
         for (ix, x) in elms.enumerated() {
             data[ix] = x
         }
-        startIndex = 0
     }
 
     // TODO: "required convenience" seems slightly at cross purposes...?
@@ -370,7 +401,7 @@ struct DataConIterator<Element:DaCoEl>
     
     init(_ daco: DataCon<Element>) {
         self.daco = daco
-        idx = self.daco.startIndex
+        idx = 0
     }
 
     mutating func next() -> Element? {

@@ -24,7 +24,12 @@ protocol SafeDivisionByIntegerProtocol {
     func safeDivide<T>(_ y: T) throws -> Self where T : BinaryInteger
 }
 
-protocol DaCoEl: LosslessStringConvertible, Numeric, SafeDivisionByIntegerProtocol {
+protocol DaCoEl:
+    LosslessStringConvertible,
+    Numeric,
+    Codable,
+    SafeDivisionByIntegerProtocol
+{
     /// return the zero-element
     static var Zero: Self {get}
     static var Identity: Self {get}
