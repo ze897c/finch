@@ -45,21 +45,33 @@ class MatrixMemViewSpec: QuickSpec {
 //                        print("eulav has address: \($0)")
 //                    }
                     
-                    do {
-                        let re_mv23 = try decoder.decode(MatrixMemView.self, from: jsonData23)
-                        let re_mv32 = try decoder.decode(MatrixMemView.self, from: jsonData32)
-                        expect(re_mv23).to(beAKindOf(MatrixMemView.self))
-                        expect(re_mv32).to(beAKindOf(MatrixMemView.self))
-                    } catch _ {
-                        // TODO: there must be a way to handle this from Q/N
-                        fail()
-                    }
+                    let re_mv23 = try! decoder.decode(MatrixMemView.self, from: jsonData23)
+                    let re_mv32 = try! decoder.decode(MatrixMemView.self, from: jsonData32)
+                    expect(re_mv23).to(beAKindOf(MatrixMemView.self))
+                    expect(re_mv32).to(beAKindOf(MatrixMemView.self))
                     
+                    expect(re_mv23.shape.nrows).to(equal(mv23.shape.nrows))
+                    expect(re_mv23.shape.ncols).to(equal(mv23.shape.ncols))
+                    expect(re_mv23.dataoff).to(equal(mv23.dataoff))
+                    expect(re_mv23.row_stride).to(equal(mv23.row_stride))
+                    expect(re_mv23.col_stride).to(equal(mv23.col_stride))
                     
+                    expect(re_mv32.shape.nrows).to(equal(mv32.shape.nrows))
+                    expect(re_mv32.shape.ncols).to(equal(mv32.shape.ncols))
+                    expect(re_mv32.dataoff).to(equal(mv32.dataoff))
+                    expect(re_mv32.row_stride).to(equal(mv32.row_stride))
+                    expect(re_mv32.col_stride).to(equal(mv32.col_stride))
+
                 } //fit("encodes and decodes")
                 
                 fit("leaves original") {
-                    // <#code#>
+                    let encoder = JSONEncoder()
+                    _ = try! encoder.encode(mv23)
+                    expect(mv23.shape.nrows).to(equal(2))
+                    expect(mv23.shape.ncols).to(equal(3))
+                    expect(mv23.dataoff).to(equal(0))
+                    expect(mv23.row_stride).to(equal(1))
+                    expect(mv23.col_stride).to(equal(2))
                 } //fit("leaves original")
                 
             } // context("on simple data")

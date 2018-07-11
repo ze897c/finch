@@ -55,15 +55,26 @@ class DCCDSpec: QuickSpec {
                     dc0 = DataCon(elements: v0)
                 }
                 
-                fit("computes correctly") {
+                fit("encodes and decodes correctly") {
                     let encoder = JSONEncoder()
                     let decoder = JSONDecoder()
                     let jsonData = try! encoder.encode(dc0)
-                    let jsonString = String(data: jsonData, encoding: .utf8)
-                } //fit("computes correctly")
+                    //let jsonString = String(data: jsonData, encoding: .utf8)
+
+                    let re_dc0 = try! decoder.decode(DataCon<CDouble>.self, from: jsonData)
+                    expect(re_dc0).to(beAKindOf(DataCon<CDouble>.self))
+                    expect(re_dc0.count).to(equal(dc0.count))
+                    for idx in 0..<Int(re_dc0.count) {
+                        expect(re_dc0[idx]).to(equal(dc0[idx]))
+                    }
+                } //fit("encodes and decodes correctly")
                 
                 fit("leaves original") {
-                    // <#code#>
+                    let encoder = JSONEncoder()
+                    _ = try! encoder.encode(dc0)
+                    for idx in 0..<Int(dc0.count) {
+                        expect(dc0[idx]).to(equal(v0[idx]))
+                    }
                 } //fit("leaves original")
                 
             } // context("on simple data")
