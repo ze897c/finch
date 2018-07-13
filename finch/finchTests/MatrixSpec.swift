@@ -24,11 +24,11 @@ class MatrixSpec: QuickSpec {
         describe("transpose") {
             context("on simple data") {
                 let d0: [[CDouble]] = [[1, -2, 3], [-4.5, 6.7, -8]]
-                
+
                 beforeEach() {
                     A = Matrix(d0)!
                 }
-                
+
                 fit("computes correctly") {
                     let B = A.transpose()
                     for idx in 0 ..< A.nrows {

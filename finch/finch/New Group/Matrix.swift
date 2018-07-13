@@ -9,6 +9,12 @@
 import Foundation
 import Accelerate
 
+struct SparseMatrixElement {
+    let row: UInt
+    let col: UInt
+    var val: CDouble
+}
+
 // assumption here is Double, dense, no structural constraint
 struct Matrix:
     BLASMatrixProtocol,
@@ -72,6 +78,12 @@ struct Matrix:
         }
     }
     
+    var square: Bool {
+        get {
+            return shape.nrows == shape.ncols
+        }
+    }
+    
     /// leading dimension
     var ld: UInt? {
         get {
@@ -111,13 +123,38 @@ struct Matrix:
      
      */
     
-    // MARK: manip
-    mutating func swap_rows(_ idx: UInt, _ jdx: UInt) {
-        try! row(idx)!.swap(row(jdx)!)
+    mutating func GEPP_inplace() throws -> (P: [UInt], L: [SparseMatrixElement]) {
+        guard square else {
+            throw Exceptions.ShapeMismatch
+        }
+        let n = Int(nrows * (nrows - 1) / UInt(2))
+        var P = [UInt](repeating: 0, count: Int(nrows))
+        var L = [SparseMatrixElement](repeating: SparseMatrixElement(row: 0, col: 0, val: 0), count: n)
+        var A = Matrix(datacon, memview)  // use as sub?
+        for idx in 0..<nrows {
+            let pivot = A.col(idx)!.imaxmag()
+            P[Int(idx)] = pivot
+            //START HERE
+            // new sub-matrix with same underlying data
+            let N = nrows - (idx + 1)
+            let newoff = UInt(0)
+            let newstrides: [UInt] = [memview.row_stride, memview.col_stride]
+            A = Matrix(datacon, MatrixMemView([N, N], newoff, newstrides))
+        }
+        return (P: P, L: L)
     }
     
-    mutating func swap_cols(_ idx: UInt, _ jdx: UInt) {
-        try! col(idx)!.swap(col(jdx)!)
+    // MARK: manip
+    mutating func row_axpby(_ adx: UInt, _ a: CDouble, _ bdx: UInt, _ b: CDouble) {
+        row(adx)!.axpby_inplace(row(bdx)!, a, b)
+    }
+    
+    mutating func swap_rows(_ adx: UInt, _ bdx: UInt) {
+        try! row(adx)!.swap(row(bdx)!)
+    }
+    
+    mutating func swap_cols(_ adx: UInt, _ bdx: UInt) {
+        try! col(adx)!.swap(col(bdx)!)
     }
     
     /// This function multiplies A * B and multiplies the resulting matrix by alpha.

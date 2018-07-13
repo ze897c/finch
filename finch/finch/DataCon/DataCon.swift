@@ -31,6 +31,7 @@ class DataCon<Element: DaCoEl>
     typealias Indices = Range<DataCon.Index>
     typealias ArrayLiteralElement = Element
 
+    
     // MARK: enc/dec
     enum PropsKeys: String, CodingKey {
         case count

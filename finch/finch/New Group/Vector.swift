@@ -57,7 +57,7 @@ struct Vector : BLASMatrixProtocol, Sequence {
     }
 
     // MARK: manip
-    
+
     /// swap vectors in place
     func swap(_ b: Vector) throws {
         guard count == b.count else {
@@ -100,7 +100,9 @@ struct Vector : BLASMatrixProtocol, Sequence {
     }
 
     func mul(_ b: CDouble) -> Vector {
-        return self // TODO:
+        let rex = Vector(datacon.deepcopy(), memview)
+        rex.mul_inplace(b)
+        return rex
     }
 
     mutating func add_inplace(_ b: Vector) {

@@ -12,6 +12,8 @@ import Quick
 import XCTest
 import os.log
 
+import Accelerate
+
 @testable import finch
 
 class VectorSpec: QuickSpec {
@@ -43,7 +45,7 @@ class VectorSpec: QuickSpec {
                     self.V4 = Vector(d4)!
                     self.V5 = Vector(d5)!
                 }
-                
+
                 fit("computes correctly") {
                     expect(self.V2!.imaxmag()).to(equal(1))
                     expect(self.V3!.imaxmag()).to(equal(2))

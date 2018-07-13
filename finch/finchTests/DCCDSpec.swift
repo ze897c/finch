@@ -48,6 +48,97 @@ class DCCDSpec: QuickSpec {
         let xyz: [CDouble] = [1, 1, 1]
         let sqrt2: CDouble = sqrt(2.0)
         
+        // MARK: pow
+        describe("pow") {
+            context("on simple data") {
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                    dc1 = DataCon(elements: [2.1, 3,  CDouble.pi])
+                }
+                
+                fit("computes correctly") {
+                    let pow0 = dc0.pow(dc1)
+                    expect(pow0).to(beAKindOf(DataCon<CDouble>.self))
+                    for (ix, x) in pow0.enumerated() {
+                        let truth: CDouble = pow(v0[ix], dc1[ix])
+                        expect(x).to(beCloseTo(truth))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = dc0.copysign(dc1)
+                    for (ix, x) in dc0.enumerated() {
+                        expect(x).to(equal(v0[ix]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("copysign")
+        
+        // <<<<<<<<<<<<<
+        
+        // MARK: copysign
+        describe("copysign") {
+            context("on simple data") {
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                    dc1 = DataCon(elements: [-1, 1, -1])
+                }
+                
+                fit("computes correctly") {
+                    let signed = dc0.copysign(dc1)
+                    expect(signed).to(beAKindOf(DataCon<CDouble>.self))
+                    for (ix, x) in signed.enumerated() {
+                        expect(abs(x)).to(equal(abs(v0[ix])))
+                        expect(x.sign).to(equal(dc1[ix].sign))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = dc0.copysign(dc1)
+                    for (ix, x) in dc0.enumerated() {
+                        expect(x).to(equal(v0[ix]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("copysign")
+        
+        // MARK: ceil
+        describe("ceil") {
+            context("on simple data") {
+                beforeEach() {
+                    dc0 = DataCon(elements: v0)
+                    dc1 = DataCon(elements: v1)
+                }
+
+                fit("computes correctly") {
+                    let cdc0 = dc0.ceil()
+                    let cdc1 = dc1.ceil()
+                    expect(cdc0).to(beAKindOf(DataCon<CDouble>.self))
+                    expect(cdc1).to(beAKindOf(DataCon<CDouble>.self))
+                    for (ix, x) in cdc0.enumerated() {
+                        expect(x).to(equal(ceil(v0[ix])))
+                    }
+                    for (ix, x) in cdc1.enumerated() {
+                        expect(x).to(equal(ceil(v1[ix])))
+                    }
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = dc0.ceil()
+                    _ = dc1.ceil()
+                    for (ix, x) in dc0.enumerated() {
+                        expect(x).to(equal(v0[ix]))
+                    }
+                    for (ix, x) in dc1.enumerated() {
+                        expect(x).to(equal(v1[ix]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("ceil")
+        
         // MARK: enc-dec
         describe("enc-dec") {
             context("on simple data") {

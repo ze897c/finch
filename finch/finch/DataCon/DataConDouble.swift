@@ -40,6 +40,54 @@ extension DataCon where DataCon.Element == CDouble {
 //    func cblas_dasum(Int32, UnsafePointer<Double>!, Int32) -> Double
 //    Computes the sum of the absolute values of elements in a vector (double-precision).
 
+    // MARK: vforce -- arithmetic & aux
+    static func ceil(_ x: DataCon<CDouble>, _ n: UInt? = nil) -> DataCon<CDouble> {
+        var N = Int32(n ?? x.count)
+        let rex = DataCon<CDouble>(capacity: UInt(N))
+        vvceil(rex.data, x.data, &N)
+        return rex
+    }
+    
+    func ceil(_ n: UInt? = nil) -> DataCon<CDouble> {
+        return DataCon.ceil(self, n ?? count)
+    }
+    
+    static func copysign(_ x: DataCon<CDouble>, _ sign: DataCon<CDouble>, _ n: UInt? = nil) -> DataCon<CDouble> {
+        var N = Int32(n ?? x.count)
+        let rex = DataCon<CDouble>(capacity: UInt(N))
+        vvcopysign(rex.data, x.data, sign.data, &N)
+        return rex
+    }
+    
+    func copysign(_ sign: DataCon<CDouble>, _ n: UInt? = nil) -> DataCon<CDouble> {
+        return DataCon.copysign(self, sign, n ?? count)
+    }
+    
+    
+    // MARK: vforce -- exp/log/pow
+    static func exp(_ x: DataCon<CDouble>, _ n: UInt? = nil) -> DataCon<CDouble> {
+        var N = Int32(n ?? x.count)
+        let rex = DataCon<CDouble>(capacity: UInt(N))
+        vvexp(rex.data, x.data, &N)
+        return rex
+    }
+    
+    func exp(_ n: UInt? = nil) -> DataCon<CDouble> {
+        return DataCon.exp(self, n ?? count)
+    }
+    
+    static func pow(_ expn: DataCon<CDouble>, _ base: DataCon<CDouble>, _ n: UInt? = nil) -> DataCon<CDouble> {
+        var N = Int32(n ?? base.count)
+        let rex = DataCon<CDouble>(capacity: UInt(N))
+        vvpow(rex.data, expn.data, base.data, &N)
+        return rex
+    }
+    
+    func pow(_ expn: DataCon<CDouble>, _ n: UInt? = nil) -> DataCon<CDouble> {
+        return DataCon.pow(expn, self, n ?? count)
+    }
+    
+    // MARK: vforce -- trig/htrig
     
     // MARK: manip
     
