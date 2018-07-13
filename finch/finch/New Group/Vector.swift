@@ -216,15 +216,22 @@ struct Vector : BLASMatrixProtocol, Sequence {
         return inner_product(v)
     }
     
-    func inner_product(_ v: Vector) -> CDouble {
-        return 0 // TODO:
+    /// unsafe
+    func inner_product(_ v: Vector, _ n: UInt? = nil, stride: UInt? = nil, offset: UInt? = nil, vstride: UInt? = nil, voffset: UInt? = nil) -> CDouble
+    {
+        return datacon.dot(v.datacon, n: n, stride: stride, offset: offset, vstride: vstride, voffset: voffset)
     }
     
-    func outer_product(_ v: Vector) -> Matrix? {
+    func outer_product(_ v: Vector) -> Matrix?
+    {
         guard count == v.count else {
             return nil
         }
-        return Matrix(1, 1) // TODO:
+        let a = isRowVector ? transpose(): self
+        let b = v.isRowVector ? v: v.transpose()
+        let c = Matrix(count)
+        Matrix.dgemm(A: a.asMatrix, B: b.asMatrix, C: c, alpha: 1.0, beta: 0.0)
+        return c
     }
 
     // MARK: iterator

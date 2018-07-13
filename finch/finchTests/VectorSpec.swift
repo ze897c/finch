@@ -18,6 +18,7 @@ import Accelerate
 
 class VectorSpec: QuickSpec {
     let v0: [CDouble] = [1.0, 2.0, 3.0]
+    let w0: [CDouble] = [CDouble.pi, 13.0/7.0, -1999.0]
     let v1: [CDouble] = [1.0, -2.0, 3.0, -4.0, 5.0]
     let d0: [[CDouble]] = [[1, 2, 3]]
     let d1: [[CDouble]] = [[1], [2], [3]]
@@ -29,6 +30,36 @@ class VectorSpec: QuickSpec {
     var V4: Vector? = nil
     var V5: Vector? = nil
     override func spec() {
+        
+        // MARK: dot
+        describe("dot") {
+            context("on simple data") {
+                beforeEach() {
+                    self.V0 = Vector(self.v0)
+                    self.V1 = Vector(self.w0)
+                }
+                
+                fit("computes correctly") {
+                    let d0 = self.V0!.inner_product(self.V1!)
+                    let d1 = try! self.V0!.dot(self.V1!)
+                    let truth = self.v0[0] * self.w0[0] + self.v0[1] * self.w0[1] + self.v0[2] * self.w0[2]
+                    expect(d0).to(beCloseTo(truth))
+                    expect(d1).to(beCloseTo(truth))
+                } //fit("computes correctly")
+                
+                fit("leaves original") {
+                    _ = self.V0!.inner_product(self.V1!)
+                    _ = try! self.V0!.dot(self.V1!)
+                    for (ix, x) in self.V0!.enumerated() {
+                        expect(x).to(equal(self.v0[ix]))
+                    }
+                    for (ix, x) in self.V1!.enumerated() {
+                        expect(x).to(equal(self.w0[ix]))
+                    }
+                } //fit("leaves original")
+                
+            } // context("on simple data")
+        } //describe("dot")
         
         // MARK: imaxmag
         describe("imaxmag") {
